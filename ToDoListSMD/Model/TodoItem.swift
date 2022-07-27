@@ -7,7 +7,7 @@
 
 import Foundation
 struct TodoItem {
-    var id: String
+    let id: String
     let text: String
 
     let importance: Importance
@@ -35,7 +35,7 @@ extension TodoItem {
         ]
 
         if importance != .ordinary {
-            jsonDict["importance"] = importance
+            jsonDict["importance"] = importance.rawValue
         }
 
         if let deadLine = deadLine {
@@ -55,7 +55,7 @@ extension TodoItem {
         return TodoItem(
             id: jsonDict["id"] as? String ?? "",
             text: jsonDict["text"] as? String ?? "",
-            importance: jsonDict["importance"] as? Importance ?? .ordinary,
+            importance: .init(rawValue: jsonDict["importance"] as? String ?? "") ?? .ordinary,
             isDone: jsonDict["isDone"] as? Bool ?? false,
             creationDate: getDate(from: jsonDict["creationDate"] as Any) ?? Date(),
             changeDate: getDate(from: jsonDict["changeDate"] as Any),
