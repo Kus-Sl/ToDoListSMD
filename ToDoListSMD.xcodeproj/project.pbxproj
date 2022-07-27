@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A87F2F34289113880079713C /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F2F33289113880079713C /* FileCache.swift */; };
 		A8C18025289013120085E331 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C18024289013120085E331 /* AppDelegate.swift */; };
 		A8C18027289013120085E331 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C18026289013120085E331 /* SceneDelegate.swift */; };
 		A8C1802C289013120085E331 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8C1802A289013120085E331 /* Main.storyboard */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A87F2F33289113880079713C /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		A8C18021289013120085E331 /* ToDoListSMD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoListSMD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8C18024289013120085E331 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8C18026289013120085E331 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		A8C1805B289015050085E331 /* ServiceLayers */ = {
 			isa = PBXGroup;
 			children = (
+				A87F2F33289113880079713C /* FileCache.swift */,
 			);
 			path = ServiceLayers;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 			files = (
 				A8C18025289013120085E331 /* AppDelegate.swift in Sources */,
 				A8C18027289013120085E331 /* SceneDelegate.swift in Sources */,
+				A87F2F34289113880079713C /* FileCache.swift in Sources */,
 				A8C1805D289017360085E331 /* TodoItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
