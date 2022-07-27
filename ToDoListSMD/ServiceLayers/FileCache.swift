@@ -7,10 +7,6 @@
 
 import Foundation
 class FileCache {
-    static let shared = FileCache()
-
-    private init () {}
-
     private(set) var todoItems: [TodoItem] = []
 
     func add(_ todoItem: TodoItem) {
@@ -23,7 +19,7 @@ class FileCache {
         }
     }
 
-    func getItems(from file: String = "Cache.txt") {
+    func load(_ file: String = "TaskList.txt") {
         guard let path = getPath(to: file),
               let jsonData = try? Data(contentsOf: path),
               let jsonDict = try? JSONSerialization.jsonObject(with: jsonData) as? [Any]
@@ -32,7 +28,7 @@ class FileCache {
         todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
-    func saveItems(to file: String = "Cache.txt") {
+    func save(_ file: String = "TaskList.txt") {
         let jsonDict = todoItems.map { $0.json }
 
         guard JSONSerialization.isValidJSONObject(jsonDict),
