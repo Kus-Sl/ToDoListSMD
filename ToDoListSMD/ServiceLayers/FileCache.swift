@@ -9,21 +9,25 @@ import Foundation
 class FileCache {
     private(set) var todoItems: [TodoItem] = []
 
-    func add(_ todoItem: TodoItem) {
-        todoItems.append(todoItem)
+    func add(_ todoItem: TodoItem) throws {
+        if !todoItems.contains(where: { $0.id == todoItem.id }) {
+            todoItems.append(todoItem)
+        } else {
+            throw CacheError.existingID
+        }
     }
 
     func delete(_ todoItemID: String) {
-        if let index = todoItems.firstIndex(where: { $0.id == todoItemID }) {
-            todoItems.remove(at: index)
-        }
+        guard let index = todoItems.firstIndex(where: { $0.id == todoItemID }) else { return }
+        todoItems.remove(at: index)
     }
 
     func load(_ file: String = "TaskList.txt") {
         guard let path = getPath(to: file),
               let jsonData = try? Data(contentsOf: path),
-              let jsonDict = try? JSONSerialization.jsonObject(with: jsonData) as? [Any]
-        else { return }
+              let jsonDict = try? JSONSerialization.jsonObject(with: jsonData) as? [Any] else {
+            return
+        }
 
         todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
@@ -33,8 +37,9 @@ class FileCache {
 
         guard JSONSerialization.isValidJSONObject(jsonDict),
               let path = getPath(to: file),
-              let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict)
-        else { return }
+              let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict) else {
+            return
+        }
 
         try? jsonData.write(to: path)
     }
@@ -45,6 +50,10 @@ class FileCache {
         path.appendPathComponent(file)
         return path
     }
+}
+
+enum CacheError: Error {
+    case existingID
 }
 
 
