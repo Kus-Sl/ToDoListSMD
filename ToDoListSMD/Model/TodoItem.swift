@@ -17,6 +17,16 @@ struct TodoItem {
     let changeDate: Date?
     let deadLine: Date?
 
+    init(id: String = UUID().uuidString, text: String, importance: Importance = .ordinary, isDone: Bool = false, creationDate: Date = Date(), changeDate: Date? = nil, deadLine: Date? = nil) {
+        self.id = id
+        self.text = text
+        self.importance = importance
+        self.isDone = isDone
+        self.creationDate = creationDate
+        self.changeDate = changeDate
+        self.deadLine = deadLine
+    }
+
     enum Importance: String {
         case important = "важная"
         case ordinary = "обычная"
