@@ -8,26 +8,31 @@
 import UIKit
 
 class BaseCell: UITableViewCell {
+    var todoItem: TodoItem?
     var delegate: CustomControlsDelegate!
+    var content: UIListContentConfiguration!
 
-    func configure(with title: String, and secondaryTitle: String?) {
+    class func cellReuseIdentifier() -> String {
+        self.description()
+    }
+
+    func configure(for todoItem: TodoItem?, with title: String) {
         backgroundColor = UIColor.colorAssets.backSecondary
+        self.todoItem = todoItem
 
-        var content = defaultContentConfiguration()
+        content = defaultContentConfiguration()
         content.textProperties.color = UIColor.colorAssets.labelPrimary!
         content.secondaryTextProperties.color = UIColor.colorAssets.colorBlue!
         content.textProperties.font = UIFont.systemFont(ofSize: 17)
         content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 13)
         content.text = title
-        content.secondaryText = secondaryTitle
+    }
+
+    func endContentConfigure() {
         contentConfiguration = content
     }
 
     func addControl() {}
-
-    class func cellReuseIdentifier() -> String {
-        "\(self)"
-    }
 }
 
 enum CellType {

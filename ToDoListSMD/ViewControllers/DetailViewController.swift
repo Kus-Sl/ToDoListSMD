@@ -21,6 +21,9 @@ final class DetailViewController: UIViewController {
     private lazy var cellTypes: [CellType] = [.importance, .deadLine, .calendar]
     private lazy var tableViewHeight: NSLayoutConstraint = tableView.heightAnchor.constraint(equalToConstant: 116)
 
+    let testDate = Date(timeIntervalSince1970: 1231314151)
+    lazy var todoItem: TodoItem? = TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: testDate)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Дело"
@@ -28,7 +31,6 @@ final class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.colorAssets.backPrimary
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: nil, action: nil)
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .plain, target: nil, action: nil)
-
         setupScrollView()
     }
 
@@ -51,40 +53,39 @@ final class DetailViewController: UIViewController {
     func setupTextView() {
         textView.backgroundColor = UIColor.colorAssets.backSecondary
         textView.textColor = UIColor.colorAssets.labelPrimary
-        textView.font = UIFont.systemFont(ofSize: 17)
-        textView.textColor = UIColor.colorAssets.labelTertiary
-        textView.textContainer.lineFragmentPadding = 0
-        textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 12, right: 16)
+        //        textView.textColor = UIColor.colorAssets.labelTertiary
         textView.layer.cornerRadius = 16
-        textView.text = "Что надо сделать?"
+        textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 12, right: 16)
+        textView.textContainer.lineFragmentPadding = 0
+        textView.font = UIFont.systemFont(ofSize: 17)
         textView.isScrollEnabled = false
+        textView.text = todoItem?.text ?? "Что надо сделать?"
     }
 
     func setupTableView() {
         tableView.separatorColor = UIColor.colorAssets.supportSeparator
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.layer.cornerRadius = 16
+        tableView.estimatedRowHeight = 145
         tableView.isScrollEnabled = false
+        tableView.allowsSelection = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.allowsSelection = false
-        tableView.layer.cornerRadius = 16
+
         cellTypes.forEach { type in
             let cellID = type.getClass().cellReuseIdentifier()
             tableView.register(type.getClass(), forCellReuseIdentifier: cellID)
         }
         cellTypes.removeLast()
-
-        tableView.estimatedRowHeight = 145
     }
 
     func setupDeleteButton() {
         deleteButton.backgroundColor = UIColor.colorAssets.backSecondary
-        deleteButton.setTitle("Удалить", for: .normal)
         deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .normal)
         deleteButton.setTitleColor(.colorAssets.colorRed, for: .highlighted)
-        deleteButton.isHighlighted.toggle()
         deleteButton.layer.cornerRadius = 16
+        deleteButton.setTitle("Удалить", for: .normal)
+        deleteButton.isHighlighted.toggle()
     }
 
     func setupLayout() {
@@ -131,7 +132,7 @@ extension DetailViewController: UITableViewDataSource {
         let cellTitle = cellTypes[indexPath.row].getTitle()
 
         cell.delegate = self
-        cell.configure(with: cellTitle, and: nil)
+        cell.configure(for: todoItem, with: cellTitle)
         cell.addControl()
 
         return cell
@@ -207,6 +208,3 @@ extension DetailViewController: CustomControlsDelegate {
 //        scrollView.frame.origin.y = 0
 //    }
 //}
-
-
-

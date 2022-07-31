@@ -14,6 +14,7 @@
 		A8A6E2562896F89200CEFEEF /* ImportanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E2512896F89200CEFEEF /* ImportanceCell.swift */; };
 		A8A6E2572896F89200CEFEEF /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E2522896F89200CEFEEF /* DetailViewController.swift */; };
 		A8A6E25A2896F8F800CEFEEF /* Extension + UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */; };
+		A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */; };
 		A8C18025289013120085E331 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C18024289013120085E331 /* AppDelegate.swift */; };
 		A8C1802E289013130085E331 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8C1802D289013130085E331 /* Assets.xcassets */; };
 		A8C18031289013130085E331 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8C1802F289013130085E331 /* LaunchScreen.storyboard */; };
@@ -48,6 +49,7 @@
 		A8A6E2512896F89200CEFEEF /* ImportanceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportanceCell.swift; sourceTree = "<group>"; };
 		A8A6E2522896F89200CEFEEF /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension + UIColor.swift"; sourceTree = "<group>"; };
+		A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + DateFormatter.swift"; sourceTree = "<group>"; };
 		A8C18021289013120085E331 /* ToDoListSMD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoListSMD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8C18024289013120085E331 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8C1802D289013130085E331 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -98,10 +100,10 @@
 		A8A6E24D2896F89200CEFEEF /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */,
-				A8A6E24F2896F89200CEFEEF /* CalendarCell.swift */,
 				A8A6E2502896F89200CEFEEF /* BaseCell.swift */,
 				A8A6E2512896F89200CEFEEF /* ImportanceCell.swift */,
+				A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */,
+				A8A6E24F2896F89200CEFEEF /* CalendarCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */,
+				A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */,
 			);
 			name = Extensions;
 			path = ToDoListSMD/Extensions;
@@ -344,6 +347,7 @@
 				A8A6E2532896F89200CEFEEF /* DeadLineCell.swift in Sources */,
 				A8A6E2562896F89200CEFEEF /* ImportanceCell.swift in Sources */,
 				A8A6E2552896F89200CEFEEF /* BaseCell.swift in Sources */,
+				A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */,
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8A6E2572896F89200CEFEEF /* DetailViewController.swift in Sources */,
 			);

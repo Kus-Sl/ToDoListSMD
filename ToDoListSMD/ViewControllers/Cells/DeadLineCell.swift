@@ -12,9 +12,15 @@ final class DeadLineCell: BaseCell {
         let control = UISwitch()
         control.addTarget(self, action: #selector(addCalendar), for: .valueChanged)
 
+        if let deadLine = todoItem?.deadLine {
+//            control.isOn = true
+            content.secondaryText = DateFormatter.formatter.string(from: deadLine)
+        }
+
         accessoryView = control
+        endContentConfigure()
     }
-    
+
     @objc func addCalendar(sender: UISwitch) {
         if sender.isOn {
             separatorInset.right = 16
