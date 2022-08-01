@@ -5,8 +5,8 @@
 //  Created by Вячеслав Кусакин on 30.07.2022.
 //
 
-import Foundation
 import UIKit
+
 extension UIColor {
     enum colorAssets {
         static let backElevated = UIColor(named: "BackElevated")

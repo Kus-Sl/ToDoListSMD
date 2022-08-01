@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct TodoItem {
     let id: String
     let text: String

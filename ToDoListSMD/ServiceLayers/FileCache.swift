@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 class FileCache {
     private(set) var todoItems: [TodoItem] = []
 
