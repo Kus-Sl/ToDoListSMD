@@ -8,31 +8,33 @@
 import UIKit
 
 class BaseCell: UITableViewCell {
-    var todoItem: TodoItem?
-    var delegate: CustomControlsDelegate!
-    var content: UIListContentConfiguration!
 
-    class func cellReuseIdentifier() -> String {
-        self.description()
+    var viewModel: CellViewModelProtocol! {
+        didSet {
+            setupContent()
+            content.text = viewModel.title
+//            content.secondaryText = viewModel
+            contentConfiguration = content
+            addControl()
+        }
     }
 
-    func configure(for todoItem: TodoItem?, with title: String) {
-        backgroundColor = UIColor.colorAssets.backSecondary
-        self.todoItem = todoItem
+    private var content: UIListContentConfiguration!
 
+    func addControl() {}
+
+    private func setupContent() {
+        backgroundColor = UIColor.colorAssets.backSecondary
         content = defaultContentConfiguration()
         content.textProperties.color = UIColor.colorAssets.labelPrimary!
         content.secondaryTextProperties.color = UIColor.colorAssets.colorBlue!
         content.textProperties.font = UIFont.systemFont(ofSize: 17)
         content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 13)
-        content.text = title
     }
 
-    func endContentConfigure() {
-        contentConfiguration = content
+    class func cellReuseIdentifier() -> String {
+        self.description()
     }
-
-    func addControl() {}
 }
 
 enum CellType {
@@ -40,12 +42,12 @@ enum CellType {
     case deadLine
     case calendar
 
-    func getHeight() -> CGFloat {
+    func getHeight() -> Double {
         switch self {
         case .importance, .deadLine:
             return 58
         case .calendar:
-            return UITableView.automaticDimension
+            return 500 //UITableView.automaticDimension
         }
     }
 

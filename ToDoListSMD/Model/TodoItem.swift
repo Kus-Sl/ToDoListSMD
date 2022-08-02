@@ -18,7 +18,7 @@ struct TodoItem {
     let changeDate: Date?
     let deadLine: Date?
 
-    init(id: String = UUID().uuidString, text: String, importance: Importance = .ordinary, isDone: Bool = false, creationDate: Date = Date(), changeDate: Date? = nil, deadLine: Date? = nil) {
+    init(id: String = UUID().uuidString, text: String = "Что надо сделать?", importance: Importance = .ordinary, isDone: Bool = false, creationDate: Date = Date(), changeDate: Date? = nil, deadLine: Date? = nil) {
         self.id = id
         self.text = text
         self.importance = importance
@@ -26,12 +26,6 @@ struct TodoItem {
         self.creationDate = creationDate
         self.changeDate = changeDate
         self.deadLine = deadLine
-    }
-
-    enum Importance: String {
-        case important = "важная"
-        case ordinary = "обычная"
-        case unimportant = "неважная"
     }
 }
 
@@ -82,4 +76,10 @@ extension TodoItem {
         let date = Date(timeIntervalSince1970: unixTime)
         return date
     }
+}
+
+enum Importance: String {
+    case important = "важная"
+    case ordinary = "обычная"
+    case unimportant = "неважная"
 }

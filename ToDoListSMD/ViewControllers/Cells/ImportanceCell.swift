@@ -8,6 +8,7 @@
 import UIKit
 
 final class ImportanceCell: BaseCell {
+
     override func addControl() {
         let control = UISegmentedControl()
         control.frame = CGRect(x: 0, y: 0, width: 150, height: 36)
@@ -15,7 +16,7 @@ final class ImportanceCell: BaseCell {
         control.insertSegment(withTitle: "нет", at: 1, animated: true)
         control.insertSegment(with: UIImage(named: "custom.exclamationmark.2"), at: 2, animated: true)
 
-        if let importance = todoItem?.importance {
+        if let importance = viewModel.importance {
             switch importance {
             case .important:
                 control.selectedSegmentIndex = 2
@@ -29,6 +30,5 @@ final class ImportanceCell: BaseCell {
         }
 
         accessoryView = control
-        endContentConfigure()
     }
 }

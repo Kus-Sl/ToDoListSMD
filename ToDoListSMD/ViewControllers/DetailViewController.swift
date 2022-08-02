@@ -18,11 +18,7 @@ final class DetailViewController: UIViewController {
     private lazy var tableView = UITableView()
     private lazy var deleteButton = UIButton()
 
-    private lazy var cellTypes: [CellType] = [.importance, .deadLine, .calendar]
-    private lazy var tableViewHeight: NSLayoutConstraint = tableView.heightAnchor.constraint(equalToConstant: 116)
-
-    let testDate = Date(timeIntervalSince1970: 1231314151)
-    lazy var todoItem: TodoItem? = TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: testDate)
+    private var viewModel = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
 
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: "Дело")
@@ -60,7 +56,7 @@ final class DetailViewController: UIViewController {
         textView.textContainer.lineFragmentPadding = 0
         textView.font = UIFont.systemFont(ofSize: 17)
         textView.isScrollEnabled = false
-        textView.text = todoItem?.text ?? "Что надо сделать?"
+        textView.text = viewModel.text
     }
 
     func setupTableView() {
@@ -73,11 +69,10 @@ final class DetailViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        cellTypes.forEach { type in
+        viewModel.cellTypes.forEach { type in
             let cellID = type.getClass().cellReuseIdentifier()
             tableView.register(type.getClass(), forCellReuseIdentifier: cellID)
         }
-        cellTypes.removeLast()
     }
 
     func setupDeleteButton() {
@@ -114,7 +109,9 @@ final class DetailViewController: UIViewController {
         textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: 16).isActive = true
         textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
         textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -16).isActive = true
-        tableViewHeight.isActive = true
+
+        tableView.heightAnchor.constraint(equalToConstant: 450).isActive = true
+
         tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -16).isActive = true
         deleteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
         deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
@@ -124,18 +121,14 @@ final class DetailViewController: UIViewController {
 // MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        cellTypes.count
+        viewModel.numberOfRows
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellID = cellTypes[indexPath.row].getClass().cellReuseIdentifier()
+        viewModel.save(indexPath)
+        let cellID = viewModel.cellID
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! BaseCell
-        let cellTitle = cellTypes[indexPath.row].getTitle()
-
-        cell.delegate = self
-        cell.configure(for: todoItem, with: cellTitle)
-        cell.addControl()
-
+        cell.viewModel = viewModel.cellViewModel()
         return cell
     }
 }
@@ -143,35 +136,35 @@ extension DetailViewController: UITableViewDataSource {
 // MARK: Table view delegate
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        cellTypes[indexPath.row].getHeight()
+        viewModel.heightForRows
     }
 }
 
 // MARK: Custom controls delegate
-extension DetailViewController: CustomControlsDelegate {
-    func showCalendar() {
-        cellTypes.append(.calendar)
-        let indexPath = IndexPath(row: cellTypes.count - 1, section: 0)
-        tableView.insertRows(at: [indexPath], with: .automatic)
-
-        UIView.animate(withDuration: 0.5) {
-            self.tableView.setNeedsDisplay()
-            self.tableViewHeight.constant = self.tableView.contentSize.height
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    func closeCalendar() {
-        cellTypes.removeLast()
-        let indexPath = IndexPath(row: cellTypes.count, section: 0)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
-
-        UIView.animate(withDuration: 0.5) {
-            self.tableViewHeight.constant = 116
-            self.view.layoutIfNeeded()
-        }
-    }
-}
+//extension DetailViewController: CustomControlsDelegate {
+//    func showCalendar() {
+//        cellTypes.append(.calendar)
+//        let indexPath = IndexPath(row: cellTypes.count - 1, section: 0)
+//        tableView.insertRows(at: [indexPath], with: .automatic)
+//
+//        UIView.animate(withDuration: 0.5) {
+//            self.tableView.setNeedsDisplay()
+//            self.tableViewHeight.constant = self.tableView.contentSize.height
+//            self.view.layoutIfNeeded()
+//        }
+//    }
+//
+//    func closeCalendar() {
+//        cellTypes.removeLast()
+//        let indexPath = IndexPath(row: cellTypes.count, section: 0)
+//        tableView.deleteRows(at: [indexPath], with: .automatic)
+//
+//        UIView.animate(withDuration: 0.5) {
+//            self.tableViewHeight.constant = 116
+//            self.view.layoutIfNeeded()
+//        }
+//    }
+//}
 
 
 

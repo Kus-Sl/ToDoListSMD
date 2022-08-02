@@ -7,19 +7,14 @@
 
 import UIKit
 
-final class CalendarCell: BaseCell{
-    override func configure(for todoItem: TodoItem?, with title: String) {
-        backgroundColor = UIColor.colorAssets.backSecondary
-        separatorInset.right = .greatestFiniteMagnitude
-        self.todoItem = todoItem
-    }
+final class CalendarCell: BaseCell {
 
     override func addControl() {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .date
 
-        if let deadLine = todoItem?.deadLine {
+        if let deadLine = viewModel.deadLine {
             datePicker.date = deadLine
         } else {
             datePicker.date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
@@ -31,7 +26,5 @@ final class CalendarCell: BaseCell{
         datePicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         datePicker.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-
-        endContentConfigure()
     }
 }
