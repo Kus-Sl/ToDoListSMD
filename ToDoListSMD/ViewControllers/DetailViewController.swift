@@ -24,18 +24,19 @@ final class DetailViewController: UIViewController {
     let testDate = Date(timeIntervalSince1970: 1231314151)
     lazy var todoItem: TodoItem? = TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: testDate)
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = "Дело"
-        view.tintColor = UIColor.colorAssets.colorBlue
-        view.backgroundColor = UIColor.colorAssets.backPrimary
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: nil, action: nil)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .plain, target: nil, action: nil)
-        setupScrollView()
+    override var navigationItem: UINavigationItem {
+        let item = UINavigationItem(title: "Дело")
+        item.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: nil, action: nil)
+        item.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .plain, target: nil, action: nil)
+        return item
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.tintColor = UIColor.colorAssets.colorBlue
+        view.backgroundColor = UIColor.colorAssets.backPrimary
+        setupScrollView()
         setupLayout()
     }
 
