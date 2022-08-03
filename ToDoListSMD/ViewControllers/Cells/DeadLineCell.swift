@@ -8,19 +8,17 @@
 import UIKit
 
 final class DeadLineCell: BaseCell {
+    private var control: UISwitch!
 
     override func addControl() {
-        let control = UISwitch()
+        control = UISwitch()
+        control.isOn = viewModel.setSwitchControl()
+        control.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
+
         accessoryView = control
     }
 
-//    @objc func addCalendar(sender: UISwitch) {
-//        if sender.isOn {
-//            separatorInset.right = 16
-//            delegate.showCalendar()
-//        } else {
-//            separatorInset.right = .greatestFiniteMagnitude
-//            delegate.closeCalendar()
-//        }
-//    }
+    @objc func controlChanged(target: UISwitch) {
+        viewModel.changedSwitchControl(to: target.isOn)
+    }
 }

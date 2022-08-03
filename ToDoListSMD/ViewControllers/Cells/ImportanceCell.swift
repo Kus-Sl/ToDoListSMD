@@ -8,27 +8,21 @@
 import UIKit
 
 final class ImportanceCell: BaseCell {
+    private var control: UISegmentedControl!
 
     override func addControl() {
-        let control = UISegmentedControl()
+        control = UISegmentedControl()
         control.frame = CGRect(x: 0, y: 0, width: 150, height: 36)
         control.insertSegment(with: UIImage(named: "custom.arrow.down"), at: 0, animated: true)
         control.insertSegment(withTitle: "нет", at: 1, animated: true)
         control.insertSegment(with: UIImage(named: "custom.exclamationmark.2"), at: 2, animated: true)
-
-        if let importance = viewModel.importance {
-            switch importance {
-            case .important:
-                control.selectedSegmentIndex = 2
-            case .ordinary:
-                control.selectedSegmentIndex = 1
-            case .unimportant:
-                control.selectedSegmentIndex = 0
-            }
-        } else {
-            control.selectedSegmentIndex = 1
-        }
+        control.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
+        control.selectedSegmentIndex = viewModel.setImportanceControl()
 
         accessoryView = control
+    }
+
+    @objc func controlChanged(target: UISegmentedControl) {
+        viewModel.changedImportanceControl(to: target.selectedSegmentIndex)
     }
 }

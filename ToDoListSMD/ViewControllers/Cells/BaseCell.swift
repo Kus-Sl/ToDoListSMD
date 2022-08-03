@@ -8,12 +8,10 @@
 import UIKit
 
 class BaseCell: UITableViewCell {
-
     var viewModel: CellViewModelProtocol! {
         didSet {
             setupContent()
             content.text = viewModel.title
-//            content.secondaryText = viewModel
             contentConfiguration = content
             addControl()
         }
@@ -36,6 +34,15 @@ class BaseCell: UITableViewCell {
         self.description()
     }
 }
+
+
+
+
+
+
+
+
+
 
 enum CellType {
     case importance

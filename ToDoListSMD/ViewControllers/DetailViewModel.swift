@@ -12,9 +12,8 @@ protocol DetailViewModelProtocol {
     var numberOfRows: Int { get }
     var heightForRows: Double { get }
     var cellID: String { get }
-
     var text: String { get }
-
+    
     func save(_ indexPath: IndexPath)
     func cellViewModel() -> CellViewModelProtocol
 
