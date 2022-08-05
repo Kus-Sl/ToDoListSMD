@@ -8,14 +8,12 @@
 import Foundation
 
 class FileCache {
+    static private let fileName = "TaskList.txt"
     private(set) var todoItems: [TodoItem] = []
 
     func add(_ todoItem: TodoItem) throws {
-        if !todoItems.contains(where: { $0.id == todoItem.id }) {
-            todoItems.append(todoItem)
-        } else {
-            throw CacheError.existingID
-        }
+        guard !todoItems.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
+        todoItems.append(todoItem)
     }
 
     func delete(_ todoItemID: String) {
@@ -23,26 +21,27 @@ class FileCache {
         todoItems.remove(at: index)
     }
 
-    func load(_ file: String = "TaskList.txt") {
-        guard let path = getPath(to: file),
-              let jsonData = try? Data(contentsOf: path),
-              let jsonDict = try? JSONSerialization.jsonObject(with: jsonData) as? [Any] else {
-            return
-        }
-
+    func load(_ file: String = fileName) throws {
+        guard let path = getPath(to: file) else { throw CacheError.invalidPath }
+        guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
+        guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
         todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
-    func save(_ file: String = "TaskList.txt") {
+    func save(_ file: String = fileName) throws {
         let jsonDict = todoItems.map { $0.json }
 
         guard JSONSerialization.isValidJSONObject(jsonDict),
               let path = getPath(to: file),
               let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict) else {
-            return
+            throw JSONError.serializationError
         }
 
-        try? jsonData.write(to: path)
+        do {
+            try jsonData.write(to: path)
+        } catch {
+            throw CacheError.savingError
+        }
     }
 
     private func getPath(to file: String) -> URL? {
@@ -54,7 +53,15 @@ class FileCache {
 }
 
 enum CacheError: Error {
+    case invalidPath
     case existingID
+    case loadingError
+    case savingError
+}
+
+enum JSONError: Error {
+    case serializationError
+    case deserializationError
 }
 
 

@@ -9,9 +9,9 @@ import UIKit
 
 final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
-        let item = UINavigationItem(title: "Дело")
-        item.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: nil, action: nil)
-        item.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .plain, target: nil, action: nil)
+        let item = UINavigationItem(title: Constants.navigationItemTitle)
+        item.rightBarButtonItem = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: nil, action: nil)
+        item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: nil, action: nil)
         return item
     }
 
@@ -22,7 +22,7 @@ final class DetailViewController: UIViewController {
     private lazy var tableView = UITableView()
     private lazy var deleteButton = UIButton()
 
-    private lazy var tableViewHeight: NSLayoutConstraint = tableView.heightAnchor.constraint(equalToConstant: 116)
+    private var tableViewHeight: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,21 +33,21 @@ final class DetailViewController: UIViewController {
         setupLayout()
     }
 
-    @objc func showOrHideDatePicker() {
+    @objc private func showOrHideDatePicker() {
         if viewModel.showOrHideDatePicker() {
-            tableView.insertRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+            tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
             tableViewHeight.constant = tableView.contentSize.height
         } else {
-            tableView.deleteRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
-            tableViewHeight.constant = 116
+            tableView.deleteRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
+            tableViewHeight.constant = Constants.minTableViewHeight
         }
 
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: Constants.animationDuration) {
             self.scrollView.layoutIfNeeded()
         }
     }
 
-    func setupScrollView() {
+    private func setupScrollView() {
         setupTextView()
         setupTableView()
         setupDeleteButton()
@@ -58,23 +58,35 @@ final class DetailViewController: UIViewController {
         view.addSubview(scrollView)
     }
 
-    func setupTextView() {
+    private func setupTextView() {
         textView.backgroundColor = UIColor.colorAssets.backSecondary
         textView.textColor = UIColor.colorAssets.labelPrimary
         //        textView.textColor = UIColor.colorAssets.labelTertiary
-        textView.layer.cornerRadius = 16
-        textView.textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 12, right: 16)
-        textView.textContainer.lineFragmentPadding = 0
-        textView.font = UIFont.systemFont(ofSize: 17)
+        textView.layer.cornerRadius = Constants.radius
+        textView.textContainerInset = UIEdgeInsets(
+            top: Constants.textContainerTopInset,
+            left: Constants.textContainerLeftInset,
+            bottom: Constants.textContainerBottomInset,
+            right: Constants.textContainerRightInset
+        )
+        textView.textContainer.lineFragmentPadding = Constants.textContainerLineFragmentPadding
+        textView.font = UIFont.body
         textView.isScrollEnabled = false
         textView.text = viewModel.text
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView.separatorColor = UIColor.colorAssets.supportSeparator
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.layer.cornerRadius = 16
-        tableView.estimatedRowHeight = 145
+        tableView.separatorInset = UIEdgeInsets(
+            top: Constants.separatorTopInset,
+            left: Constants.SeparatorLeftInset,
+            bottom: Constants.SeparatorBottomInset,
+            right: Constants.SeparatorRightInset
+        )
+        tableView.layer.cornerRadius = Constants.radius
+
+        tableView.estimatedRowHeight = 145 // без этого работает только со второго раза
+
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
         tableView.dataSource = self
@@ -85,18 +97,18 @@ final class DetailViewController: UIViewController {
         tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
     }
 
-    func setupDeleteButton() {
+    private func setupDeleteButton() {
         deleteButton.backgroundColor = UIColor.colorAssets.backSecondary
         deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .normal)
         deleteButton.setTitleColor(.colorAssets.colorRed, for: .highlighted)
-        deleteButton.layer.cornerRadius = 16
-        deleteButton.setTitle("Удалить", for: .normal)
+        deleteButton.layer.cornerRadius = Constants.radius
+        deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
         deleteButton.isHighlighted.toggle()
 
         deleteButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .touchUpInside)
     }
 
-    func setupLayout() {
+    private func setupLayout() {
         textView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -111,19 +123,20 @@ final class DetailViewController: UIViewController {
         frameGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor).isActive = true
 
-        textView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: 16).isActive = true
-        textView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: -16).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: 16).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: -16).isActive = true
-        deleteButton.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: 16).isActive = true
-        deleteButton.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: -16).isActive = true
+        textView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        textView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
+        deleteButton.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        deleteButton.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
 
-        textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: 16).isActive = true
-        textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
-        textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -16).isActive = true
+        textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: Constants.leadingInset).isActive = true
+        textView.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.textViewHeight).isActive = true
+        textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: Constants.trailingInset).isActive = true
+        tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: Constants.minTableViewHeight)
         tableViewHeight.isActive = true
-        tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -16).isActive = true
-        deleteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: Constants.trailingInset).isActive = true
+        deleteButton.heightAnchor.constraint(equalToConstant: Constants.deleteButtonHeight).isActive = true
         deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
     }
 }
@@ -149,39 +162,31 @@ extension DetailViewController: UITableViewDelegate {
     }
 }
 
-
-
-
-
-// MARK: Custom controls delegate
-//extension DetailViewController: CustomControlsDelegate {
-//    func showCalendar() {
-//        cellTypes.append(.calendar)
-//        let indexPath = IndexPath(row: cellTypes.count - 1, section: 0)
-//        tableView.insertRows(at: [indexPath], with: .automatic)
-//
-//        UIView.animate(withDuration: 0.5) {
-//            self.tableView.setNeedsDisplay()
-//            self.tableViewHeight.constant = self.tableView.contentSize.height
-//            self.view.layoutIfNeeded()
-//        }
-//    }
-//
-//    func closeCalendar() {
-//        cellTypes.removeLast()
-//        let indexPath = IndexPath(row: cellTypes.count, section: 0)
-//        tableView.deleteRows(at: [indexPath], with: .automatic)
-//
-//        UIView.animate(withDuration: 0.5) {
-//            self.tableViewHeight.constant = 116
-//            self.view.layoutIfNeeded()
-//        }
-//    }
-//}
-
-
-
-
+// MARK: Constants
+extension DetailViewController {
+    private enum Constants {
+        static let leadingInset: CGFloat = 16
+        static let trailingInset: CGFloat = -16
+        static let minTableViewHeight: CGFloat = 116
+        static let textViewHeight: CGFloat = 120
+        static let textContainerBottomInset: CGFloat = 12
+        static let textContainerTopInset: CGFloat = 17
+        static let textContainerLeftInset: CGFloat = 16
+        static let textContainerRightInset: CGFloat = 16
+        static let textContainerLineFragmentPadding: CGFloat = 0
+        static let separatorTopInset: CGFloat = 0
+        static let SeparatorBottomInset: CGFloat = 0
+        static let SeparatorLeftInset: CGFloat = 16
+        static let SeparatorRightInset: CGFloat = 16
+        static let deleteButtonHeight: CGFloat = 56
+        static let radius: CGFloat = 16
+        static let animationDuration: CGFloat = 0.5
+        static let navigationItemTitle = "Дело"
+        static let navigationBarSaveButtonTitle = "Сохранить"
+        static let navigationBarCancelButtonTitle = "Отменить"
+        static let deleteButtonTitle = "Удалить"
+    }
+}
 
 
 // Keyboards methods

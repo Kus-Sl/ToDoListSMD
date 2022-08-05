@@ -16,21 +16,24 @@ protocol DetailViewModelProtocol {
     func getNumberOfRows() -> Int
     func getHeightForRows(_ indexPath: IndexPath) -> Double
 
-    func changedImportanceControl(to index: Int)
+    func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes)
     func setImportanceControl() -> Int
     func changedSwitchControl(to status: Bool)
     func setSwitchControl() -> Bool
+    func showOrHideDatePicker() -> Bool
 
     init(todoItem: TodoItem)
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
-    private var cellTypes: [CellType] = [.importance, .deadLine] // доковырять
-    private var datePickerIsHidden = true
-
     var text: String
     var importance: Importance
     var deadLine: Date?
+
+    private var datePickerIsHidden = true
+
+    // NB: доковырять
+    private var cellTypes: [CellType] = [.importance, .deadLine]
 
     required init(todoItem: TodoItem) {
         text = todoItem.text
@@ -41,25 +44,25 @@ final class DetailViewModel: DetailViewModelProtocol {
 
 // MARK: Cell's controls methods
 extension DetailViewModel {
-    func changedImportanceControl(to index: Int) {
+    func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes) {
         switch index {
-        case 0:
+        case .unimportant:
             importance = .unimportant
-        case 1:
+        case .ordinary:
             importance = .ordinary
-        default:
+        case .important:
             importance = .important
         }
     }
 
     func setImportanceControl() -> Int {
         switch importance {
-        case .important:
-            return 2
-        case .ordinary:
-            return 1
         case .unimportant:
-            return 0
+            return ImportanceCell.SegmentedControlIndexes.unimportant.rawValue
+        case .ordinary:
+            return ImportanceCell.SegmentedControlIndexes.ordinary.rawValue
+        case .important:
+            return ImportanceCell.SegmentedControlIndexes.unimportant.rawValue
         }
     }
 
@@ -75,7 +78,7 @@ extension DetailViewModel {
         deadLine != nil
     }
 
-    func showOrHideDatePicker() -> Bool{
+    func showOrHideDatePicker() -> Bool {
         if datePickerIsHidden {
             cellTypes.append(.calendar)
         } else {

@@ -15,6 +15,9 @@
 		A8A6E2572896F89200CEFEEF /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E2522896F89200CEFEEF /* DetailViewController.swift */; };
 		A8A6E25A2896F8F800CEFEEF /* Extension + UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */; };
 		A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */; };
+		A8ADE1CB289D8EA6000FFBA3 /* CellType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8ADE1CA289D8EA6000FFBA3 /* CellType.swift */; };
+		A8ADE1CD289D8F65000FFBA3 /* Extension + UITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8ADE1CC289D8F65000FFBA3 /* Extension + UITableViewCell.swift */; };
+		A8ADE1D1289D99EB000FFBA3 /* Extension + UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8ADE1D0289D99EB000FFBA3 /* Extension + UIFont.swift */; };
 		A8C18025289013120085E331 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C18024289013120085E331 /* AppDelegate.swift */; };
 		A8C1802E289013130085E331 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8C1802D289013130085E331 /* Assets.xcassets */; };
 		A8C18031289013130085E331 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8C1802F289013130085E331 /* LaunchScreen.storyboard */; };
@@ -51,6 +54,9 @@
 		A8A6E2522896F89200CEFEEF /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension + UIColor.swift"; sourceTree = "<group>"; };
 		A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + DateFormatter.swift"; sourceTree = "<group>"; };
+		A8ADE1CA289D8EA6000FFBA3 /* CellType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellType.swift; sourceTree = "<group>"; };
+		A8ADE1CC289D8F65000FFBA3 /* Extension + UITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UITableViewCell.swift"; sourceTree = "<group>"; };
+		A8ADE1D0289D99EB000FFBA3 /* Extension + UIFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIFont.swift"; sourceTree = "<group>"; };
 		A8C18021289013120085E331 /* ToDoListSMD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoListSMD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8C18024289013120085E331 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8C1802D289013130085E331 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -95,12 +101,11 @@
 			children = (
 				A8A6E2522896F89200CEFEEF /* DetailViewController.swift */,
 				A8D1BF57289970AB00E35E4C /* DetailViewModel.swift */,
-				A8A6E24D2896F89200CEFEEF /* Cells */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		A8A6E24D2896F89200CEFEEF /* Cells */ = {
+		A8A6E24D2896F89200CEFEEF /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				A8A6E2502896F89200CEFEEF /* BaseCell.swift */,
@@ -108,18 +113,28 @@
 				A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */,
 				A8A6E24F2896F89200CEFEEF /* CalendarCell.swift */,
 			);
-			path = Cells;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		A8A6E2582896F8F800CEFEEF /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				A8ADE1CC289D8F65000FFBA3 /* Extension + UITableViewCell.swift */,
+				A8ADE1D0289D99EB000FFBA3 /* Extension + UIFont.swift */,
 				A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */,
 				A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */,
 			);
 			name = Extensions;
 			path = ToDoListSMD/Extensions;
 			sourceTree = SOURCE_ROOT;
+		};
+		A8ADE1C9289D8E8C000FFBA3 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A8ADE1CA289D8EA6000FFBA3 /* CellType.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
 		};
 		A8C18018289013110085E331 = {
 			isa = PBXGroup;
@@ -145,8 +160,10 @@
 			isa = PBXGroup;
 			children = (
 				A8A6E24C2896F89200CEFEEF /* ViewControllers */,
+				A8A6E24D2896F89200CEFEEF /* Views */,
 				A8C1805A289014790085E331 /* Model */,
 				A8C1805B289015050085E331 /* ServiceLayers */,
+				A8ADE1C9289D8E8C000FFBA3 /* Helpers */,
 				A8A6E2582896F8F800CEFEEF /* Extensions */,
 				A8C18054289013D70085E331 /* App */,
 				A8C18056289014090085E331 /* Resources */,
@@ -349,7 +366,10 @@
 				A8C1805D289017360085E331 /* TodoItem.swift in Sources */,
 				A8A6E2532896F89200CEFEEF /* DeadLineCell.swift in Sources */,
 				A8A6E2562896F89200CEFEEF /* ImportanceCell.swift in Sources */,
+				A8ADE1D1289D99EB000FFBA3 /* Extension + UIFont.swift in Sources */,
 				A8A6E2552896F89200CEFEEF /* BaseCell.swift in Sources */,
+				A8ADE1CD289D8F65000FFBA3 /* Extension + UITableViewCell.swift in Sources */,
+				A8ADE1CB289D8EA6000FFBA3 /* CellType.swift in Sources */,
 				A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */,
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8D1BF58289970AB00E35E4C /* DetailViewModel.swift in Sources */,

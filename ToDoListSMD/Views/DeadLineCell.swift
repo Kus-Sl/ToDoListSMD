@@ -12,7 +12,7 @@ final class DeadLineCell: BaseCell {
 
     override func setupContent() {
         super.setupContent()
-        content.text = "Сделать до"
+        content.text = CellType.deadLine.getTitle()
         contentConfiguration = content
     }
 
