@@ -23,7 +23,6 @@
 		A8C18048289013130085E331 /* ToDoListSMDUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C18047289013130085E331 /* ToDoListSMDUITestsLaunchTests.swift */; };
 		A8C1805D289017360085E331 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C1805C289017360085E331 /* TodoItem.swift */; };
 		A8D1BF58289970AB00E35E4C /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D1BF57289970AB00E35E4C /* DetailViewModel.swift */; };
-		A8D1BF5A28997B9800E35E4C /* CellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D1BF5928997B9800E35E4C /* CellViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +63,6 @@
 		A8C18047289013130085E331 /* ToDoListSMDUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListSMDUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		A8C1805C289017360085E331 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 		A8D1BF57289970AB00E35E4C /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
-		A8D1BF5928997B9800E35E4C /* CellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +103,6 @@
 		A8A6E24D2896F89200CEFEEF /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				A8D1BF5928997B9800E35E4C /* CellViewModel.swift */,
 				A8A6E2502896F89200CEFEEF /* BaseCell.swift */,
 				A8A6E2512896F89200CEFEEF /* ImportanceCell.swift */,
 				A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */,
@@ -356,7 +353,6 @@
 				A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */,
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8D1BF58289970AB00E35E4C /* DetailViewModel.swift in Sources */,
-				A8D1BF5A28997B9800E35E4C /* CellViewModel.swift in Sources */,
 				A8A6E2572896F89200CEFEEF /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,10 +8,15 @@
 import UIKit
 
 final class DeadLineCell: BaseCell {
-    private var control: UISwitch!
+    private var control = UISwitch()
 
-    override func addControl() {
-        control = UISwitch()
+    override func setupContent() {
+        super.setupContent()
+        content.text = "Сделать до"
+        contentConfiguration = content
+    }
+
+    override func setupControl() {
         control.isOn = viewModel.setSwitchControl()
         control.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
 

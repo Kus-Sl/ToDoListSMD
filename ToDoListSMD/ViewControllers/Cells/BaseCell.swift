@@ -8,38 +8,28 @@
 import UIKit
 
 class BaseCell: UITableViewCell {
-    var viewModel: CellViewModelProtocol! {
+    var content: UIListContentConfiguration!
+
+    var viewModel: DetailViewModelProtocol! {
         didSet {
             setupContent()
-            content.text = viewModel.title
-            contentConfiguration = content
-            addControl()
+            setupControl()
         }
     }
 
-    private var content: UIListContentConfiguration!
-
-    func addControl() {}
-
-    private func setupContent() {
+    func setupContent() {
         backgroundColor = UIColor.colorAssets.backSecondary
         content = defaultContentConfiguration()
         content.textProperties.color = UIColor.colorAssets.labelPrimary!
-        content.secondaryTextProperties.color = UIColor.colorAssets.colorBlue!
         content.textProperties.font = UIFont.systemFont(ofSize: 17)
-        content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 13)
     }
+
+    func setupControl() {}
 
     class func cellReuseIdentifier() -> String {
         self.description()
     }
 }
-
-
-
-
-
-
 
 
 
@@ -54,7 +44,7 @@ enum CellType {
         case .importance, .deadLine:
             return 58
         case .calendar:
-            return 500 //UITableView.automaticDimension
+            return UITableView.automaticDimension
         }
     }
 

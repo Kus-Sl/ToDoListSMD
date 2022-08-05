@@ -7,25 +7,22 @@
 
 import UIKit
 
-protocol CustomControlsDelegate {
-    func showCalendar()
-    func closeCalendar()
-}
-
 final class DetailViewController: UIViewController {
-    private lazy var scrollView = UIScrollView()
-    private lazy var textView = UITextView()
-    private lazy var tableView = UITableView()
-    private lazy var deleteButton = UIButton()
-
-    private var viewModel = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
-
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: "Дело")
         item.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: nil, action: nil)
         item.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .plain, target: nil, action: nil)
         return item
     }
+
+    private var viewModel = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
+
+    private lazy var scrollView = UIScrollView()
+    private lazy var textView = UITextView()
+    private lazy var tableView = UITableView()
+    private lazy var deleteButton = UIButton()
+
+    private lazy var tableViewHeight: NSLayoutConstraint = tableView.heightAnchor.constraint(equalToConstant: 116)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +31,20 @@ final class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.colorAssets.backPrimary
         setupScrollView()
         setupLayout()
+    }
+
+    @objc func showOrHideDatePicker() {
+        if viewModel.showOrHideDatePicker() {
+            tableView.insertRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+            tableViewHeight.constant = tableView.contentSize.height
+        } else {
+            tableView.deleteRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+            tableViewHeight.constant = 116
+        }
+
+        UIView.animate(withDuration: 0.5) {
+            self.scrollView.layoutIfNeeded()
+        }
     }
 
     func setupScrollView() {
@@ -69,10 +80,9 @@ final class DetailViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        viewModel.cellTypes.forEach { type in
-            let cellID = type.getClass().cellReuseIdentifier()
-            tableView.register(type.getClass(), forCellReuseIdentifier: cellID)
-        }
+        tableView.register(CellType.deadLine.getClass(), forCellReuseIdentifier: CellType.deadLine.getClass().cellReuseIdentifier())
+        tableView.register(CellType.importance.getClass(), forCellReuseIdentifier: CellType.importance.getClass().cellReuseIdentifier())
+        tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
     }
 
     func setupDeleteButton() {
@@ -82,6 +92,8 @@ final class DetailViewController: UIViewController {
         deleteButton.layer.cornerRadius = 16
         deleteButton.setTitle("Удалить", for: .normal)
         deleteButton.isHighlighted.toggle()
+
+        deleteButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .touchUpInside)
     }
 
     func setupLayout() {
@@ -109,9 +121,7 @@ final class DetailViewController: UIViewController {
         textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: 16).isActive = true
         textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
         textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -16).isActive = true
-
-        tableView.heightAnchor.constraint(equalToConstant: 450).isActive = true
-
+        tableViewHeight.isActive = true
         tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: -16).isActive = true
         deleteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
         deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
@@ -121,14 +131,13 @@ final class DetailViewController: UIViewController {
 // MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfRows
+        return viewModel.getNumberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        viewModel.save(indexPath)
-        let cellID = viewModel.cellID
+        let cellID = viewModel.getCellID(indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! BaseCell
-        cell.viewModel = viewModel.cellViewModel()
+        cell.viewModel = viewModel
         return cell
     }
 }
@@ -136,9 +145,13 @@ extension DetailViewController: UITableViewDataSource {
 // MARK: Table view delegate
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        viewModel.heightForRows
+        viewModel.getHeightForRows(indexPath)
     }
 }
+
+
+
+
 
 // MARK: Custom controls delegate
 //extension DetailViewController: CustomControlsDelegate {

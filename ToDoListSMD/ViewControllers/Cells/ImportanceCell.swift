@@ -8,10 +8,15 @@
 import UIKit
 
 final class ImportanceCell: BaseCell {
-    private var control: UISegmentedControl!
+    private var control = UISegmentedControl()
 
-    override func addControl() {
-        control = UISegmentedControl()
+    override func setupContent() {
+        super.setupContent()
+        content.text = "Важность"
+        contentConfiguration = content
+    }
+
+    override func setupControl() {
         control.frame = CGRect(x: 0, y: 0, width: 150, height: 36)
         control.insertSegment(with: UIImage(named: "custom.arrow.down"), at: 0, animated: true)
         control.insertSegment(withTitle: "нет", at: 1, animated: true)
