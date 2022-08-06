@@ -32,6 +32,8 @@ final class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        registerForKeyBoardNotifications()
+
         viewModel.delegate = self
 
         view.tintColor = UIColor.colorAssets.colorBlue
@@ -169,6 +171,28 @@ extension DetailViewController: DetailViewControllerDelegate {
     }
 }
 
+//MARK: Keyboards methods
+extension DetailViewController {
+    private func registerForKeyBoardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(kbWillHIde), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func kbWillShow(_ notification: NSNotification) {
+        guard let kbFrameSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardTopY = kbFrameSize.cgRectValue.origin.y
+        let convertedDeleteButtonFrame = view.convert(deleteButton.frame, from: deleteButton.superview)
+        let deleteButtonBottomY = convertedDeleteButtonFrame.origin.y + deleteButton.frame.height
+        guard deleteButtonBottomY > keyboardTopY else { return }
+        let newFrameY = (keyboardTopY - deleteButtonBottomY - 15)
+        scrollView.contentOffset.y = -newFrameY
+    }
+
+    @objc func kbWillHIde(_ notification: NSNotification) {
+        scrollView.contentOffset.y = 0
+    }
+}
+
 // MARK: Constants
 extension DetailViewController {
     private enum Constants {
@@ -194,36 +218,3 @@ extension DetailViewController {
         static let deleteButtonTitle = "Удалить"
     }
 }
-
-
-// Keyboards methods
-//extension DetailViewController {
-//    private func registerForKeyBoardNotifications() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(kbWillHIde), name: UIResponder.keyboardWillHideNotification, object: nil)
-//    }
-//
-//    @objc func kbWillShow(_ notification: NSNotification) {
-////        guard let userInfo = notification.userInfo else { return }
-////        guard let kbFrameSize = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-////        scrollView.contentOffset = CGPoint(x: 0, y: kbFrameSize.height)
-//
-//
-//        if let kbFrameSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-//            let keyboardTopY = kbFrameSize.cgRectValue.origin.y
-//            let convertedDeleteButtonFrame = view.convert(deleteButton.frame, from: deleteButton.superview)
-//            let deleteButtonBottomY = convertedDeleteButtonFrame.origin.y + convertedDeleteButtonFrame.size.height
-//
-//            if deleteButtonBottomY > keyboardTopY {
-//
-//                let textBoxY = convertedDeleteButtonFrame.origin.y
-//                  let newFrameY = (textBoxY - keyboardTopY / 2) * -1
-//                  scrollView.frame.origin.y = newFrameY
-//            }
-//        }
-//    }
-//
-//    @objc func kbWillHIde(_ notification: NSNotification) {
-//        scrollView.frame.origin.y = 0
-//    }
-//}
