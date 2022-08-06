@@ -16,13 +16,14 @@ struct TodoItem {
     let changeDate: Date?
     let deadLine: Date?
 
-    init(id: String = UUID().uuidString,
-         text: String,
-         importance: Importance = .ordinary,
-         isDone: Bool = false,
-         creationDate: Date = Date(),
-         changeDate: Date? = nil,
-         deadLine: Date? = nil
+    init(
+        id: String = UUID().uuidString,
+        text: String,
+        importance: Importance = .ordinary,
+        isDone: Bool = false,
+        creationDate: Date = Date(),
+        changeDate: Date? = nil,
+        deadLine: Date? = nil
     ) {
         self.id = id
         self.text = text
@@ -31,6 +32,18 @@ struct TodoItem {
         self.creationDate = creationDate
         self.changeDate = changeDate
         self.deadLine = deadLine
+    }
+
+    func makeCompleted() -> TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: true,
+            creationDate: creationDate,
+            changeDate: Date(),
+            deadLine: deadLine
+        )
     }
 }
 

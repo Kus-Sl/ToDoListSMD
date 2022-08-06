@@ -51,30 +51,3 @@ class FileCache {
         return path
     }
 }
-
-enum CacheError: Error {
-    case invalidPath
-    case existingID
-    case loadingError
-    case savingError
-}
-
-enum JSONError: Error {
-    case serializationError
-    case deserializationError
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
