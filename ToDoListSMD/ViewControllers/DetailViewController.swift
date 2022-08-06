@@ -16,12 +16,14 @@ protocol DetailViewControllerDelegate {
 final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
-        item.rightBarButtonItem = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: nil, action: nil)
+        let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: nil, action: nil)
+        saveButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
+        item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: nil, action: nil)
         return item
     }
 
-    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
+    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
 
     private lazy var scrollView = UIScrollView()
     private lazy var textView = UITextView()
@@ -33,13 +35,20 @@ final class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         registerForKeyBoardNotifications()
-
         viewModel.delegate = self
+        textView.delegate = self
 
         view.tintColor = UIColor.colorAssets.colorBlue
         view.backgroundColor = UIColor.colorAssets.backPrimary
         setupScrollView()
+        isEnableToSaveOrDelete()
         setupLayout()
+    }
+
+    private func isEnableToSaveOrDelete() {
+        let status = textView.hasText
+        navigationController?.navigationBar.topItem?.rightBarButtonItem?.isEnabled = status
+        deleteButton.isEnabled = status
     }
 
     private func setupScrollView() {
@@ -91,11 +100,10 @@ final class DetailViewController: UIViewController {
 
     private func setupDeleteButton() {
         deleteButton.backgroundColor = UIColor.colorAssets.backSecondary
-        deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .normal)
-        deleteButton.setTitleColor(.colorAssets.colorRed, for: .highlighted)
-        deleteButton.layer.cornerRadius = Constants.radius
+        deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .disabled)
+        deleteButton.setTitleColor(.colorAssets.colorRed, for: .normal)
         deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
-        deleteButton.isHighlighted.toggle()
+        deleteButton.layer.cornerRadius = Constants.radius
     }
 
     private func setupLayout() {
@@ -168,6 +176,13 @@ extension DetailViewController: DetailViewControllerDelegate {
         UIView.animate(withDuration: Constants.animationDuration) {
             self.scrollView.layoutIfNeeded()
         }
+    }
+}
+
+// MARK: Text view delegate
+extension DetailViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        isEnableToSaveOrDelete()
     }
 }
 
