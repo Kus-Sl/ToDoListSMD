@@ -55,19 +55,17 @@ final class DeadLineCell: BaseCell {
 
     private func showDeadLineButton() {
         datePickerButton = UIButton()
-        guard let datePickerButton = datePickerButton,
-              let deadLine = viewModel.deadLine else {
-            return
-        }
+        guard let datePickerButton = datePickerButton else { return }
 
+        viewModel.deadLine.bind { date in
+            datePickerButton.setTitle(DateFormatter.formatter.string(from: date ?? Date()), for: .normal)
+        }
         datePickerButton.titleLabel?.font = UIFont.footnote
-        datePickerButton.setTitle(DateFormatter.formatter.string(from: deadLine), for: .normal)
         datePickerButton.setTitleColor(UIColor.colorAssets.colorBlue, for: .normal)
         datePickerButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .touchUpInside)
 
         contentView.addSubview(datePickerButton)
         datePickerButton.translatesAutoresizingMaskIntoConstraints = false
-
         datePickerButtonConstraints = [
             datePickerButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
             datePickerButton.heightAnchor.constraint(equalToConstant: Constants.datePickerButtonHeight),

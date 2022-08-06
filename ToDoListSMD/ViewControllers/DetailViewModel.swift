@@ -10,7 +10,7 @@ import Foundation
 protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
-    var deadLine: Date? { get }
+    var deadLine: Box<Date?> { get set }
     var delegate: DetailViewControllerDelegate! { get set }
 
     func getCellID(_ indexPath: IndexPath) -> String
@@ -29,7 +29,7 @@ protocol DetailViewModelProtocol {
 final class DetailViewModel: DetailViewModelProtocol {
     var text: String
     var importance: Importance
-    var deadLine: Date?
+    var deadLine: Box<Date?>
 
     var delegate: DetailViewControllerDelegate!
 
@@ -40,7 +40,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     required init(todoItem: TodoItem) {
         text = todoItem.text
         importance = todoItem.importance
-        deadLine = todoItem.deadLine
+        deadLine = Box(value: todoItem.deadLine)
     }
 }
 
@@ -69,15 +69,15 @@ extension DetailViewModel {
     }
 
     func isDeadlineExist() -> Bool {
-        deadLine != nil
+        deadLine.value != nil
     }
 
     func changedSwitchControl(to status: Bool) {
-        deadLine = status
+        deadLine.value = status
         ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
         : nil
 
-        if !isHiddenDatePicker && deadLine == nil {
+        if !isHiddenDatePicker && deadLine.value == nil {
             showOrHideDatePicker()
         }
     }

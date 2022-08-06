@@ -19,13 +19,15 @@ final class CalendarCell: BaseCell {
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .date
 
-        if let deadLine = viewModel.deadLine {
-            datePicker.date = deadLine
-        } else {
-            datePicker.date = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
-        }
+        guard let deadLine = viewModel.deadLine.value else { return }
+        datePicker.date = deadLine
+        datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
 
         setDatePickerConstraints()
+    }
+
+    @objc private func datePickerTapped() {
+        viewModel.deadLine.value = datePicker.date
     }
 
     private func setDatePickerConstraints() {
