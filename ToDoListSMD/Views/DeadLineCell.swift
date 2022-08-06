@@ -18,21 +18,25 @@ final class DeadLineCell: BaseCell {
         super.setupContent()
         addTitleLabel()
 
-        if viewModel.deadLine != nil {
-            addDeadLineButton()
+        if viewModel.isDeadlineExist() {
+            showDeadLineButton()
         }
     }
 
     override func setupControl() {
-        switchControl.isOn = viewModel.setSwitchControl()
+        switchControl.isOn = viewModel.isDeadlineExist()
         switchControl.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
 
         accessoryView = switchControl
     }
 
-    @objc func controlChanged(target: UISwitch) {
+    @objc private func controlChanged(target: UISwitch) {
         viewModel.changedSwitchControl(to: target.isOn)
         showOrHideDatePickerButton(accordingTo: target.isOn)
+    }
+
+    @objc private func showOrHideDatePicker() {
+        viewModel.showOrHideDatePicker()
     }
 
     private func addTitleLabel() {
@@ -42,14 +46,14 @@ final class DeadLineCell: BaseCell {
 
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.widthAnchor.constraint(equalToConstant: 91).isActive = true
+        titleLabel.widthAnchor.constraint(equalToConstant: Constants.titleLabelWidth).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.titleLabelLeadingInset).isActive = true
 
         titleLabelTopConstraint = titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.titleLabelTopInset)
         titleLabelTopConstraint.isActive = true
     }
 
-    private func addDeadLineButton() {
+    private func showDeadLineButton() {
         datePickerButton = UIButton()
         guard let datePickerButton = datePickerButton,
               let deadLine = viewModel.deadLine else {
@@ -59,6 +63,7 @@ final class DeadLineCell: BaseCell {
         datePickerButton.titleLabel?.font = UIFont.footnote
         datePickerButton.setTitle(DateFormatter.formatter.string(from: deadLine), for: .normal)
         datePickerButton.setTitleColor(UIColor.colorAssets.colorBlue, for: .normal)
+        datePickerButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .touchUpInside)
 
         contentView.addSubview(datePickerButton)
         datePickerButton.translatesAutoresizingMaskIntoConstraints = false
@@ -73,23 +78,25 @@ final class DeadLineCell: BaseCell {
         titleLabelTopConstraint.constant = Constants.titleLabelTopInsetWithDatePickerButton
     }
 
+    private func hideDeadLineButton() {
+        NSLayoutConstraint.deactivate(datePickerButtonConstraints)
+        titleLabelTopConstraint.constant = Constants.titleLabelTopInset
+        datePickerButton?.removeFromSuperview()
+        datePickerButton = nil
+    }
+
     private func showOrHideDatePickerButton(accordingTo status: Bool) {
-        if status {
-            addDeadLineButton()
-        } else {
-            NSLayoutConstraint.deactivate(datePickerButtonConstraints)
-            titleLabelTopConstraint.constant = Constants.titleLabelTopInset
-            datePickerButton?.removeFromSuperview()
-            datePickerButton = nil
-        }
+        status ? showDeadLineButton() : hideDeadLineButton()
     }
 }
 
+//MARK: Constants
 extension DeadLineCell {
     private enum Constants {
         static let titleLabelTopInset: CGFloat = 17
         static let titleLabelTopInsetWithDatePickerButton: CGFloat = 9
         static let titleLabelLeadingInset: CGFloat = 16
+        static let titleLabelWidth: CGFloat = 91
         static let datePickerButtonHeight: CGFloat = 18
         static let datePickerButtonLeadingInset: CGFloat = 18
     }

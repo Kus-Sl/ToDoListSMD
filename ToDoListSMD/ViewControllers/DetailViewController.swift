@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol DetailViewControllerDelegate {
+    func showDatePicker()
+    func hideDatePicker()
+    func animateDatePicker()
+}
+
 final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
@@ -15,7 +21,7 @@ final class DetailViewController: UIViewController {
         return item
     }
 
-    private var viewModel = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
+    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "Умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
 
     private lazy var scrollView = UIScrollView()
     private lazy var textView = UITextView()
@@ -26,25 +32,12 @@ final class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
 
         view.tintColor = UIColor.colorAssets.colorBlue
         view.backgroundColor = UIColor.colorAssets.backPrimary
         setupScrollView()
         setupLayout()
-    }
-
-    @objc private func showOrHideDatePicker() {
-        if viewModel.showOrHideDatePicker() {
-            tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
-            tableViewHeight.constant = tableView.contentSize.height
-        } else {
-            tableView.deleteRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
-            tableViewHeight.constant = Constants.minTableViewHeight
-        }
-
-        UIView.animate(withDuration: Constants.animationDuration) {
-            self.scrollView.layoutIfNeeded()
-        }
     }
 
     private func setupScrollView() {
@@ -61,7 +54,6 @@ final class DetailViewController: UIViewController {
     private func setupTextView() {
         textView.backgroundColor = UIColor.colorAssets.backSecondary
         textView.textColor = UIColor.colorAssets.labelPrimary
-        //        textView.textColor = UIColor.colorAssets.labelTertiary
         textView.layer.cornerRadius = Constants.radius
         textView.textContainerInset = UIEdgeInsets(
             top: Constants.textContainerTopInset,
@@ -84,14 +76,12 @@ final class DetailViewController: UIViewController {
             right: Constants.SeparatorRightInset
         )
         tableView.layer.cornerRadius = Constants.radius
-
-        tableView.estimatedRowHeight = 145 // без этого работает только со второго раза
-
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
         tableView.dataSource = self
         tableView.delegate = self
 
+        //NB: зарефачить
         tableView.register(CellType.deadLine.getClass(), forCellReuseIdentifier: CellType.deadLine.getClass().cellReuseIdentifier())
         tableView.register(CellType.importance.getClass(), forCellReuseIdentifier: CellType.importance.getClass().cellReuseIdentifier())
         tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
@@ -104,8 +94,6 @@ final class DetailViewController: UIViewController {
         deleteButton.layer.cornerRadius = Constants.radius
         deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
         deleteButton.isHighlighted.toggle()
-
-        deleteButton.addTarget(self, action: #selector(showOrHideDatePicker), for: .touchUpInside)
     }
 
     private func setupLayout() {
@@ -159,6 +147,25 @@ extension DetailViewController: UITableViewDataSource {
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.getHeightForRows(indexPath)
+    }
+}
+
+// MARK: Detail view controller delegate
+extension DetailViewController: DetailViewControllerDelegate {
+    func showDatePicker() {
+        tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
+        tableViewHeight.constant = tableView.contentSize.height
+    }
+
+    func hideDatePicker() {
+        tableView.deleteRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
+        tableViewHeight.constant = Constants.minTableViewHeight
+    }
+
+    func animateDatePicker() {
+        UIView.animate(withDuration: Constants.animationDuration) {
+            self.scrollView.layoutIfNeeded()
+        }
     }
 }
 

@@ -11,6 +11,7 @@ protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
     var deadLine: Date? { get }
+    var delegate: DetailViewControllerDelegate! { get set }
 
     func getCellID(_ indexPath: IndexPath) -> String
     func getNumberOfRows() -> Int
@@ -19,8 +20,8 @@ protocol DetailViewModelProtocol {
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes)
     func setImportanceControl() -> Int
     func changedSwitchControl(to status: Bool)
-    func setSwitchControl() -> Bool
-    func showOrHideDatePicker() -> Bool
+    func isDeadlineExist() -> Bool
+    func showOrHideDatePicker()
 
     init(todoItem: TodoItem)
 }
@@ -30,9 +31,10 @@ final class DetailViewModel: DetailViewModelProtocol {
     var importance: Importance
     var deadLine: Date?
 
-    private var datePickerIsHidden = true
+    var delegate: DetailViewControllerDelegate!
 
     // NB: доковырять
+    private var isHiddenDatePicker = true
     private var cellTypes: [CellType] = [.importance, .deadLine]
 
     required init(todoItem: TodoItem) {
@@ -66,26 +68,33 @@ extension DetailViewModel {
         }
     }
 
-    func changedSwitchControl(to status: Bool) {
-        if status {
-            deadLine = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
-        } else {
-            deadLine = nil
-        }
-    }
-
-    func setSwitchControl() -> Bool {
+    func isDeadlineExist() -> Bool {
         deadLine != nil
     }
 
-    func showOrHideDatePicker() -> Bool {
-        if datePickerIsHidden {
-            cellTypes.append(.calendar)
-        } else {
-            cellTypes.removeLast()
-        }
-        datePickerIsHidden.toggle()
-        return !datePickerIsHidden
+    func changedSwitchControl(to status: Bool) {
+        deadLine = status
+        ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        : nil
+    }
+
+    func showOrHideDatePicker() {
+        isHiddenDatePicker
+        ? showDatePicker()
+        : hideDatePicker()
+        
+        delegate.animateDatePicker()
+        isHiddenDatePicker.toggle()
+    }
+
+    private func showDatePicker() {
+        cellTypes.append(.calendar)
+        delegate.showDatePicker()
+    }
+
+    private func hideDatePicker() {
+        cellTypes.removeLast()
+        delegate.hideDatePicker()
     }
 }
 
