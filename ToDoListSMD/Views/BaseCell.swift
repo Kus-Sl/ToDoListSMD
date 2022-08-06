@@ -8,7 +8,7 @@
 import UIKit
 
 class BaseCell: UITableViewCell {
-    var content: UIListContentConfiguration!
+    lazy var content = defaultContentConfiguration()
 
     var viewModel: DetailViewModelProtocol! {
         didSet {
@@ -19,9 +19,8 @@ class BaseCell: UITableViewCell {
 
     func setupContent() {
         backgroundColor = UIColor.colorAssets.backSecondary
-        content = defaultContentConfiguration()
         content.textProperties.color = UIColor.colorAssets.labelPrimary!
-        content.textProperties.font = UIFont.title
+        content.textProperties.font = UIFont.body
     }
 
     func setupControl() {}

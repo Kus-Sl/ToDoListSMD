@@ -8,7 +8,7 @@
 import UIKit
 
 final class ImportanceCell: BaseCell {
-    private var control = UISegmentedControl()
+    private lazy var control = UISegmentedControl()
 
     override func setupContent() {
         super.setupContent()

@@ -22,7 +22,7 @@ final class DetailViewController: UIViewController {
     private lazy var tableView = UITableView()
     private lazy var deleteButton = UIButton()
 
-    private var tableViewHeight: NSLayoutConstraint!
+    private lazy var tableViewHeight = NSLayoutConstraint()
 
     override func viewDidLoad() {
         super.viewDidLoad()

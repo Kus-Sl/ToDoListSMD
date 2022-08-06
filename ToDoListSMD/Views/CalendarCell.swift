@@ -8,7 +8,7 @@
 import UIKit
 
 final class CalendarCell: BaseCell {
-    private let datePicker = UIDatePicker()
+    private lazy var datePicker = UIDatePicker()
 
     override func setupContent() {
         super.setupContent()
