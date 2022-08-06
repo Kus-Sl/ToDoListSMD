@@ -16,7 +16,7 @@ protocol DetailViewControllerDelegate {
 final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
-        let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveTodoItem))
+        let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
         saveButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: nil, action: nil)
@@ -37,18 +37,17 @@ final class DetailViewController: UIViewController {
         registerForKeyBoardNotifications()
         viewModel.delegate = self
 
-        view.tintColor = UIColor.colorAssets.colorBlue
         view.backgroundColor = UIColor.colorAssets.backPrimary
+        view.tintColor = UIColor.colorAssets.colorBlue
         setupScrollView()
-        isEnableToSaveOrDelete()
         setupLayout()
+        isEnableToSaveOrDelete()
     }
 
     private func setupScrollView() {
         setupTextView()
         setupTableView()
         setupDeleteButton()
-
         scrollView.addSubview(textView)
         scrollView.addSubview(tableView)
         scrollView.addSubview(deleteButton)
@@ -57,22 +56,23 @@ final class DetailViewController: UIViewController {
 
     private func setupTextView() {
         textView.backgroundColor = UIColor.colorAssets.backSecondary
-        textView.textColor = UIColor.colorAssets.labelPrimary
         textView.layer.cornerRadius = Constants.radius
+        textView.textContainer.lineFragmentPadding = Constants.textContainerLineFragmentPadding
         textView.textContainerInset = UIEdgeInsets(
             top: Constants.textContainerTopInset,
             left: Constants.textContainerLeftInset,
             bottom: Constants.textContainerBottomInset,
             right: Constants.textContainerRightInset
         )
-        textView.textContainer.lineFragmentPadding = Constants.textContainerLineFragmentPadding
+        textView.textColor = UIColor.colorAssets.labelPrimary
         textView.font = UIFont.body
+        textView.text = viewModel.text
         textView.isScrollEnabled = false
         textView.delegate = self
-        textView.text = viewModel.text
     }
 
     private func setupTableView() {
+        tableView.layer.cornerRadius = Constants.radius
         tableView.separatorColor = UIColor.colorAssets.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
@@ -80,7 +80,6 @@ final class DetailViewController: UIViewController {
             bottom: Constants.SeparatorBottomInset,
             right: Constants.SeparatorRightInset
         )
-        tableView.layer.cornerRadius = Constants.radius
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
         tableView.dataSource = self
@@ -98,7 +97,7 @@ final class DetailViewController: UIViewController {
         deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .disabled)
         deleteButton.setTitleColor(.colorAssets.colorRed, for: .normal)
         deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
-        deleteButton.addTarget(self, action: #selector(deleteTodoItem), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
 
     private func setupLayout() {
@@ -136,12 +135,12 @@ final class DetailViewController: UIViewController {
 
 // MARK: Actions
 extension DetailViewController {
-    @objc private func deleteTodoItem() {
+    @objc private func deleteButtonTapped() {
         viewModel.deleteTodoItem()
         dismiss(animated: true)
     }
 
-    @objc private func saveTodoItem() {
+    @objc private func saveButtonTapped() {
         viewModel.saveTodoItem()
         dismiss(animated: true)
     }
@@ -214,7 +213,7 @@ extension DetailViewController {
         let convertedDeleteButtonFrame = view.convert(deleteButton.frame, from: deleteButton.superview)
         let deleteButtonBottomY = convertedDeleteButtonFrame.origin.y + deleteButton.frame.height
         guard deleteButtonBottomY > keyboardTopY else { return }
-        let newFrameY = (keyboardTopY - deleteButtonBottomY - 15)
+        let newFrameY = (keyboardTopY - deleteButtonBottomY - Constants.appearedKeyBoardInset)
         scrollView.contentOffset.y = -newFrameY
     }
 
@@ -242,6 +241,7 @@ extension DetailViewController {
         static let deleteButtonHeight: CGFloat = 56
         static let radius: CGFloat = 16
         static let animationDuration: CGFloat = 0.5
+        static let appearedKeyBoardInset: CGFloat = 15
         static let navigationItemTitle = "Дело"
         static let navigationBarSaveButtonTitle = "Сохранить"
         static let navigationBarCancelButtonTitle = "Отменить"

@@ -26,10 +26,6 @@ final class CalendarCell: BaseCell {
         setDatePickerConstraints()
     }
 
-    @objc private func datePickerTapped() {
-        viewModel.deadLine.value = datePicker.date
-    }
-
     private func setDatePickerConstraints() {
         contentView.addSubview(datePicker)
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,5 +36,12 @@ final class CalendarCell: BaseCell {
         datePicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         datePicker.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+    }
+}
+
+//MARK: Actions
+extension CalendarCell {
+    @objc private func datePickerTapped() {
+        viewModel.deadLine.value = datePicker.date
     }
 }

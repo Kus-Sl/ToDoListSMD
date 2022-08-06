@@ -12,6 +12,9 @@ protocol DetailViewModelProtocol {
     var importance: Importance { get }
     var deadLine: Box<Date?> { get set }
     var delegate: DetailViewControllerDelegate! { get set }
+
+    init(todoItem: TodoItem)
+
     func deleteTodoItem()
     func saveTodoItem()
 
@@ -21,25 +24,23 @@ protocol DetailViewModelProtocol {
 
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes)
     func setImportanceControl() -> Int
-    func changedSwitchControl(to status: Bool)
     func isDeadlineExist() -> Bool
+    func changedSwitchControl(to status: Bool)
     func showOrHideDatePicker()
 
-    init(todoItem: TodoItem)
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
     var text: String
     var importance: Importance
     var deadLine: Box<Date?>
-
     var delegate: DetailViewControllerDelegate!
 
     // NB: доковырять
     private let todoItem: TodoItem
-    private var isHiddenDatePicker = true
-    private var cellTypes: [CellType] = [.importance, .deadLine]
+    private lazy var isHiddenDatePicker = true
     private lazy var fileCache = FileCache()
+    private lazy var cellTypes: [CellType] = [.importance, .deadLine]
 
     required init(todoItem: TodoItem) {
         self.todoItem = todoItem
@@ -73,12 +74,12 @@ final class DetailViewModel: DetailViewModelProtocol {
 
 // MARK: Cell's data source
 extension DetailViewModel {
-    func getNumberOfRows() -> Int {
-        cellTypes.count
-    }
-
     func getCellID(_ indexPath: IndexPath) -> String {
         cellTypes[indexPath.row].getClass().cellReuseIdentifier()
+    }
+
+    func getNumberOfRows() -> Int {
+        cellTypes.count
     }
 
     func getHeightForRows(_ indexPath: IndexPath) -> Double {
