@@ -16,14 +16,14 @@ protocol DetailViewControllerDelegate {
 final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
-        let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: nil, action: nil)
+        let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveTodoItem))
         saveButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: nil, action: nil)
         return item
     }
 
-    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
+    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
 
     private lazy var scrollView = UIScrollView()
     private lazy var textView = UITextView()
@@ -36,19 +36,12 @@ final class DetailViewController: UIViewController {
         super.viewDidLoad()
         registerForKeyBoardNotifications()
         viewModel.delegate = self
-        textView.delegate = self
 
         view.tintColor = UIColor.colorAssets.colorBlue
         view.backgroundColor = UIColor.colorAssets.backPrimary
         setupScrollView()
         isEnableToSaveOrDelete()
         setupLayout()
-    }
-
-    private func isEnableToSaveOrDelete() {
-        let status = textView.hasText
-        navigationController?.navigationBar.topItem?.rightBarButtonItem?.isEnabled = status
-        deleteButton.isEnabled = status
     }
 
     private func setupScrollView() {
@@ -75,6 +68,7 @@ final class DetailViewController: UIViewController {
         textView.textContainer.lineFragmentPadding = Constants.textContainerLineFragmentPadding
         textView.font = UIFont.body
         textView.isScrollEnabled = false
+        textView.delegate = self
         textView.text = viewModel.text
     }
 
@@ -100,10 +94,11 @@ final class DetailViewController: UIViewController {
 
     private func setupDeleteButton() {
         deleteButton.backgroundColor = UIColor.colorAssets.backSecondary
+        deleteButton.layer.cornerRadius = Constants.radius
         deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .disabled)
         deleteButton.setTitleColor(.colorAssets.colorRed, for: .normal)
         deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
-        deleteButton.layer.cornerRadius = Constants.radius
+        deleteButton.addTarget(self, action: #selector(deleteTodoItem), for: .touchUpInside)
     }
 
     private func setupLayout() {
@@ -138,6 +133,26 @@ final class DetailViewController: UIViewController {
         deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
     }
 }
+
+// MARK: Actions
+extension DetailViewController {
+    @objc private func deleteTodoItem() {
+        viewModel.deleteTodoItem()
+        dismiss(animated: true)
+    }
+
+    @objc private func saveTodoItem() {
+        viewModel.saveTodoItem()
+        dismiss(animated: true)
+    }
+
+    private func isEnableToSaveOrDelete() {
+        let status = textView.hasText
+        navigationController?.navigationBar.topItem?.rightBarButtonItem?.isEnabled = status
+        deleteButton.isEnabled = status
+    }
+}
+
 
 // MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
