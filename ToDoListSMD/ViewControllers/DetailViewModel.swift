@@ -76,13 +76,17 @@ extension DetailViewModel {
         deadLine = status
         ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
         : nil
+
+        if !isHiddenDatePicker && deadLine == nil {
+            showOrHideDatePicker()
+        }
     }
 
     func showOrHideDatePicker() {
         isHiddenDatePicker
         ? showDatePicker()
         : hideDatePicker()
-        
+
         delegate.animateDatePicker()
         isHiddenDatePicker.toggle()
     }
