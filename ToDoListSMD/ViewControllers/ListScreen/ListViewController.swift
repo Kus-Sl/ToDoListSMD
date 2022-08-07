@@ -100,7 +100,7 @@ extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let detailScreen = DetailViewController()
-        detailScreen.viewModel = DetailViewModel(todoItem: viewModel.getTodoItem(for: indexPath))
+        detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
         present(UINavigationController(rootViewController: detailScreen), animated: true)
     }
 }

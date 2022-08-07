@@ -10,6 +10,8 @@ import Foundation
 protocol ListViewModelProtocol {
     var completedCount: Int { get }
 
+    func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel
+    
     func getNumberOfRows() -> Int
     func getTodoItem(for indexPath: IndexPath) -> TodoItem
 }
@@ -25,6 +27,13 @@ final class ListViewModel: ListViewModelProtocol {
         createMopTasks()
     }
 
+    func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel {
+        DetailViewModel(todoItem: getTodoItem(for: indexPath), fileCache: fileCache)
+    }
+}
+
+// MARK: Cell's data source
+extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
         fileCache.todoItems[indexPath.row]
     }

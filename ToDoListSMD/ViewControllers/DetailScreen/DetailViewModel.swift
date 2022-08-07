@@ -13,7 +13,7 @@ protocol DetailViewModelProtocol {
     var deadLine: Box<Date?> { get set }
     var delegate: DetailViewControllerDelegate! { get set }
 
-    init(todoItem: TodoItem)
+    init(todoItem: TodoItem, fileCache: FileCache)
 
     func deleteTodoItem()
     func saveTodoItem()
@@ -38,12 +38,13 @@ final class DetailViewModel: DetailViewModelProtocol {
 
     // NB: доковырять
     private let todoItem: TodoItem
+    private let fileCache: FileCache
     private lazy var isHiddenDatePicker = true
-    private lazy var fileCache = FileCache()
     private lazy var cellTypes: [CellType] = [.importance, .deadLine]
 
-    required init(todoItem: TodoItem) {
+    required init(todoItem: TodoItem, fileCache: FileCache) {
         self.todoItem = todoItem
+        self.fileCache = fileCache
         text = todoItem.text
         importance = todoItem.importance
         deadLine = Box(value: todoItem.deadLine)

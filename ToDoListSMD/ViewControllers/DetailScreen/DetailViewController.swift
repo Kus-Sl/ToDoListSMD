@@ -40,7 +40,6 @@ final class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.colorAsset.backPrimary
         setupScrollView()
         setupLayout()
-//        setupNavigationBar()
         isEnableToSaveOrDelete()
     }
 
