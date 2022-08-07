@@ -22,7 +22,7 @@ class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.colorAssets.backPrimary
+        view.backgroundColor = UIColor.colorAsset.backPrimary
         setupView()
         setupLayout()
     }
@@ -37,20 +37,20 @@ class ListViewController: UIViewController {
     }
 
     private func setupCompletedCounterLabel() {
-        completedCounterLabel.textColor = UIColor.colorAssets.labelTertiary
+        completedCounterLabel.textColor = UIColor.colorAsset.labelTertiary
         completedCounterLabel.font = UIFont.subhead
         completedCounterLabel.text = "Выполнено - \(testCount)"
     }
 
     private func setupShowCompletedButton() {
-        showCompletedButton.setTitleColor(UIColor.colorAssets.colorBlue, for: .normal)
+        showCompletedButton.setTitleColor(UIColor.colorAsset.colorBlue, for: .normal)
         showCompletedButton.titleLabel?.font = UIFont.subheadline
         showCompletedButton.setTitle("Показать", for: .normal)
     }
 
     private func setupTableView() {
         tableView.layer.cornerRadius = Constants.radius
-        tableView.separatorColor = UIColor.colorAssets.supportSeparator
+        tableView.separatorColor = UIColor.colorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
             left: Constants.SeparatorLeftInset,
@@ -96,7 +96,7 @@ extension ListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath)
-        cell.backgroundColor = UIColor.colorAssets.backSecondary
+        cell.backgroundColor = UIColor.colorAsset.backSecondary
         return cell
     }
 }

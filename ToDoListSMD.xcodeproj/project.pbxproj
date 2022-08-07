@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A82056AC289FEBE100738AE1 /* Extension + UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */; };
 		A87F2F34289113880079713C /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F2F33289113880079713C /* FileCache.swift */; };
 		A8931A67289E8A2400A4498F /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8931A66289E8A2400A4498F /* Errors.swift */; };
 		A8A6E2532896F89200CEFEEF /* DeadLineCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIImage.swift"; sourceTree = "<group>"; };
 		A87F2F33289113880079713C /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		A8931A66289E8A2400A4498F /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeadLineCell.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				A8ADE1CC289D8F65000FFBA3 /* Extension + UITableViewCell.swift */,
 				A8ADE1D0289D99EB000FFBA3 /* Extension + UIFont.swift */,
 				A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */,
+				A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */,
 				A8A6E25B28970F5300CEFEEF /* Extension + DateFormatter.swift */,
 			);
 			name = Extensions;
@@ -424,6 +427,7 @@
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8B5CE7E289FB1E300F2CDFC /* ListViewModel.swift in Sources */,
 				A8B5CE77289ED6B900F2CDFC /* Box.swift in Sources */,
+				A82056AC289FEBE100738AE1 /* Extension + UIImage.swift in Sources */,
 				A8D1BF58289970AB00E35E4C /* DetailViewModel.swift in Sources */,
 				A8A6E2572896F89200CEFEEF /* DetailViewController.swift in Sources */,
 			);

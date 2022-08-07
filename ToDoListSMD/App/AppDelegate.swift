@@ -24,13 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func setupNavigationController(_ controller: UINavigationController) {
         let standardNavigationBarAppearance = UINavigationBarAppearance()
-        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
-        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
-        standardNavigationBarAppearance.backgroundColor = UIColor.colorAssets.backPrimary
+        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.colorAsset.labelPrimary!]
+        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.colorAsset.labelPrimary!]
+        standardNavigationBarAppearance.backgroundColor = UIColor.colorAsset.backPrimary
         standardNavigationBarAppearance.shadowColor = nil
 
         controller.navigationBar.standardAppearance = standardNavigationBarAppearance
-        controller.navigationBar.tintColor = UIColor.colorAssets.colorBlue
+        controller.navigationBar.tintColor = UIColor.colorAsset.colorBlue
         controller.navigationBar.prefersLargeTitles = true
     }
 }

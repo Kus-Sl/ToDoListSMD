@@ -17,7 +17,7 @@ final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
-        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
+        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.colorAsset.labelTertiary!], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
@@ -37,7 +37,7 @@ final class DetailViewController: UIViewController {
         registerForKeyBoardNotifications()
         viewModel.delegate = self
 
-        view.backgroundColor = UIColor.colorAssets.backPrimary
+        view.backgroundColor = UIColor.colorAsset.backPrimary
         setupScrollView()
         setupLayout()
         isEnableToSaveOrDelete()
@@ -54,7 +54,7 @@ final class DetailViewController: UIViewController {
     }
 
     private func setupTextView() {
-        textView.backgroundColor = UIColor.colorAssets.backSecondary
+        textView.backgroundColor = UIColor.colorAsset.backSecondary
         textView.layer.cornerRadius = Constants.radius
         textView.textContainer.lineFragmentPadding = Constants.textContainerLineFragmentPadding
         textView.textContainerInset = UIEdgeInsets(
@@ -63,7 +63,7 @@ final class DetailViewController: UIViewController {
             bottom: Constants.textContainerBottomInset,
             right: Constants.textContainerRightInset
         )
-        textView.textColor = UIColor.colorAssets.labelPrimary
+        textView.textColor = UIColor.colorAsset.labelPrimary
         textView.font = UIFont.body
         textView.text = viewModel.text
         textView.isScrollEnabled = false
@@ -72,7 +72,7 @@ final class DetailViewController: UIViewController {
 
     private func setupTableView() {
         tableView.layer.cornerRadius = Constants.radius
-        tableView.separatorColor = UIColor.colorAssets.supportSeparator
+        tableView.separatorColor = UIColor.colorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
             left: Constants.SeparatorLeftInset,
@@ -91,10 +91,10 @@ final class DetailViewController: UIViewController {
     }
 
     private func setupDeleteButton() {
-        deleteButton.backgroundColor = UIColor.colorAssets.backSecondary
+        deleteButton.backgroundColor = UIColor.colorAsset.backSecondary
         deleteButton.layer.cornerRadius = Constants.radius
-        deleteButton.setTitleColor(.colorAssets.labelTertiary, for: .disabled)
-        deleteButton.setTitleColor(.colorAssets.colorRed, for: .normal)
+        deleteButton.setTitleColor(.colorAsset.labelTertiary, for: .disabled)
+        deleteButton.setTitleColor(.colorAsset.colorRed, for: .normal)
         deleteButton.setTitle(Constants.deleteButtonTitle, for: .normal)
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
