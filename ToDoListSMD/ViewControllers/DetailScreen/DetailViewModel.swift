@@ -107,7 +107,7 @@ extension DetailViewModel {
         case .ordinary:
             return ImportanceCell.SegmentedControlIndexes.ordinary.rawValue
         case .important:
-            return ImportanceCell.SegmentedControlIndexes.unimportant.rawValue
+            return ImportanceCell.SegmentedControlIndexes.important.rawValue
         }
     }
 

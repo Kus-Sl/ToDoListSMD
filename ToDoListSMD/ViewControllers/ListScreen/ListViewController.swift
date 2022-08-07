@@ -70,16 +70,14 @@ final class ListViewController: UIViewController {
         completedCounterLabel.translatesAutoresizingMaskIntoConstraints = false
         showCompletedButton.translatesAutoresizingMaskIntoConstraints = false
 
-        completedCounterLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
         completedCounterLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-
-        showCompletedButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.showCompletedButtonLeadingInset).isActive = true
+        completedCounterLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.completedCounterLabelLeadingInset).isActive = true
+        showCompletedButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.showCompletedButtonTrailingInset).isActive = true
         showCompletedButton.centerYAnchor.constraint(equalTo: completedCounterLabel.centerYAnchor).isActive = true
         showCompletedButton.heightAnchor.constraint(equalToConstant: Constants.showCompletedButtonHeight).isActive = true
-
         tableView.topAnchor.constraint(equalTo: completedCounterLabel.bottomAnchor, constant: Constants.tableViewTopInset).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.trailingInset).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
 }
@@ -101,6 +99,9 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let detailScreen = DetailViewController()
+        detailScreen.viewModel = DetailViewModel(todoItem: viewModel.getTodoItem(for: indexPath))
+        navigationController?.present(detailScreen, animated: true)
     }
 }
 
@@ -109,7 +110,8 @@ extension ListViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
         static let trailingInset: CGFloat = -16
-        static let showCompletedButtonLeadingInset: CGFloat = -32
+        static let completedCounterLabelLeadingInset: CGFloat = 32
+        static let showCompletedButtonTrailingInset: CGFloat = -32
         static let showCompletedButtonHeight: CGFloat = 20
         static let tableViewTopInset: CGFloat = 12
         static let separatorTopInset: CGFloat = 0

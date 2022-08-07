@@ -14,6 +14,8 @@ protocol DetailViewControllerDelegate {
 }
 
 final class DetailViewController: UIViewController {
+    var viewModel: DetailViewModelProtocol!
+
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
@@ -22,8 +24,6 @@ final class DetailViewController: UIViewController {
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
     }
-
-    private var viewModel: DetailViewModelProtocol = DetailViewModel(todoItem: TodoItem(id: "1", text: "умная мысль", importance: .important, isDone: true, creationDate: Date(), changeDate: nil, deadLine: Date(timeIntervalSince1970: 1231314151)))
 
     private lazy var scrollView = UIScrollView()
     private lazy var textView = UITextView()
