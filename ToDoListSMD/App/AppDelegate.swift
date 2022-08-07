@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let navigationController = UINavigationController(rootViewController: DetailViewController())
+        let navigationController = UINavigationController(rootViewController: ListViewController())
         setupNavigationController(navigationController)
         
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -23,13 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupNavigationController(_ controller: UINavigationController) {
-        let scrollEdgeNavigationBarAppearance = UINavigationBarAppearance()
-        scrollEdgeNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
-        scrollEdgeNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
-        scrollEdgeNavigationBarAppearance.backgroundColor = UIColor.colorAssets.backPrimary
-        scrollEdgeNavigationBarAppearance.shadowColor = nil
+        let standardNavigationBarAppearance = UINavigationBarAppearance()
+        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
+        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.colorAssets.labelPrimary!]
+        standardNavigationBarAppearance.backgroundColor = UIColor.colorAssets.backPrimary
+        standardNavigationBarAppearance.shadowColor = nil
 
-        controller.navigationBar.scrollEdgeAppearance = scrollEdgeNavigationBarAppearance
+        controller.navigationBar.standardAppearance = standardNavigationBarAppearance
         controller.navigationBar.tintColor = UIColor.colorAssets.colorBlue
         controller.navigationBar.prefersLargeTitles = true
     }

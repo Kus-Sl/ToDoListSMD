@@ -8,10 +8,117 @@
 import UIKit
 
 class ListViewController: UIViewController {
+    override var navigationItem: UINavigationItem {
+        let item = UINavigationItem(title: Constants.navigationItemTitle)
+        return item
+    }
 
     private lazy var tableView = UITableView()
+    private lazy var completedCounterLabel = UILabel()
+    private lazy var showCompletedButton = UIButton()
+
+    var testCount = 5
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = UIColor.colorAssets.backPrimary
+        setupView()
+        setupLayout()
+    }
+
+    private func setupView() {
+        setupCompletedCounterLabel()
+        setupShowCompletedButton()
+        setupTableView()
+        view.addSubview(completedCounterLabel)
+        view.addSubview(showCompletedButton)
+        view.addSubview(tableView)
+    }
+
+    private func setupCompletedCounterLabel() {
+        completedCounterLabel.textColor = UIColor.colorAssets.labelTertiary
+        completedCounterLabel.font = UIFont.subhead
+        completedCounterLabel.text = "Выполнено - \(testCount)"
+    }
+
+    private func setupShowCompletedButton() {
+        showCompletedButton.setTitleColor(UIColor.colorAssets.colorBlue, for: .normal)
+        showCompletedButton.titleLabel?.font = UIFont.subheadline
+        showCompletedButton.setTitle("Показать", for: .normal)
+    }
+
+    private func setupTableView() {
+        tableView.layer.cornerRadius = Constants.radius
+        tableView.separatorColor = UIColor.colorAssets.supportSeparator
+        tableView.separatorInset = UIEdgeInsets(
+            top: Constants.separatorTopInset,
+            left: Constants.SeparatorLeftInset,
+            bottom: Constants.SeparatorBottomInset,
+            right: Constants.SeparatorRightInset
+        )
+        tableView.dataSource = self
+        tableView.delegate = self
+
+        //NB: зарефачить
+        tableView.register(ListCell.self, forCellReuseIdentifier: ListCell.cellReuseIdentifier())
+    }
+
+    private func setupLayout() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        completedCounterLabel.translatesAutoresizingMaskIntoConstraints = false
+        showCompletedButton.translatesAutoresizingMaskIntoConstraints = false
+
+        completedCounterLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        completedCounterLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+
+        showCompletedButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.showCompletedButtonLeadingInset).isActive = true
+        showCompletedButton.centerYAnchor.constraint(equalTo: completedCounterLabel.centerYAnchor).isActive = true
+        showCompletedButton.heightAnchor.constraint(equalToConstant: Constants.showCompletedButtonHeight).isActive = true
+
+        tableView.topAnchor.constraint(equalTo: completedCounterLabel.bottomAnchor, constant: Constants.tableViewTopInset).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+
+    }
+}
+
+// MARK: Table view data source
+extension ListViewController: UITableViewDataSource {
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//
+//    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        10
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath)
+        cell.backgroundColor = UIColor.colorAssets.backSecondary
+        return cell
+    }
+}
+
+// MARK: Table view delegate
+extension ListViewController: UITableViewDelegate {
+
+}
+
+// MARK: Constants
+extension ListViewController {
+    private enum Constants {
+        static let leadingInset: CGFloat = 16
+        static let trailingInset: CGFloat = -16
+        static let showCompletedButtonLeadingInset: CGFloat = -32
+        static let showCompletedButtonHeight: CGFloat = 20
+        static let tableViewTopInset: CGFloat = 12
+        static let separatorTopInset: CGFloat = 0
+        static let SeparatorBottomInset: CGFloat = 0
+        static let SeparatorLeftInset: CGFloat = 16
+        static let SeparatorRightInset: CGFloat = 16
+        static let radius: CGFloat = 16
+        static let navigationItemTitle = "Мои дела"
     }
 }
