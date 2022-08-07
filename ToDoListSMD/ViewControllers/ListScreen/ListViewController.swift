@@ -84,13 +84,19 @@ final class ListViewController: UIViewController {
 
 // MARK: Actions
 extension ListViewController {
-    //    private func deleteTaskList(with indexPath: IndexPath) {
-    //        let deletingTaskList = taskLists[indexPath.row]
-    //
-    //        StorageManager.shared.delete(taskList: deletingTaskList)
-    //        taskLists.remove(at: indexPath.row)
-    //        tasksListTableView.deleteRows(at: [indexPath], with: .automatic)
-    //    }
+    private func openDetailsScreen(for indexPath: IndexPath) {
+        let detailScreen = DetailViewController()
+        detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
+        present(UINavigationController(rootViewController: detailScreen), animated: true)
+    }
+
+    private func deleteTodoItem(with indexPath: IndexPath) {
+
+    }
+
+    private func completeTodoItem(with indexPath: IndexPath) {
+
+    }
 }
 
 // MARK: Table view data source
@@ -110,29 +116,28 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let detailScreen = DetailViewController()
-        detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
-        present(UINavigationController(rootViewController: detailScreen), animated: true)
+        openDetailsScreen(for: indexPath)
     }
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in
-
+            self.deleteTodoItem(with: indexPath)
         }
 
         let openDetailAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+            self.openDetailsScreen(for: indexPath)
             isDone(true)
         }
 
         deleteAction.image = .IconAsset.deleteActionIcon
         openDetailAction.image = .IconAsset.openDetailActionIcon
         openDetailAction.backgroundColor = .ColorAsset.colorGray
-
         return UISwipeActionsConfiguration(actions: [deleteAction, openDetailAction])
     }
 
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+            self.completeTodoItem(with: indexPath)
             isDone(true)
         }
 
