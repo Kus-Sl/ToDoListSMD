@@ -26,7 +26,7 @@ final class ListCell: UITableViewCell {
         ? setupContentForCompletedTodoItem()
         : checkTodoItemDeadLine()
 
-        accessoryView = UIImageView(image: UIImage.IconAsset.listCellDirectionArrow)
+        accessoryView = UIImageView(image: UIImage.IconAsset.listCellDirectionIcon)
         contentConfiguration = content
     }
 
@@ -50,19 +50,19 @@ final class ListCell: UITableViewCell {
 
         content.textProperties.numberOfLines = 1
         content.attributedText = NSAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmarkDone
+        content.image = UIImage.IconAsset.listCellCheckmarkDoneIcon
     }
 
     private func setupContentForUncompletedTodoItemWithoutDeadLine() {
         content.textProperties.numberOfLines = 3
         content.textProperties.color = UIColor.colorAsset.labelPrimary!
         content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmark
+        content.image = UIImage.IconAsset.listCellCheckmarkIcon
     }
 
     private func setupContentForUncompletedTodoItemWithDeadLine() {
         let imageAttachment = NSTextAttachment()
-        imageAttachment.image = UIImage.IconAsset.listCellDeadlineCalendar
+        imageAttachment.image = UIImage.IconAsset.listCellDeadlineIcon
 
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.subhead,
@@ -74,7 +74,7 @@ final class ListCell: UITableViewCell {
             content.secondaryAttributedText = NSAttributedString(string: DateFormatter.formatter.string(from: deadline), attributes: attributes)
         }
         content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmark
+        content.image = UIImage.IconAsset.listCellCheckmarkIcon
 
     }
 
@@ -86,6 +86,6 @@ final class ListCell: UITableViewCell {
 
         content.textProperties.numberOfLines = 3
         content.attributedText = NSMutableAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmarkExpired
+        content.image = UIImage.IconAsset.listCellCheckmarkExpiredIcon
     }
 }

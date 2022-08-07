@@ -8,7 +8,11 @@
 import UIKit
 
 final class ImportanceCell: BaseCell {
-    private lazy var control = UISegmentedControl()
+    private lazy var control = UISegmentedControl(items: [
+        UIImage.IconAsset.unimportantSegmentedControlIcon as Any,
+        Constants.ordinarySegmentedControlTitle as Any,
+        UIImage.IconAsset.importantSegmentedControlIcon as Any
+    ])
     
     override func setupContent() {
         super.setupContent()
@@ -18,9 +22,6 @@ final class ImportanceCell: BaseCell {
     
     override func setupControl() {
         control.frame = CGRect(x: 0, y: 0, width: Constants.segmentedControlWidth, height: Constants.segmentedControlHeight)
-        control.insertSegment(with: UIImage.IconAsset.unimportantSegmentedControlImage, at: SegmentedControlIndexes.unimportant.rawValue, animated: true)
-        control.insertSegment(withTitle: Constants.ordinarySegmentedControlTitle, at: SegmentedControlIndexes.ordinary.rawValue, animated: true)
-        control.insertSegment(with: UIImage.IconAsset.importantSegmentedControlImage, at: SegmentedControlIndexes.important.rawValue, animated: true)
         control.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
         control.selectedSegmentIndex = viewModel.setImportanceControl()
         accessoryView = control

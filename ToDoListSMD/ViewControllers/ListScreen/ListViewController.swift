@@ -82,6 +82,17 @@ final class ListViewController: UIViewController {
     }
 }
 
+// MARK: Actions
+extension ListViewController {
+    //    private func deleteTaskList(with indexPath: IndexPath) {
+    //        let deletingTaskList = taskLists[indexPath.row]
+    //
+    //        StorageManager.shared.delete(taskList: deletingTaskList)
+    //        taskLists.remove(at: indexPath.row)
+    //        tasksListTableView.deleteRows(at: [indexPath], with: .automatic)
+    //    }
+}
+
 // MARK: Table view data source
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -102,6 +113,32 @@ extension ListViewController: UITableViewDelegate {
         let detailScreen = DetailViewController()
         detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
         present(UINavigationController(rootViewController: detailScreen), animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in
+
+        }
+
+        let openDetailAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+            isDone(true)
+        }
+
+        deleteAction.image = .IconAsset.deleteActionIcon
+        openDetailAction.image = .IconAsset.openDetailActionIcon
+        openDetailAction.backgroundColor = UIColor.colorAsset.colorGray
+
+        return UISwipeActionsConfiguration(actions: [deleteAction, openDetailAction])
+    }
+
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+            isDone(true)
+        }
+
+        completeAction.backgroundColor = UIColor.colorAsset.colorGreen
+        completeAction.image = .IconAsset.completeActionIcon
+        return UISwipeActionsConfiguration(actions: [completeAction])
     }
 }
 
