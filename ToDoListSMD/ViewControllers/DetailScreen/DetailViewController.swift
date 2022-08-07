@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol DetailViewControllerDelegate {
+protocol DetailViewControllerDelegate: AnyObject {
     func showDatePicker()
     func hideDatePicker()
     func animateDatePicker()
