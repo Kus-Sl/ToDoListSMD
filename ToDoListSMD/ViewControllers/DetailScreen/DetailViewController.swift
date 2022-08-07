@@ -40,7 +40,13 @@ final class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.colorAsset.backPrimary
         setupScrollView()
         setupLayout()
+//        setupNavigationBar()
         isEnableToSaveOrDelete()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     private func setupScrollView() {
