@@ -19,7 +19,7 @@ final class DetailViewController: UIViewController {
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
         saveButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
         item.rightBarButtonItem = saveButton
-        item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: nil, action: nil)
+        item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
     }
 
@@ -142,6 +142,10 @@ extension DetailViewController {
 
     @objc private func saveButtonTapped() {
         viewModel.saveTodoItem()
+        dismiss(animated: true)
+    }
+
+    @objc private func cancelButtonTapped() {
         dismiss(animated: true)
     }
 
