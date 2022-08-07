@@ -14,8 +14,8 @@ final class ListViewController: UIViewController {
     }
 
     private lazy var tableView = UITableView()
-    private lazy var completedCounterLabel = UILabel()
-    private lazy var showCompletedButton = UIButton()
+    private lazy var doneItemsCountLabel = UILabel()
+    private lazy var showOrHideDoneItemsButton = UIButton()
 
     private lazy var viewModel: ListViewModelProtocol = ListViewModel()
 
@@ -32,21 +32,21 @@ final class ListViewController: UIViewController {
         setupCompletedCounterLabel()
         setupShowCompletedButton()
         setupTableView()
-        view.addSubview(completedCounterLabel)
-        view.addSubview(showCompletedButton)
+        view.addSubview(doneItemsCountLabel)
+        view.addSubview(showOrHideDoneItemsButton)
         view.addSubview(tableView)
     }
 
     private func setupCompletedCounterLabel() {
-        completedCounterLabel.textColor = .ColorAsset.labelTertiary
-        completedCounterLabel.font = .FontAsset.subhead
-        completedCounterLabel.text = "Выполнено - \(viewModel.completedCount)"
+        doneItemsCountLabel.textColor = .ColorAsset.labelTertiary
+        doneItemsCountLabel.font = .FontAsset.subhead
+        doneItemsCountLabel.text = Constants.doneItemsCountLabelText + "\(viewModel.completedCount)"
     }
 
     private func setupShowCompletedButton() {
-        showCompletedButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
-        showCompletedButton.titleLabel?.font = .FontAsset.subheadline
-        showCompletedButton.setTitle("Показать", for: .normal)
+        showOrHideDoneItemsButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
+        showOrHideDoneItemsButton.titleLabel?.font = .FontAsset.subheadline
+        showOrHideDoneItemsButton.setTitle(Constants.showDoneItemsButtonTitle, for: .normal)
     }
 
     private func setupTableView() {
@@ -67,15 +67,15 @@ final class ListViewController: UIViewController {
 
     private func setupLayout() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        completedCounterLabel.translatesAutoresizingMaskIntoConstraints = false
-        showCompletedButton.translatesAutoresizingMaskIntoConstraints = false
+        doneItemsCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        showOrHideDoneItemsButton.translatesAutoresizingMaskIntoConstraints = false
 
-        completedCounterLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        completedCounterLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.completedCounterLabelLeadingInset).isActive = true
-        showCompletedButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.showCompletedButtonTrailingInset).isActive = true
-        showCompletedButton.centerYAnchor.constraint(equalTo: completedCounterLabel.centerYAnchor).isActive = true
-        showCompletedButton.heightAnchor.constraint(equalToConstant: Constants.showCompletedButtonHeight).isActive = true
-        tableView.topAnchor.constraint(equalTo: completedCounterLabel.bottomAnchor, constant: Constants.tableViewTopInset).isActive = true
+        doneItemsCountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        doneItemsCountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.doneItemsCountLabelLeadingInset).isActive = true
+        showOrHideDoneItemsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.showOrHideDoneItemsButtonTrailingInset).isActive = true
+        showOrHideDoneItemsButton.centerYAnchor.constraint(equalTo: doneItemsCountLabel.centerYAnchor).isActive = true
+        showOrHideDoneItemsButton.heightAnchor.constraint(equalToConstant: Constants.showOrHideDoneItemsButtonHeight).isActive = true
+        tableView.topAnchor.constraint(equalTo: doneItemsCountLabel.bottomAnchor, constant: Constants.tableViewTopInset).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.trailingInset).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -152,9 +152,9 @@ extension ListViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
         static let trailingInset: CGFloat = -16
-        static let completedCounterLabelLeadingInset: CGFloat = 32
-        static let showCompletedButtonTrailingInset: CGFloat = -32
-        static let showCompletedButtonHeight: CGFloat = 20
+        static let doneItemsCountLabelLeadingInset: CGFloat = 32
+        static let showOrHideDoneItemsButtonTrailingInset: CGFloat = -32
+        static let showOrHideDoneItemsButtonHeight: CGFloat = 20
         static let tableViewTopInset: CGFloat = 12
         static let separatorTopInset: CGFloat = 0
         static let separatorBottomInset: CGFloat = 0
@@ -162,5 +162,8 @@ extension ListViewController {
         static let separatorRightInset: CGFloat = 0
         static let radius: CGFloat = 16
         static let navigationItemTitle = "Мои дела"
+        static let showDoneItemsButtonTitle = "Показать"
+        static let hideDoneItemsButtonTitle = "Показать"
+        static let doneItemsCountLabelText = "Выполнено - "
     }
 }

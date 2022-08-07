@@ -93,6 +93,6 @@ final class ListCell: UITableViewCell {
 extension ListCell {
     private enum Constants {
         static let strikethroughStyleValue = 1
-        static let numberOfLines = 1
+        static let numberOfLines = 3
     }
 }
