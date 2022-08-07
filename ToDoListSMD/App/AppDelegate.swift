@@ -27,13 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         style.firstLineHeadIndent = 16
 
         let standardNavigationBarAppearance = UINavigationBarAppearance()
-        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.colorAsset.labelPrimary!]
-        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.colorAsset.labelPrimary!, .paragraphStyle: style]
-        standardNavigationBarAppearance.backgroundColor = UIColor.colorAsset.backPrimary
+        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary!]
+        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary!, .paragraphStyle: style]
+        standardNavigationBarAppearance.backgroundColor = .ColorAsset.backPrimary
         standardNavigationBarAppearance.shadowColor = nil
 
         controller.navigationBar.standardAppearance = standardNavigationBarAppearance
-        controller.navigationBar.tintColor = UIColor.colorAsset.colorBlue
+        controller.navigationBar.tintColor = .ColorAsset.colorBlue
         controller.navigationBar.prefersLargeTitles = true
     }
 }

@@ -18,9 +18,9 @@ class BaseCell: UITableViewCell {
     }
 
     func setupContent() {
-        backgroundColor = UIColor.colorAsset.backSecondary
-        content.textProperties.color = UIColor.colorAsset.labelPrimary!
-        content.textProperties.font = UIFont.FontAsset.body
+        backgroundColor = .ColorAsset.backSecondary
+        content.textProperties.color = .ColorAsset.labelPrimary!
+        content.textProperties.font = .FontAsset.body
     }
 
     func setupControl() {}

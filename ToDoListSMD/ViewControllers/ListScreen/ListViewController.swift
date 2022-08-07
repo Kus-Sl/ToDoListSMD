@@ -22,7 +22,7 @@ final class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.colorAsset.backPrimary
+        view.backgroundColor = .ColorAsset.backPrimary
         setupView()
         setupLayout()
         viewModel = ListViewModel()
@@ -38,20 +38,20 @@ final class ListViewController: UIViewController {
     }
 
     private func setupCompletedCounterLabel() {
-        completedCounterLabel.textColor = UIColor.colorAsset.labelTertiary
-        completedCounterLabel.font = UIFont.FontAsset.subhead
+        completedCounterLabel.textColor = .ColorAsset.labelTertiary
+        completedCounterLabel.font = .FontAsset.subhead
         completedCounterLabel.text = "Выполнено - \(viewModel.completedCount)"
     }
 
     private func setupShowCompletedButton() {
-        showCompletedButton.setTitleColor(UIColor.colorAsset.colorBlue, for: .normal)
-        showCompletedButton.titleLabel?.font = UIFont.FontAsset.subheadline
+        showCompletedButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
+        showCompletedButton.titleLabel?.font = .FontAsset.subheadline
         showCompletedButton.setTitle("Показать", for: .normal)
     }
 
     private func setupTableView() {
         tableView.layer.cornerRadius = Constants.radius
-        tableView.separatorColor = UIColor.colorAsset.supportSeparator
+        tableView.separatorColor = .ColorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
             left: Constants.separatorLeftInset,
@@ -126,7 +126,7 @@ extension ListViewController: UITableViewDelegate {
 
         deleteAction.image = .IconAsset.deleteActionIcon
         openDetailAction.image = .IconAsset.openDetailActionIcon
-        openDetailAction.backgroundColor = UIColor.colorAsset.colorGray
+        openDetailAction.backgroundColor = .ColorAsset.colorGray
 
         return UISwipeActionsConfiguration(actions: [deleteAction, openDetailAction])
     }
@@ -136,7 +136,7 @@ extension ListViewController: UITableViewDelegate {
             isDone(true)
         }
 
-        completeAction.backgroundColor = UIColor.colorAsset.colorGreen
+        completeAction.backgroundColor = .ColorAsset.colorGreen
         completeAction.image = .IconAsset.completeActionIcon
         return UISwipeActionsConfiguration(actions: [completeAction])
     }

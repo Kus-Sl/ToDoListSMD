@@ -20,13 +20,13 @@ final class ListCell: UITableViewCell {
     }
 
     private func setupContent() {
-        backgroundColor = UIColor.colorAsset.backSecondary
+        backgroundColor = .ColorAsset.backSecondary
 
         todoItem.isDone
         ? setupContentForCompletedTodoItem()
         : checkTodoItemDeadLine()
 
-        accessoryView = UIImageView(image: UIImage.IconAsset.listCellDirectionIcon)
+        accessoryView = UIImageView(image: .IconAsset.listCellDirectionIcon)
         contentConfiguration = content
     }
 
@@ -44,48 +44,48 @@ final class ListCell: UITableViewCell {
     private func setupContentForCompletedTodoItem() {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.body,
-            .foregroundColor: UIColor.colorAsset.labelTertiary!,
+            .foregroundColor: UIColor.ColorAsset.labelTertiary!,
             .strikethroughStyle: 1
         ]
 
         content.textProperties.numberOfLines = 1
         content.attributedText = NSAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmarkDoneIcon
+        content.image = .IconAsset.listCellCheckmarkDoneIcon
     }
 
     private func setupContentForUncompletedTodoItemWithoutDeadLine() {
         content.textProperties.numberOfLines = 3
-        content.textProperties.color = UIColor.colorAsset.labelPrimary!
+        content.textProperties.color = .ColorAsset.labelPrimary!
         content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmarkIcon
+        content.image = .IconAsset.listCellCheckmarkIcon
     }
 
     private func setupContentForUncompletedTodoItemWithDeadLine() {
         let imageAttachment = NSTextAttachment()
-        imageAttachment.image = UIImage.IconAsset.listCellDeadlineIcon
+        imageAttachment.image = .IconAsset.listCellDeadlineIcon
 
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.subhead,
-            .foregroundColor: UIColor.colorAsset.labelTertiary!,
+            .foregroundColor: UIColor.ColorAsset.labelTertiary!,
             .attachment: imageAttachment
         ]
 
         if let deadline = todoItem.deadLine {
             content.secondaryAttributedText = NSAttributedString(string: DateFormatter.formatter.string(from: deadline), attributes: attributes)
         }
-        content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmarkIcon
 
+        content.text = todoItem.text
+        content.image = .IconAsset.listCellCheckmarkIcon
     }
 
     private func setupContentForExpiredTodoItem() {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.body,
-            .foregroundColor: UIColor.colorAsset.labelPrimary!
+            .foregroundColor: UIColor.ColorAsset.labelPrimary!
         ]
 
         content.textProperties.numberOfLines = 3
         content.attributedText = NSMutableAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmarkExpiredIcon
+        content.image = .IconAsset.listCellCheckmarkExpiredIcon
     }
 }
