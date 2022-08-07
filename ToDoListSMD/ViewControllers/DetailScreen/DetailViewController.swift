@@ -17,7 +17,7 @@ final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
-        saveButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
+        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.colorAssets.labelTertiary!], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
@@ -38,7 +38,6 @@ final class DetailViewController: UIViewController {
         viewModel.delegate = self
 
         view.backgroundColor = UIColor.colorAssets.backPrimary
-        view.tintColor = UIColor.colorAssets.colorBlue
         setupScrollView()
         setupLayout()
         isEnableToSaveOrDelete()

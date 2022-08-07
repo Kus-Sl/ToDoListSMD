@@ -9,6 +9,8 @@ import UIKit
 
 class ListViewController: UIViewController {
 
+    private lazy var tableView = UITableView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
