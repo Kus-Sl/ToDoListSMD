@@ -26,6 +26,7 @@ final class ListCell: UITableViewCell {
         ? setupContentForCompletedTodoItem()
         : checkTodoItemDeadLine()
 
+        accessoryView = UIImageView(image: UIImage.IconAsset.listCellDirectionArrow)
         contentConfiguration = content
     }
 
@@ -42,7 +43,7 @@ final class ListCell: UITableViewCell {
 
     private func setupContentForCompletedTodoItem() {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.body,
+            .font: UIFont.FontAsset.body,
             .foregroundColor: UIColor.colorAsset.labelTertiary!,
             .strikethroughStyle: 1
         ]
@@ -64,7 +65,7 @@ final class ListCell: UITableViewCell {
         imageAttachment.image = UIImage.IconAsset.listCellDeadlineCalendar
 
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.subhead,
+            .font: UIFont.FontAsset.subhead,
             .foregroundColor: UIColor.colorAsset.labelTertiary!,
             .attachment: imageAttachment
         ]
@@ -79,7 +80,7 @@ final class ListCell: UITableViewCell {
 
     private func setupContentForExpiredTodoItem() {
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.body,
+            .font: UIFont.FontAsset.body,
             .foregroundColor: UIColor.colorAsset.labelPrimary!
         ]
 

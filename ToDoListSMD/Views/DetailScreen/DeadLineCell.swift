@@ -31,7 +31,7 @@ final class DeadLineCell: BaseCell {
 
     private func addTitleLabel() {
         titleLabel.textColor = UIColor.colorAsset.labelPrimary
-        titleLabel.font = UIFont.body
+        titleLabel.font = UIFont.FontAsset.body
         titleLabel.text = CellType.deadLine.getTitle()
 
         contentView.addSubview(titleLabel)
@@ -60,7 +60,7 @@ extension DeadLineCell {
         guard let datePickerButton = datePickerButton else { return }
 
         datePickerButton.setTitleColor(UIColor.colorAsset.colorBlue, for: .normal)
-        datePickerButton.titleLabel?.font = UIFont.footnote
+        datePickerButton.titleLabel?.font = UIFont.FontAsset.footnote
         viewModel.deadLine.bind { date in
             datePickerButton.setTitle(DateFormatter.formatter.string(from: date ?? Date()), for: .normal)
         }

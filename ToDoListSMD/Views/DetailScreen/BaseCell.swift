@@ -20,7 +20,7 @@ class BaseCell: UITableViewCell {
     func setupContent() {
         backgroundColor = UIColor.colorAsset.backSecondary
         content.textProperties.color = UIColor.colorAsset.labelPrimary!
-        content.textProperties.font = UIFont.body
+        content.textProperties.font = UIFont.FontAsset.body
     }
 
     func setupControl() {}

@@ -64,7 +64,7 @@ final class DetailViewController: UIViewController {
             right: Constants.textContainerRightInset
         )
         textView.textColor = UIColor.colorAsset.labelPrimary
-        textView.font = UIFont.body
+        textView.font = UIFont.FontAsset.body
         textView.text = viewModel.text
         textView.isScrollEnabled = false
         textView.delegate = self

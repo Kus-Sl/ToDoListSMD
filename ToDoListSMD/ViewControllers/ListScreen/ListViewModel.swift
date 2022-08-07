@@ -8,26 +8,29 @@
 import Foundation
 
 protocol ListViewModelProtocol {
+    var completedCount: Int { get }
+
     func getNumberOfRows() -> Int
     func getTodoItem(for indexPath: IndexPath) -> TodoItem
 }
 
 final class ListViewModel: ListViewModelProtocol {
-    private var todoItems: [TodoItem]
-    private var fileCache: FileCache
+    var completedCount: Int {
+        fileCache.todoItems.filter { $0.isDone }.count
+    }
+
+    private lazy var fileCache = FileCache()
 
     init() {
-        fileCache = FileCache()
-        todoItems = fileCache.todoItems
         createMopTasks()
     }
 
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
-        todoItems[indexPath.row]
+        fileCache.todoItems[indexPath.row]
     }
 
     func getNumberOfRows() -> Int {
-        todoItems.count
+        fileCache.todoItems.count
     }
 }
 

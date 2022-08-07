@@ -19,8 +19,6 @@ final class ListViewController: UIViewController {
 
     private lazy var viewModel: ListViewModelProtocol = ListViewModel()
 
-    var testCount = 5
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -41,13 +39,13 @@ final class ListViewController: UIViewController {
 
     private func setupCompletedCounterLabel() {
         completedCounterLabel.textColor = UIColor.colorAsset.labelTertiary
-        completedCounterLabel.font = UIFont.subhead
-        completedCounterLabel.text = "Выполнено - \(testCount)"
+        completedCounterLabel.font = UIFont.FontAsset.subhead
+        completedCounterLabel.text = "Выполнено - \(viewModel.completedCount)"
     }
 
     private func setupShowCompletedButton() {
         showCompletedButton.setTitleColor(UIColor.colorAsset.colorBlue, for: .normal)
-        showCompletedButton.titleLabel?.font = UIFont.subheadline
+        showCompletedButton.titleLabel?.font = UIFont.FontAsset.subheadline
         showCompletedButton.setTitle("Показать", for: .normal)
     }
 
@@ -101,7 +99,9 @@ extension ListViewController: UITableViewDataSource {
 
 // MARK: Table view delegate
 extension ListViewController: UITableViewDelegate {
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
 // MARK: Constants

@@ -10,12 +10,12 @@ import UIKit
 
 extension UIImage {
     enum IconAsset {
-        static let importantSegmentedControlImage = UIImage(named: "custom.exclamationmark.2")
-        static let unimportantSegmentedControlImage = UIImage(named: "custom.arrow.down")
-        static let listCellDirectionArrow = UIImage(named: "custom.arrow.right")
-        static let listCellCheckmark = UIImage(named: "custom.checkmark.circle.gray")
-        static let listCellCheckmarkDone = UIImage(named: "custom.checkmark.done")
-        static let listCellCheckmarkExpired = UIImage(named: "custom.checkmark.circle.red")
-        static let listCellDeadlineCalendar = UIImage(named: "custom.calendar")
+        static let importantSegmentedControlImage = UIImage(systemName: "exclamationmark.2")?.withTintColor(.colorAsset.colorRed!, renderingMode: .alwaysOriginal)
+        static let unimportantSegmentedControlImage = UIImage(systemName: "arrow.down")?.withTintColor(.colorAsset.colorGray!, renderingMode: .alwaysOriginal)
+        static let listCellDirectionArrow = UIImage(systemName: "chevron.forward")?.withTintColor(.colorAsset.colorGray!, renderingMode: .alwaysOriginal)
+        static let listCellCheckmark = UIImage(systemName: "circle")?.withTintColor(.colorAsset.supportSeparator!, renderingMode: .alwaysOriginal)
+        static let listCellCheckmarkDone = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.colorAsset.colorGreen!, renderingMode: .alwaysOriginal)
+        static let listCellCheckmarkExpired = UIImage(systemName: "circle")?.withTintColor(.colorAsset.colorRed!, renderingMode: .alwaysOriginal)
+        static let listCellDeadlineCalendar = UIImage(systemName: "calendar")?.withTintColor(.colorAsset.labelTertiary!, renderingMode: .alwaysOriginal)
     }
 }
