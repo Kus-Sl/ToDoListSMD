@@ -56,9 +56,9 @@ final class ListViewController: UIViewController {
         tableView.separatorColor = UIColor.colorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
-            left: Constants.SeparatorLeftInset,
-            bottom: Constants.SeparatorBottomInset,
-            right: Constants.SeparatorRightInset
+            left: Constants.separatorLeftInset,
+            bottom: Constants.separatorBottomInset,
+            right: Constants.separatorRightInset
         )
         tableView.dataSource = self
         tableView.delegate = self
@@ -113,9 +113,9 @@ extension ListViewController {
         static let showCompletedButtonHeight: CGFloat = 20
         static let tableViewTopInset: CGFloat = 12
         static let separatorTopInset: CGFloat = 0
-        static let SeparatorBottomInset: CGFloat = 0
-        static let SeparatorLeftInset: CGFloat = 16
-        static let SeparatorRightInset: CGFloat = 0
+        static let separatorBottomInset: CGFloat = 0
+        static let separatorLeftInset: CGFloat = 52
+        static let separatorRightInset: CGFloat = 0
         static let radius: CGFloat = 16
         static let navigationItemTitle = "Мои дела"
     }

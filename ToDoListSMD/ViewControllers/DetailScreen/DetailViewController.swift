@@ -75,9 +75,9 @@ final class DetailViewController: UIViewController {
         tableView.separatorColor = UIColor.colorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
-            left: Constants.SeparatorLeftInset,
-            bottom: Constants.SeparatorBottomInset,
-            right: Constants.SeparatorRightInset
+            left: Constants.separatorLeftInset,
+            bottom: Constants.separatorBottomInset,
+            right: Constants.separatorRightInset
         )
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
@@ -238,9 +238,9 @@ extension DetailViewController {
         static let textContainerRightInset: CGFloat = 16
         static let textContainerLineFragmentPadding: CGFloat = 0
         static let separatorTopInset: CGFloat = 0
-        static let SeparatorBottomInset: CGFloat = 0
-        static let SeparatorLeftInset: CGFloat = 16
-        static let SeparatorRightInset: CGFloat = 16
+        static let separatorBottomInset: CGFloat = 0
+        static let separatorLeftInset: CGFloat = 16
+        static let separatorRightInset: CGFloat = 0
         static let deleteButtonHeight: CGFloat = 56
         static let radius: CGFloat = 16
         static let animationDuration: CGFloat = 0.5

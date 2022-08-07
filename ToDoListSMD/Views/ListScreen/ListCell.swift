@@ -49,14 +49,14 @@ final class ListCell: UITableViewCell {
 
         content.textProperties.numberOfLines = 1
         content.attributedText = NSAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmerkDone
+        content.image = UIImage.IconAsset.listCellCheckmarkDone
     }
 
     private func setupContentForUncompletedTodoItemWithoutDeadLine() {
         content.textProperties.numberOfLines = 3
         content.textProperties.color = UIColor.colorAsset.labelPrimary!
         content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmerk
+        content.image = UIImage.IconAsset.listCellCheckmark
     }
 
     private func setupContentForUncompletedTodoItemWithDeadLine() {
@@ -73,7 +73,7 @@ final class ListCell: UITableViewCell {
             content.secondaryAttributedText = NSAttributedString(string: DateFormatter.formatter.string(from: deadline), attributes: attributes)
         }
         content.text = todoItem.text
-        content.image = UIImage.IconAsset.listCellCheckmerk
+        content.image = UIImage.IconAsset.listCellCheckmark
 
     }
 
@@ -85,6 +85,6 @@ final class ListCell: UITableViewCell {
 
         content.textProperties.numberOfLines = 3
         content.attributedText = NSMutableAttributedString(string: todoItem.text, attributes: attributes)
-        content.image = UIImage.IconAsset.listCellCheckmerkExpired
+        content.image = UIImage.IconAsset.listCellCheckmarkExpired
     }
 }
