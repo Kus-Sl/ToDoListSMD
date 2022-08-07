@@ -21,7 +21,8 @@ final class ListCell: UITableViewCell {
 
     private func setupContent() {
         backgroundColor = .ColorAsset.backSecondary
-
+        content.textProperties.numberOfLines = Constants.numberOfLines
+        
         todoItem.isDone
         ? setupContentForCompletedTodoItem()
         : checkTodoItemDeadLine()
@@ -45,16 +46,14 @@ final class ListCell: UITableViewCell {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.body,
             .foregroundColor: UIColor.ColorAsset.labelTertiary!,
-            .strikethroughStyle: 1
+            .strikethroughStyle: Constants.strikethroughStyleValue
         ]
 
-        content.textProperties.numberOfLines = 1
         content.attributedText = NSAttributedString(string: todoItem.text, attributes: attributes)
         content.image = .IconAsset.listCellCheckmarkDoneIcon
     }
 
     private func setupContentForUncompletedTodoItemWithoutDeadLine() {
-        content.textProperties.numberOfLines = 3
         content.textProperties.color = .ColorAsset.labelPrimary!
         content.text = todoItem.text
         content.image = .IconAsset.listCellCheckmarkIcon
@@ -74,6 +73,7 @@ final class ListCell: UITableViewCell {
             content.secondaryAttributedText = NSAttributedString(string: DateFormatter.formatter.string(from: deadline), attributes: attributes)
         }
 
+
         content.text = todoItem.text
         content.image = .IconAsset.listCellCheckmarkIcon
     }
@@ -84,8 +84,15 @@ final class ListCell: UITableViewCell {
             .foregroundColor: UIColor.ColorAsset.labelPrimary!
         ]
 
-        content.textProperties.numberOfLines = 3
         content.attributedText = NSMutableAttributedString(string: todoItem.text, attributes: attributes)
         content.image = .IconAsset.listCellCheckmarkExpiredIcon
+    }
+}
+
+//MARK: Constants
+extension ListCell {
+    private enum Constants {
+        static let strikethroughStyleValue = 1
+        static let numberOfLines = 1
     }
 }
