@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ListViewController: UIViewController {
+final class ListViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         return item
@@ -17,6 +17,8 @@ class ListViewController: UIViewController {
     private lazy var completedCounterLabel = UILabel()
     private lazy var showCompletedButton = UIButton()
 
+    private lazy var viewModel: ListViewModelProtocol = ListViewModel()
+
     var testCount = 5
 
     override func viewDidLoad() {
@@ -25,6 +27,7 @@ class ListViewController: UIViewController {
         view.backgroundColor = UIColor.colorAsset.backPrimary
         setupView()
         setupLayout()
+        viewModel = ListViewModel()
     }
 
     private func setupView() {
@@ -80,23 +83,18 @@ class ListViewController: UIViewController {
         tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-
     }
 }
 
 // MARK: Table view data source
 extension ListViewController: UITableViewDataSource {
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//
-//    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        viewModel.getNumberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath)
-        cell.backgroundColor = UIColor.colorAsset.backSecondary
+        let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as! ListCell
+        cell.configure(for: indexPath, with: viewModel)
         return cell
     }
 }
@@ -117,7 +115,7 @@ extension ListViewController {
         static let separatorTopInset: CGFloat = 0
         static let SeparatorBottomInset: CGFloat = 0
         static let SeparatorLeftInset: CGFloat = 16
-        static let SeparatorRightInset: CGFloat = 16
+        static let SeparatorRightInset: CGFloat = 0
         static let radius: CGFloat = 16
         static let navigationItemTitle = "Мои дела"
     }

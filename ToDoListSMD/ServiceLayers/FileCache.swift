@@ -11,6 +11,10 @@ class FileCache {
     static private let fileName = "TaskList.txt"
     private(set) var todoItems: [TodoItem] = []
 
+    init() {
+        try? load()
+    }
+
     func add(_ todoItem: TodoItem) throws {
         guard !todoItems.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
         todoItems.append(todoItem)
