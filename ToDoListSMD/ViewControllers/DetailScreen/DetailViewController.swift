@@ -126,12 +126,12 @@ final class DetailViewController: UIViewController {
         deleteButton.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
         deleteButton.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
 
-        textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: Constants.leadingInset).isActive = true
+        textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: Constants.textViewTopInset).isActive = true
         textView.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.textViewHeight).isActive = true
-        textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: Constants.trailingInset).isActive = true
+        textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: Constants.textViewBottomInset).isActive = true
         tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: Constants.minTableViewHeight)
         tableViewHeight.isActive = true
-        tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: Constants.trailingInset).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: Constants.tableViewBottomInset).isActive = true
         deleteButton.heightAnchor.constraint(equalToConstant: Constants.deleteButtonHeight).isActive = true
         deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
     }
@@ -235,8 +235,11 @@ extension DetailViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
         static let trailingInset: CGFloat = -16
-        static let minTableViewHeight: CGFloat = 116
+        static let textViewTopInset: CGFloat = 16
         static let textViewHeight: CGFloat = 120
+        static let textViewBottomInset: CGFloat = -16
+        static let minTableViewHeight: CGFloat = 116
+        static let tableViewBottomInset: CGFloat = -16
         static let textContainerBottomInset: CGFloat = 12
         static let textContainerTopInset: CGFloat = 17
         static let textContainerLeftInset: CGFloat = 16
