@@ -43,11 +43,6 @@ final class DetailViewController: UIViewController {
         isEnableToSaveOrDelete()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
     private func setupScrollView() {
         setupTextView()
         setupTableView()
