@@ -43,6 +43,10 @@ final class DetailViewController: UIViewController {
         isEnableToSaveOrDelete()
     }
 
+    override func viewDidLayoutSubviews() {
+        tableViewHeight.constant = tableView.contentSize.height
+    }
+
     private func setupScrollView() {
         setupTextView()
         setupTableView()
@@ -159,7 +163,7 @@ extension DetailViewController {
 // MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.getNumberOfRows()
+        viewModel.getNumberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -181,6 +185,8 @@ extension DetailViewController: UITableViewDelegate {
 extension DetailViewController: DetailViewControllerDelegate {
     func showDatePicker() {
         tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
+        tableViewHeight.constant = tableView.contentSize.height
+        animateDatePicker()
         tableViewHeight.constant = tableView.contentSize.height
     }
 
