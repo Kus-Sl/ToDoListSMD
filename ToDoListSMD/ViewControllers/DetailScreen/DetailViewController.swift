@@ -112,9 +112,9 @@ final class DetailViewController: UIViewController {
         let frameGuide = scrollView.frameLayoutGuide
         let contentGuide = scrollView.contentLayoutGuide
 
-        frameGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        frameGuide.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
         frameGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        frameGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        frameGuide.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
         frameGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor).isActive = true
 

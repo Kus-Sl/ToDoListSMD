@@ -101,13 +101,13 @@ final class ListViewController: UIViewController {
         newTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
 
         doneItemsCountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        doneItemsCountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.doneItemsCountLabelLeadingInset).isActive = true
-        showOrHideDoneItemsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.showOrHideDoneItemsButtonTrailingInset).isActive = true
+        doneItemsCountLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.doneItemsCountLabelLeadingInset).isActive = true
+        showOrHideDoneItemsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.showOrHideDoneItemsButtonTrailingInset).isActive = true
         showOrHideDoneItemsButton.centerYAnchor.constraint(equalTo: doneItemsCountLabel.centerYAnchor).isActive = true
         showOrHideDoneItemsButton.heightAnchor.constraint(equalToConstant: Constants.showOrHideDoneItemsButtonHeight).isActive = true
         tableView.topAnchor.constraint(equalTo: doneItemsCountLabel.bottomAnchor, constant: Constants.tableViewTopInset).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.trailingInset).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
 
         newTodoItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: Constants.newTodoItemBottomInset).isActive = true
