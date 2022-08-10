@@ -15,8 +15,8 @@ final class ListViewController: UIViewController {
 
     private lazy var tableView = UITableView()
     private lazy var tableViewHeaderView = UIView()
-    private lazy var doneItemsCountLabel = UILabel()
-    private lazy var showOrHideDoneItemsButton = UIButton()
+    private lazy var completedItemsCountLabel = UILabel()
+    private lazy var completedItemsButton = UIButton()
     private lazy var newTodoItemButton = UIButton()
 
     private lazy var viewModel: ListViewModelProtocol = ListViewModel()
@@ -33,19 +33,19 @@ final class ListViewController: UIViewController {
     private func setupView() {
         setupTableView()
         setupTableViewHeaderView()
-        setupCompletedCounterLabel()
-        setupShowCompletedButton()
+        setupCompletedItemsCountLabel()
+        setupCompletedItemsButton()
         setupNewTodoItemButton()
 
         view.addSubview(tableView)
-        tableViewHeaderView.addSubview(doneItemsCountLabel)
-        tableViewHeaderView.addSubview(showOrHideDoneItemsButton)
+        tableViewHeaderView.addSubview(completedItemsCountLabel)
+        tableViewHeaderView.addSubview(completedItemsButton)
         view.addSubview(newTodoItemButton)
     }
 
     private func setupTableView() {
         tableView.backgroundColor = .clear
-        tableView.layer.cornerRadius = Constants.radius
+        tableView.layer.cornerRadius = Constants.tableViewRadius
         tableView.separatorColor = .ColorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
@@ -65,75 +65,75 @@ final class ListViewController: UIViewController {
         tableView.tableHeaderView = tableViewHeaderView
     }
 
-    private func setupCompletedCounterLabel() {
-        doneItemsCountLabel.textColor = .ColorAsset.labelTertiary
-        doneItemsCountLabel.font = .FontAsset.subhead
-        doneItemsCountLabel.text = Constants.doneItemsCountLabelText + "\(viewModel.completedCount)"
+    private func setupCompletedItemsCountLabel() {
+        completedItemsCountLabel.textColor = .ColorAsset.labelTertiary
+        completedItemsCountLabel.font = .FontAsset.subhead
+        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.completedCount)"
     }
 
-    private func setupShowCompletedButton() {
-        showOrHideDoneItemsButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
-        showOrHideDoneItemsButton.titleLabel?.font = .FontAsset.subheadline
-        showOrHideDoneItemsButton.setTitle(Constants.showDoneItemsButtonTitle, for: .normal)
-        showOrHideDoneItemsButton.addTarget(self, action: #selector(showOrHideCompletedTodoItem), for: .touchUpInside)
+    private func setupCompletedItemsButton() {
+        completedItemsButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
+        completedItemsButton.titleLabel?.font = .FontAsset.subheadline
+        completedItemsButton.setTitle(Constants.showCompletedItemsButtonTitle, for: .normal)
+        completedItemsButton.addTarget(self, action: #selector(completedItemsButtonTapped), for: .touchUpInside)
     }
 
     private func setupNewTodoItemButton() {
         newTodoItemButton.backgroundColor = .clear
         newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue?.cgColor
-        newTodoItemButton.layer.shadowOffset = Constants.newTodoItemShadowOffset
-        newTodoItemButton.layer.shadowOpacity = Constants.newTodoItemShadowOpacity
-        newTodoItemButton.layer.shadowRadius = Constants.newTodoItemShadowRadius
-        newTodoItemButton.layer.cornerRadius = Constants.newTodoItemRadius
+        newTodoItemButton.layer.shadowOffset = Constants.newTodoItemButtonShadowOffset
+        newTodoItemButton.layer.shadowOpacity = Constants.newTodoItemButtonShadowOpacity
+        newTodoItemButton.layer.shadowRadius = Constants.newTodoItemButtonShadowRadius
+        newTodoItemButton.layer.cornerRadius = Constants.newTodoItemButtonRadius
         newTodoItemButton.contentVerticalAlignment = .fill
         newTodoItemButton.contentHorizontalAlignment = .fill
         newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon!.withTintColor(.ColorAsset.colorBlue!), for: .normal)
-        newTodoItemButton.addTarget(self, action: #selector(createNewTodoItem), for: .touchUpInside)
+        newTodoItemButton.addTarget(self, action: #selector(newTodoItemButtonTapped), for: .touchUpInside)
 
-        let mopView = UIView()
-        mopView.backgroundColor = .ColorAsset.colorWhite
-        mopView.isUserInteractionEnabled = false
+        let mopViewForNewTodoItemButton = UIView()
+        mopViewForNewTodoItemButton.backgroundColor = .ColorAsset.colorWhite
+        mopViewForNewTodoItemButton.isUserInteractionEnabled = false
 
-        newTodoItemButton.insertSubview(mopView, belowSubview: newTodoItemButton.imageView!)
-        mopView.translatesAutoresizingMaskIntoConstraints = false
+        newTodoItemButton.insertSubview(mopViewForNewTodoItemButton, belowSubview: newTodoItemButton.imageView!)
+        mopViewForNewTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
 
-        mopView.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
-        mopView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
-        mopView.heightAnchor.constraint(equalToConstant: Constants.mopViewSide).isActive = true
-        mopView.widthAnchor.constraint(equalToConstant: Constants.mopViewSide).isActive = true
+        mopViewForNewTodoItemButton.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
+        mopViewForNewTodoItemButton.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
+        mopViewForNewTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
+        mopViewForNewTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
     }
 
     private func setupLayout() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        doneItemsCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        showOrHideDoneItemsButton.translatesAutoresizingMaskIntoConstraints = false
+        completedItemsCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        completedItemsButton.translatesAutoresizingMaskIntoConstraints = false
         newTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
 
-        doneItemsCountLabel.topAnchor.constraint(equalTo: tableViewHeaderView.topAnchor).isActive = true
-        doneItemsCountLabel.leadingAnchor.constraint(equalTo: tableViewHeaderView.leadingAnchor, constant: Constants.doneItemsCountLabelLeadingInset).isActive = true
-        showOrHideDoneItemsButton.trailingAnchor.constraint(equalTo: tableViewHeaderView.trailingAnchor, constant: Constants.showOrHideDoneItemsButtonTrailingInset).isActive = true
-        showOrHideDoneItemsButton.centerYAnchor.constraint(equalTo: doneItemsCountLabel.centerYAnchor).isActive = true
-        showOrHideDoneItemsButton.heightAnchor.constraint(equalToConstant: Constants.showOrHideDoneItemsButtonHeight).isActive = true
+        completedItemsCountLabel.topAnchor.constraint(equalTo: tableViewHeaderView.topAnchor).isActive = true
+        completedItemsCountLabel.leadingAnchor.constraint(equalTo: tableViewHeaderView.leadingAnchor, constant: Constants.completedItemsCountLabelLeadingInset).isActive = true
+        completedItemsButton.trailingAnchor.constraint(equalTo: tableViewHeaderView.trailingAnchor, constant: Constants.completedItemsButtonTrailingInset).isActive = true
+        completedItemsButton.centerYAnchor.constraint(equalTo: completedItemsCountLabel.centerYAnchor).isActive = true
+        completedItemsButton.heightAnchor.constraint(equalToConstant: Constants.completedItemsButtonHeight).isActive = true
 
         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.tableViewTopInset).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
-        newTodoItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: Constants.newTodoItemBottomInset).isActive = true
-        newTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.newTodoItemSide).isActive = true
-        newTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.newTodoItemSide).isActive = true
+        newTodoItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: Constants.newTodoItemButtonBottomInset).isActive = true
+        newTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.newTodoItemButtonSide).isActive = true
+        newTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.newTodoItemButtonSide).isActive = true
         newTodoItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
 }
 
 // MARK: Actions
 extension ListViewController {
-    @objc private func createNewTodoItem() {
+    @objc private func newTodoItemButtonTapped() {
 
     }
 
-    @objc private func showOrHideCompletedTodoItem() {
+    @objc private func completedItemsButtonTapped() {
 
     }
 
@@ -205,25 +205,25 @@ extension ListViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
         static let trailingInset: CGFloat = -16
-        static let doneItemsCountLabelLeadingInset: CGFloat = 16
-        static let showOrHideDoneItemsButtonTrailingInset: CGFloat = -16
-        static let showOrHideDoneItemsButtonHeight: CGFloat = 20
+        static let completedItemsCountLabelLeadingInset: CGFloat = 16
+        static let completedItemsButtonTrailingInset: CGFloat = -16
+        static let completedItemsButtonHeight: CGFloat = 20
         static let tableViewTopInset: CGFloat = 12
         static let separatorTopInset: CGFloat = 0
         static let separatorBottomInset: CGFloat = 0
         static let separatorLeftInset: CGFloat = 52
         static let separatorRightInset: CGFloat = 0
-        static let radius: CGFloat = 16
+        static let tableViewRadius: CGFloat = 16
         static let navigationItemTitle = "Мои дела"
-        static let showDoneItemsButtonTitle = "Показать"
-        static let hideDoneItemsButtonTitle = "Показать"
-        static let doneItemsCountLabelText = "Выполнено - "
-        static let newTodoItemRadius: CGFloat = newTodoItemSide / 2
-        static let newTodoItemShadowOffset = CGSize(width: 0, height: 7)
-        static let newTodoItemShadowOpacity: Float = 0.5
-        static let newTodoItemShadowRadius: CGFloat = 8
-        static let newTodoItemSide: CGFloat = 46
-        static let newTodoItemBottomInset: CGFloat = -54
-        static let mopViewSide: CGFloat = 20
+        static let showCompletedItemsButtonTitle = "Показать"
+        static let hideCompletedItemsButtonTitle = "Cкрыть"
+        static let completedItemsCountLabelText = "Выполнено - "
+        static let newTodoItemButtonRadius: CGFloat = newTodoItemButtonSide / 2
+        static let newTodoItemButtonShadowOffset = CGSize(width: 0, height: 7)
+        static let newTodoItemButtonShadowOpacity: Float = 0.5
+        static let newTodoItemButtonShadowRadius: CGFloat = 8
+        static let newTodoItemButtonSide: CGFloat = 46
+        static let newTodoItemButtonBottomInset: CGFloat = -54
+        static let mopViewForNewTodoItemButtonSide: CGFloat = 20
     }
 }

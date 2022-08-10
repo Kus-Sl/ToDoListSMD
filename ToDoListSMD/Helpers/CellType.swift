@@ -10,14 +10,14 @@ import UIKit.UITableView
 
 enum CellType {
     case importance
-    case deadLine
+    case deadline
     case calendar
 
     func getRowIndexPath() -> IndexPath {
         switch self {
         case .importance:
             return Constants.importanceCellIndexPath
-        case .deadLine:
+        case .deadline:
             return Constants.deadlineCellIndexPath
         case .calendar:
             return Constants.calendarCellIndexPath
@@ -26,8 +26,8 @@ enum CellType {
 
     func getHeight() -> Double {
         switch self {
-        case .importance, .deadLine:
-            return Constants.importanceAndDeadLineCellHeight
+        case .importance, .deadline:
+            return Constants.importanceAndDeadlineCellHeight
         case .calendar:
             return UITableView.automaticDimension
         }
@@ -37,8 +37,8 @@ enum CellType {
         switch self {
         case .importance:
             return Constants.importanceLabelTitle
-        case .deadLine:
-            return Constants.deadLineLabelTitle
+        case .deadline:
+            return Constants.deadlineLabelTitle
         case .calendar:
             return Constants.calendarLabelTitle
         }
@@ -48,8 +48,8 @@ enum CellType {
         switch self {
         case .importance:
             return ImportanceCell.self
-        case .deadLine:
-            return DeadLineCell.self
+        case .deadline:
+            return DeadlineCell.self
         case .calendar:
             return CalendarCell.self
         }
@@ -57,9 +57,9 @@ enum CellType {
 
     private enum Constants {
         static let importanceLabelTitle = "Важность"
-        static let deadLineLabelTitle = "Сделать до"
+        static let deadlineLabelTitle = "Сделать до"
         static let calendarLabelTitle = ""
-        static let importanceAndDeadLineCellHeight: Double = 58
+        static let importanceAndDeadlineCellHeight: Double = 58
         static let importanceCellIndexPath: IndexPath = IndexPath(row: 0, section: 0)
         static let deadlineCellIndexPath: IndexPath = IndexPath(row: 1, section: 0)
         static let calendarCellIndexPath: IndexPath = IndexPath(row: 2, section: 0)

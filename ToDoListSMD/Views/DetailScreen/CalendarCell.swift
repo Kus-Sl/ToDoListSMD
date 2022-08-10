@@ -19,8 +19,8 @@ final class CalendarCell: BaseCell {
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .date
 
-        guard let deadLine = viewModel.deadLine.value else { return }
-        datePicker.date = deadLine
+        guard let deadline = viewModel.deadline.value else { return }
+        datePicker.date = deadline
         datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
 
         setDatePickerConstraints()
@@ -42,6 +42,6 @@ final class CalendarCell: BaseCell {
 //MARK: Actions
 extension CalendarCell {
     @objc private func datePickerTapped() {
-        viewModel.deadLine.value = datePicker.date
+        viewModel.deadline.value = datePicker.date
     }
 }

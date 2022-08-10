@@ -22,7 +22,7 @@ final class ImportanceCell: BaseCell {
     
     override func setupControl() {
         control.frame = CGRect(x: 0, y: 0, width: Constants.segmentedControlWidth, height: Constants.segmentedControlHeight)
-        control.addTarget(self, action: #selector(controlChanged), for: .valueChanged)
+        control.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         control.selectedSegmentIndex = viewModel.setImportanceControl()
         accessoryView = control
     }
@@ -30,7 +30,7 @@ final class ImportanceCell: BaseCell {
 
 //MARK: Actions
 extension ImportanceCell {
-    @objc func controlChanged(target: UISegmentedControl) {
+    @objc func segmentedControlChanged(target: UISegmentedControl) {
         if let selectedIndex = SegmentedControlIndexes(rawValue: target.selectedSegmentIndex) {
             viewModel.changedImportanceControl(to: selectedIndex)
         }

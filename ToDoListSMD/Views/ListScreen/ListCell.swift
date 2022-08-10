@@ -25,21 +25,21 @@ final class ListCell: UITableViewCell {
         
         todoItem.isDone
         ? setupContentForCompletedTodoItem()
-        : checkTodoItemDeadLine()
+        : checkTodoItemDeadline()
 
         accessoryView = UIImageView(image: .IconAsset.listCellDirectionIcon)
         contentConfiguration = content
     }
 
-    private func checkTodoItemDeadLine() {
-        guard let deadLine = todoItem.deadLine else {
-            setupContentForUncompletedTodoItemWithoutDeadLine()
+    private func checkTodoItemDeadline() {
+        guard let deadline = todoItem.deadline else {
+            setupContentForUncompletedTodoItemWithoutDeadline()
             return
         }
 
-        deadLine <= Date()
+        deadline <= Date()
         ? setupContentForExpiredTodoItem()
-        : setupContentForUncompletedTodoItemWithDeadLine()
+        : setupContentForUncompletedTodoItemWithDeadline()
     }
 
     private func setupContentForCompletedTodoItem() {
@@ -53,13 +53,13 @@ final class ListCell: UITableViewCell {
         content.image = .IconAsset.listCellCheckmarkDoneIcon
     }
 
-    private func setupContentForUncompletedTodoItemWithoutDeadLine() {
+    private func setupContentForUncompletedTodoItemWithoutDeadline() {
         content.textProperties.color = .ColorAsset.labelPrimary!
         content.text = todoItem.text
         content.image = .IconAsset.listCellCheckmarkIcon
     }
 
-    private func setupContentForUncompletedTodoItemWithDeadLine() {
+    private func setupContentForUncompletedTodoItemWithDeadline() {
         let imageAttachment = NSTextAttachment()
         imageAttachment.image = .IconAsset.listCellDeadlineIcon
 
@@ -69,10 +69,9 @@ final class ListCell: UITableViewCell {
             .attachment: imageAttachment
         ]
 
-        if let deadline = todoItem.deadLine {
+        if let deadline = todoItem.deadline {
             content.secondaryAttributedText = NSAttributedString(string: DateFormatter.formatter.string(from: deadline), attributes: attributes)
         }
-
 
         content.text = todoItem.text
         content.image = .IconAsset.listCellCheckmarkIcon

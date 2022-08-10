@@ -14,7 +14,7 @@ struct TodoItem {
     let isDone: Bool
     let creationDate: Date
     let changeDate: Date?
-    let deadLine: Date?
+    let deadline: Date?
 
     init(
         id: String = UUID().uuidString,
@@ -23,7 +23,7 @@ struct TodoItem {
         isDone: Bool = false,
         creationDate: Date = Date(),
         changeDate: Date? = nil,
-        deadLine: Date? = nil
+        deadline: Date? = nil
     ) {
         self.id = id
         self.text = text
@@ -31,7 +31,7 @@ struct TodoItem {
         self.isDone = isDone
         self.creationDate = creationDate
         self.changeDate = changeDate
-        self.deadLine = deadLine
+        self.deadline = deadline
     }
 
     func makeCompleted() -> TodoItem {
@@ -42,7 +42,7 @@ struct TodoItem {
             isDone: true,
             creationDate: creationDate,
             changeDate: Date(),
-            deadLine: deadLine
+            deadline: deadline
         )
     }
 }
@@ -61,8 +61,8 @@ extension TodoItem {
             jsonDict[Keys.importanceKey] = importance.rawValue
         }
 
-        if let deadLine = deadLine {
-            jsonDict[Keys.deadLineKey] = deadLine.timeIntervalSince1970
+        if let deadline = deadline {
+            jsonDict[Keys.deadlineKey] = deadline.timeIntervalSince1970
         }
 
         if let changeDate = changeDate {
@@ -82,7 +82,7 @@ extension TodoItem {
             isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
             creationDate: DateFormatter.getDate(from: jsonDict[Keys.creationDateKey] as Any) ?? Date(),
             changeDate: DateFormatter.getDate(from: jsonDict[Keys.changeDateKey] as Any),
-            deadLine: DateFormatter.getDate(from: jsonDict[Keys.deadLineKey] as Any)
+            deadline: DateFormatter.getDate(from: jsonDict[Keys.deadlineKey] as Any)
         )
     }
 }
@@ -96,7 +96,7 @@ extension TodoItem {
         static let isDoneKey = "isDone"
         static let creationDateKey = "creationDate"
         static let changeDateKey = "changeDate"
-        static let deadLineKey = "deadLine"
+        static let deadlineKey = "deadline"
     }
 }
 

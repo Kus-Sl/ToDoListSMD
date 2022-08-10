@@ -89,7 +89,7 @@ final class DetailViewController: UIViewController {
         tableView.delegate = self
 
         //NB: зарефачить
-        tableView.register(CellType.deadLine.getClass(), forCellReuseIdentifier: CellType.deadLine.getClass().cellReuseIdentifier())
+        tableView.register(CellType.deadline.getClass(), forCellReuseIdentifier: CellType.deadline.getClass().cellReuseIdentifier())
         tableView.register(CellType.importance.getClass(), forCellReuseIdentifier: CellType.importance.getClass().cellReuseIdentifier())
         tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
     }

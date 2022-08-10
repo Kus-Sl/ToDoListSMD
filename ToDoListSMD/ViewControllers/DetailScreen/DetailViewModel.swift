@@ -10,7 +10,7 @@ import Foundation
 protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
-    var deadLine: Box<Date?> { get set }
+    var deadline: Box<Date?> { get set }
     var delegate: DetailViewControllerDelegate! { get set }
 
     init(todoItem: TodoItem, fileCache: FileCache)
@@ -33,21 +33,21 @@ protocol DetailViewModelProtocol {
 final class DetailViewModel: DetailViewModelProtocol {
     var text: String
     var importance: Importance
-    var deadLine: Box<Date?>
+    var deadline: Box<Date?>
     var delegate: DetailViewControllerDelegate!
 
     // NB: доковырять
     private let todoItem: TodoItem
     private let fileCache: FileCache
     private lazy var isHiddenDatePicker = true
-    private lazy var cellTypes: [CellType] = [.importance, .deadLine]
+    private lazy var cellTypes: [CellType] = [.importance, .deadline]
 
     required init(todoItem: TodoItem, fileCache: FileCache) {
         self.todoItem = todoItem
         self.fileCache = fileCache
         text = todoItem.text
         importance = todoItem.importance
-        deadLine = Box(value: todoItem.deadLine)
+        deadline = Box(value: todoItem.deadline)
     }
 
     func deleteTodoItem() {
@@ -62,7 +62,7 @@ final class DetailViewModel: DetailViewModelProtocol {
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,
             changeDate: Date(),
-            deadLine: deadLine.value
+            deadline: deadline.value
         )
 
         do {
@@ -113,15 +113,15 @@ extension DetailViewModel {
     }
 
     func isDeadlineExist() -> Bool {
-        deadLine.value != nil
+        deadline.value != nil
     }
 
     func changedSwitchControl(to status: Bool) {
-        deadLine.value = status
+        deadline.value = status
         ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
         : nil
 
-        if !isHiddenDatePicker && deadLine.value == nil {
+        if !isHiddenDatePicker && deadline.value == nil {
             showOrHideDatePicker()
         }
     }
