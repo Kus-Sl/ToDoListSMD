@@ -20,5 +20,6 @@ extension UIImage {
         static let openDetailActionIcon = UIImage(systemName: "info.circle.fill")?.withTintColor(.ColorAsset.colorWhite!, renderingMode: .alwaysOriginal)
         static let deleteActionIcon = UIImage(systemName: "trash.fill")?.withTintColor(.ColorAsset.colorWhite!, renderingMode: .alwaysOriginal)
         static let completeActionIcon = UIImage(systemName: "checkmark.circle.fill")?.withTintColor(.ColorAsset.colorWhite!, renderingMode: .alwaysOriginal)
+        static let newTodoItemButtonIcon = UIImage(systemName: "plus.circle.fill")?.withTintColor(.ColorAsset.colorBlue!, renderingMode: .alwaysOriginal)
     }
 }

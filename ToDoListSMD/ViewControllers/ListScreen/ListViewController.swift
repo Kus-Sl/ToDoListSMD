@@ -16,6 +16,7 @@ final class ListViewController: UIViewController {
     private lazy var tableView = UITableView()
     private lazy var doneItemsCountLabel = UILabel()
     private lazy var showOrHideDoneItemsButton = UIButton()
+    private lazy var newTodoItemButton = UIButton()
 
     private lazy var viewModel: ListViewModelProtocol = ListViewModel()
 
@@ -32,9 +33,12 @@ final class ListViewController: UIViewController {
         setupCompletedCounterLabel()
         setupShowCompletedButton()
         setupTableView()
+        setupNewTodoItemButton()
+        view.addSubview(newTodoItemButton)
         view.addSubview(doneItemsCountLabel)
         view.addSubview(showOrHideDoneItemsButton)
         view.addSubview(tableView)
+        view.addSubview(newTodoItemButton)
     }
 
     private func setupCompletedCounterLabel() {
@@ -65,10 +69,36 @@ final class ListViewController: UIViewController {
         tableView.register(ListCell.self, forCellReuseIdentifier: ListCell.cellReuseIdentifier())
     }
 
+    private func setupNewTodoItemButton() {
+        newTodoItemButton.backgroundColor = .clear
+        newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue?.cgColor
+        newTodoItemButton.layer.shadowOffset = Constants.newTodoItemShadowOffset
+        newTodoItemButton.layer.shadowOpacity = Constants.newTodoItemShadowOpacity
+        newTodoItemButton.layer.shadowRadius = Constants.newTodoItemShadowRadius
+        newTodoItemButton.layer.cornerRadius = Constants.newTodoItemRadius
+        newTodoItemButton.contentVerticalAlignment = .fill
+        newTodoItemButton.contentHorizontalAlignment = .fill
+        newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon!.withTintColor(.ColorAsset.colorBlue!), for: .normal)
+        newTodoItemButton.addTarget(self, action: #selector(createNewTodoItem), for: .touchUpInside)
+
+        let mopView = UIView()
+        mopView.backgroundColor = .ColorAsset.colorWhite
+        mopView.isUserInteractionEnabled = false
+
+        newTodoItemButton.insertSubview(mopView, belowSubview: newTodoItemButton.imageView!)
+        mopView.translatesAutoresizingMaskIntoConstraints = false
+
+        mopView.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
+        mopView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
+        mopView.heightAnchor.constraint(equalToConstant: Constants.mopViewSide).isActive = true
+        mopView.widthAnchor.constraint(equalToConstant: Constants.mopViewSide).isActive = true
+    }
+
     private func setupLayout() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         doneItemsCountLabel.translatesAutoresizingMaskIntoConstraints = false
         showOrHideDoneItemsButton.translatesAutoresizingMaskIntoConstraints = false
+        newTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
 
         doneItemsCountLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         doneItemsCountLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.doneItemsCountLabelLeadingInset).isActive = true
@@ -79,11 +109,20 @@ final class ListViewController: UIViewController {
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.trailingInset).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+
+        newTodoItemButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: Constants.newTodoItemBottomInset).isActive = true
+        newTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.newTodoItemSide).isActive = true
+        newTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.newTodoItemSide).isActive = true
+        newTodoItemButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
 }
 
 // MARK: Actions
 extension ListViewController {
+    @objc private func createNewTodoItem() {
+
+    }
+
     private func openDetailsScreen(for indexPath: IndexPath) {
         let detailScreen = DetailViewController()
         detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
@@ -165,5 +204,12 @@ extension ListViewController {
         static let showDoneItemsButtonTitle = "Показать"
         static let hideDoneItemsButtonTitle = "Показать"
         static let doneItemsCountLabelText = "Выполнено - "
+        static let newTodoItemRadius: CGFloat = newTodoItemSide / 2
+        static let newTodoItemShadowOffset = CGSize(width: 0, height: 7)
+        static let newTodoItemShadowOpacity: Float = 0.5
+        static let newTodoItemShadowRadius: CGFloat = 8
+        static let newTodoItemSide: CGFloat = 46
+        static let newTodoItemBottomInset: CGFloat = -54
+        static let mopViewSide: CGFloat = 20
     }
 }
