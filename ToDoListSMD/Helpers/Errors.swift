@@ -10,6 +10,7 @@ import Foundation
 enum CacheError: Error {
     case invalidPath
     case existingID
+    case nonexistentID
     case loadingError
     case savingError
 }

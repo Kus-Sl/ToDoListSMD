@@ -43,10 +43,6 @@ final class DetailViewController: UIViewController {
         isEnableToSaveOrDelete()
     }
 
-    override func viewDidLayoutSubviews() {
-        tableViewHeight.constant = tableView.contentSize.height
-    }
-
     private func setupScrollView() {
         setupTextView()
         setupTableView()
@@ -144,7 +140,7 @@ extension DetailViewController {
     }
 
     @objc private func saveButtonTapped() {
-        viewModel.saveTodoItem()
+        viewModel.saveOrUpdateTodoItem()
         dismiss(animated: true)
     }
 

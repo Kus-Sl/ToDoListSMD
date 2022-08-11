@@ -16,7 +16,7 @@ protocol DetailViewModelProtocol {
     init(todoItem: TodoItem, fileCache: FileCache)
 
     func deleteTodoItem()
-    func saveTodoItem()
+    func saveOrUpdateTodoItem()
 
     func getCellID(_ indexPath: IndexPath) -> String
     func getNumberOfRows() -> Int
@@ -27,7 +27,6 @@ protocol DetailViewModelProtocol {
     func isDeadlineExist() -> Bool
     func changedSwitchControl(to status: Bool)
     func showOrHideDatePicker()
-
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
@@ -39,6 +38,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     // NB: доковырять
     private let todoItem: TodoItem
     private let fileCache: FileCache
+    private var isNewTodoItem: Bool
     private lazy var isHiddenDatePicker = true
     private lazy var cellTypes: [CellType] = [.importance, .deadline]
 
@@ -48,13 +48,15 @@ final class DetailViewModel: DetailViewModelProtocol {
         text = todoItem.text
         importance = todoItem.importance
         deadline = Box(value: todoItem.deadline)
+
+        isNewTodoItem = todoItem.text.isEmpty
     }
 
     func deleteTodoItem() {
         fileCache.delete(todoItem.id)
     }
 
-    func saveTodoItem() {
+    func saveOrUpdateTodoItem() {
         let newTodoItem = TodoItem(
             id: todoItem.id,
             text: text,
@@ -65,8 +67,20 @@ final class DetailViewModel: DetailViewModelProtocol {
             deadline: deadline.value
         )
 
+        isNewTodoItem ? save(newTodoItem) : update(newTodoItem)
+    }
+
+    private func save(_ newTodoItem: TodoItem) {
         do {
             try fileCache.add(newTodoItem)
+        } catch {
+            //NB: Показать алерт
+        }
+    }
+
+    private func update(_ updatingTodoItem: TodoItem) {
+        do {
+            try fileCache.update(updatingTodoItem)
         } catch {
             //NB: Показать алерт
         }
