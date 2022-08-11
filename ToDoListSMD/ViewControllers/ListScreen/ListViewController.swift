@@ -61,7 +61,7 @@ final class ListViewController: UIViewController {
     }
 
     private func setupTableViewHeaderView() {
-        tableViewHeaderView.frame = CGRect(x: 0, y: 0, width: 0, height: 32)
+        tableViewHeaderView.frame = Constants.tableViewHeaderViewFrame
         tableView.tableHeaderView = tableViewHeaderView
     }
 
@@ -214,6 +214,7 @@ extension ListViewController {
         static let separatorLeftInset: CGFloat = 52
         static let separatorRightInset: CGFloat = 0
         static let tableViewRadius: CGFloat = 16
+        static let tableViewHeaderViewFrame = CGRect(x: 0, y: 0, width: 0, height: 32)
         static let navigationItemTitle = "Мои дела"
         static let showCompletedItemsButtonTitle = "Показать"
         static let hideCompletedItemsButtonTitle = "Cкрыть"
