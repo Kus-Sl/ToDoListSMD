@@ -16,4 +16,10 @@ extension DateFormatter {
         formatter.timeZone = .current
         return formatter
     }()
+
+    static func getDate(from json: Any) -> Date? {
+        guard let unixTime = json as? TimeInterval else { return nil }
+        let date = Date(timeIntervalSince1970: unixTime)
+        return date
+    }
 }

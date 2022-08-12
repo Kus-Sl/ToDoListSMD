@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIColor {
-    enum colorAssets {
+    enum ColorAsset {
         static let backElevated = UIColor(named: "BackElevated")
         static let backiOSPrimary = UIColor(named: "BackiOSPrimary")
         static let backPrimary = UIColor(named: "BackPrimary")

@@ -10,22 +10,40 @@ import Foundation
 struct TodoItem {
     let id: String
     let text: String
-
     let importance: Importance
     let isDone: Bool
-
     let creationDate: Date
     let changeDate: Date?
-    let deadLine: Date?
+    let deadline: Date?
 
-    init(id: String = UUID().uuidString, text: String = "Что надо сделать?", importance: Importance = .ordinary, isDone: Bool = false, creationDate: Date = Date(), changeDate: Date? = nil, deadLine: Date? = nil) {
+    init(
+        id: String = UUID().uuidString,
+        text: String,
+        importance: Importance = .ordinary,
+        isDone: Bool = false,
+        creationDate: Date = Date(),
+        changeDate: Date? = nil,
+        deadline: Date? = nil
+    ) {
         self.id = id
         self.text = text
         self.importance = importance
         self.isDone = isDone
         self.creationDate = creationDate
         self.changeDate = changeDate
-        self.deadLine = deadLine
+        self.deadline = deadline
+    }
+
+    func makeCompleted() -> TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: true,
+            creationDate: creationDate,
+            changeDate: Date(),
+            deadline: deadline
+        )
     }
 }
 
@@ -33,22 +51,22 @@ struct TodoItem {
 extension TodoItem {
     var json: Any {
         var jsonDict: [String: Any] = [
-            "id" : id,
-            "text" : text,
-            "isDone" : isDone,
-            "creationDate" : creationDate.timeIntervalSince1970
+            Keys.idKey : id,
+            Keys.textKey : text,
+            Keys.isDoneKey : isDone,
+            Keys.creationDateKey : creationDate.timeIntervalSince1970
         ]
 
         if importance != .ordinary {
-            jsonDict["importance"] = importance.rawValue
+            jsonDict[Keys.importanceKey] = importance.rawValue
         }
 
-        if let deadLine = deadLine {
-            jsonDict["deadLine"] = deadLine.timeIntervalSince1970
+        if let deadline = deadline {
+            jsonDict[Keys.deadlineKey] = deadline.timeIntervalSince1970
         }
 
         if let changeDate = changeDate {
-            jsonDict["changeDate"] = changeDate.timeIntervalSince1970
+            jsonDict[Keys.changeDateKey] = changeDate.timeIntervalSince1970
         }
 
         return jsonDict
@@ -58,28 +76,33 @@ extension TodoItem {
         guard let jsonDict = json as? [String: Any] else { return nil }
 
         return TodoItem(
-            id: jsonDict["id"] as? String ?? "",
-            text: jsonDict["text"] as? String ?? "",
-            importance: .init(rawValue: jsonDict["importance"] as? String ?? "") ?? .ordinary,
-            isDone: jsonDict["isDone"] as? Bool ?? false,
-            creationDate: getDate(from: jsonDict["creationDate"] as Any) ?? Date(),
-            changeDate: getDate(from: jsonDict["changeDate"] as Any),
-            deadLine: getDate(from: jsonDict["deadLine"] as Any)
+            id: jsonDict[Keys.idKey] as? String ?? "",
+            text: jsonDict[Keys.textKey] as? String ?? "",
+            importance: .init(rawValue: jsonDict[Keys.importanceKey] as? String ?? "") ?? .ordinary,
+            isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
+            creationDate: DateFormatter.getDate(from: jsonDict[Keys.creationDateKey] as Any) ?? Date(),
+            changeDate: DateFormatter.getDate(from: jsonDict[Keys.changeDateKey] as Any),
+            deadline: DateFormatter.getDate(from: jsonDict[Keys.deadlineKey] as Any)
         )
     }
 }
 
-// MARK: Date formatting
+// MARK: Constants
 extension TodoItem {
-    private static func getDate(from json: Any) -> Date? {
-        guard let unixTime = json as? TimeInterval else { return nil }
-        let date = Date(timeIntervalSince1970: unixTime)
-        return date
+    private enum Keys {
+        static let idKey = "id"
+        static let textKey = "text"
+        static let importanceKey = "importance"
+        static let isDoneKey = "isDone"
+        static let creationDateKey = "creationDate"
+        static let changeDateKey = "changeDate"
+        static let deadlineKey = "deadline"
     }
 }
 
 enum Importance: String {
-    case important = "важная"
-    case ordinary = "обычная"
-    case unimportant = "неважная"
-}
+     case important = "важная"
+     case ordinary = "обычная"
+     case unimportant = "неважная"
+ }
+
