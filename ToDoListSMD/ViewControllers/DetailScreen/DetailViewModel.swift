@@ -13,20 +13,18 @@ protocol DetailViewModelProtocol {
     var deadline: Box<Date?> { get set }
     var delegate: DetailViewControllerDelegate! { get set }
 
-    init(todoItem: TodoItem, fileCache: FileCache)
-
     func deleteTodoItem()
     func saveOrUpdateTodoItem()
-
-    func getCellID(_ indexPath: IndexPath) -> String
-    func getNumberOfRows() -> Int
-    func getHeightForRows(_ indexPath: IndexPath) -> Double
 
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes)
     func setImportanceControl() -> Int
     func isDeadlineExist() -> Bool
     func changedSwitchControl(to status: Bool)
     func showOrHideDatePicker()
+
+    func getCellID(_ indexPath: IndexPath) -> String
+    func getNumberOfRows() -> Int
+    func getHeightForRows(_ indexPath: IndexPath) -> Double
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
@@ -51,7 +49,10 @@ final class DetailViewModel: DetailViewModelProtocol {
 
         isNewTodoItem = todoItem.text.isEmpty
     }
+}
 
+//MARK: Actions
+extension DetailViewModel {
     func deleteTodoItem() {
         fileCache.delete(todoItem.id)
     }
@@ -87,22 +88,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     }
 }
 
-// MARK: Cell's data source
-extension DetailViewModel {
-    func getCellID(_ indexPath: IndexPath) -> String {
-        cellTypes[indexPath.row].getClass().cellReuseIdentifier()
-    }
-
-    func getNumberOfRows() -> Int {
-        cellTypes.count
-    }
-
-    func getHeightForRows(_ indexPath: IndexPath) -> Double {
-        cellTypes[indexPath.row].getHeight()
-    }
-}
-
-// MARK: Cell's controls methods
+//MARK: Cell's controls methods
 extension DetailViewModel {
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes) {
         switch index {
@@ -157,5 +143,20 @@ extension DetailViewModel {
     private func hideDatePicker() {
         cellTypes.removeLast()
         delegate.hideDatePicker()
+    }
+}
+
+//MARK: Cell's data source
+extension DetailViewModel {
+    func getCellID(_ indexPath: IndexPath) -> String {
+        cellTypes[indexPath.row].getClass().cellReuseIdentifier()
+    }
+
+    func getNumberOfRows() -> Int {
+        cellTypes.count
+    }
+
+    func getHeightForRows(_ indexPath: IndexPath) -> Double {
+        cellTypes[indexPath.row].getHeight()
     }
 }

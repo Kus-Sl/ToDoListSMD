@@ -132,7 +132,7 @@ final class DetailViewController: UIViewController {
     }
 }
 
-// MARK: Actions
+//MARK: Actions
 extension DetailViewController {
     @objc private func deleteButtonTapped() {
         viewModel.deleteTodoItem()
@@ -155,8 +155,7 @@ extension DetailViewController {
     }
 }
 
-
-// MARK: Table view data source
+//MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.getNumberOfRows()
@@ -164,20 +163,20 @@ extension DetailViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellID = viewModel.getCellID(indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! BaseCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? BaseCell else { return UITableViewCell() }
         cell.viewModel = viewModel
         return cell
     }
 }
 
-// MARK: Table view delegate
+//MARK: Table view delegate
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.getHeightForRows(indexPath)
     }
 }
 
-// MARK: Detail view controller delegate
+//MARK: Detail view controller delegate
 extension DetailViewController: DetailViewControllerDelegate {
     func showDatePicker() {
         tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
@@ -198,7 +197,7 @@ extension DetailViewController: DetailViewControllerDelegate {
     }
 }
 
-// MARK: Text view delegate
+//MARK: Text view delegate
 extension DetailViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         isEnableToSaveOrDelete()
@@ -227,7 +226,7 @@ extension DetailViewController {
     }
 }
 
-// MARK: Constants
+//MARK: Constants
 extension DetailViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16

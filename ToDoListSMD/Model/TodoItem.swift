@@ -16,6 +16,18 @@ struct TodoItem {
     let changeDate: Date?
     let deadline: Date?
 
+    var asCompleted: TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: true,
+            creationDate: creationDate,
+            changeDate: Date(),
+            deadline: deadline
+        )
+    }
+
     init(
         id: String = UUID().uuidString,
         text: String,
@@ -33,21 +45,9 @@ struct TodoItem {
         self.changeDate = changeDate
         self.deadline = deadline
     }
-
-    func makeCompleted() -> TodoItem {
-        TodoItem(
-            id: id,
-            text: text,
-            importance: importance,
-            isDone: true,
-            creationDate: creationDate,
-            changeDate: Date(),
-            deadline: deadline
-        )
-    }
 }
 
-// MARK: JSON Conversion
+//MARK: JSON Conversion
 extension TodoItem {
     var json: Any {
         var jsonDict: [String: Any] = [
@@ -87,7 +87,7 @@ extension TodoItem {
     }
 }
 
-// MARK: Constants
+//MARK: Constants
 extension TodoItem {
     private enum Keys {
         static let idKey = "id"

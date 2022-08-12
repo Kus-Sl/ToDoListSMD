@@ -11,6 +11,9 @@ protocol ListViewModelProtocol {
     var completedCount: Int { get }
 
     func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel
+
+    func completeTodoItem(with indexPath: IndexPath)
+    func deleteTodoItem(with indexPath: IndexPath)
     
     func getNumberOfRows() -> Int
     func getTodoItem(for indexPath: IndexPath) -> TodoItem
@@ -24,7 +27,7 @@ final class ListViewModel: ListViewModelProtocol {
     private lazy var fileCache = FileCache()
 
     init() {
-        createMopTasks()
+        createMockTasks()
     }
 
     func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel {
@@ -32,7 +35,24 @@ final class ListViewModel: ListViewModelProtocol {
     }
 }
 
-// MARK: Cell's data source
+//MARK: Actions
+extension ListViewModel {
+    func completeTodoItem(with indexPath: IndexPath) {
+        let completedTodoItem = fileCache.todoItems[indexPath.row].asCompleted
+        do {
+            try fileCache.update(completedTodoItem)
+        } catch {
+            //NB: Показать алерт
+        }
+    }
+
+    func deleteTodoItem(with indexPath: IndexPath) {
+        let deletingTodoItem = fileCache.todoItems[indexPath.row]
+        fileCache.delete(deletingTodoItem.id)
+    }
+}
+
+//MARK: Cell's data source
 extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
         fileCache.todoItems[indexPath.row]
@@ -74,9 +94,13 @@ extension ListViewModel {
 
 
 
-// MARK: Test data
+
+
+
+
+//MARK: Test data
 extension ListViewModel {
-    func createMopTasks() {
+    func createMockTasks() {
         let t1 = TodoItem(id: "11", text: "умная мысль", importance: .ordinary, isDone: false, creationDate: Date(), changeDate: nil, deadline: Date(timeIntervalSince1970: 1231314152999))
 
         let t2 = TodoItem(id: "22", text: "свежая мысль", importance: .important, isDone: false, creationDate: Date(), changeDate: nil, deadline: nil)

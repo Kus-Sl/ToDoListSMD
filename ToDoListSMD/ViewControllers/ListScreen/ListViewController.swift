@@ -127,7 +127,7 @@ final class ListViewController: UIViewController {
     }
 }
 
-// MARK: Actions
+//MARK: Actions
 extension ListViewController {
     @objc private func newTodoItemButtonTapped() {
 
@@ -144,28 +144,28 @@ extension ListViewController {
     }
 
     private func deleteTodoItem(with indexPath: IndexPath) {
-
+        viewModel.deleteTodoItem(with: indexPath)
     }
 
     private func completeTodoItem(with indexPath: IndexPath) {
-
+        viewModel.completeTodoItem(with: indexPath)
     }
 }
 
-// MARK: Table view data source
+//MARK: Table view data source
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.getNumberOfRows()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as! ListCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as? ListCell else { return UITableViewCell() }
         cell.configure(for: indexPath, with: viewModel)
         return cell
     }
 }
 
-// MARK: Table view delegate
+//MARK: Table view delegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -200,7 +200,7 @@ extension ListViewController: UITableViewDelegate {
     }
 }
 
-// MARK: Constants
+//MARK: Constants
 extension ListViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
