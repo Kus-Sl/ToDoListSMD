@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class CalendarCell: BaseCell {
     private lazy var datePicker = UIDatePicker()

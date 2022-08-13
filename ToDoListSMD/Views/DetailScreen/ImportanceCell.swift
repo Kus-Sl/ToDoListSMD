@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class ImportanceCell: BaseCell {
     private lazy var control = UISegmentedControl(items: [

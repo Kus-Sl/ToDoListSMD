@@ -1,12 +1,14 @@
 //
-//  File.swift
+//  LogFormatter.swift
 //  ToDoListSMD
 //
 //  Created by Вячеслав Кусакин on 13.08.2022.
 //
 
 import Foundation
-class LogFormatter {
+import CocoaLumberjack
+
+class LogFormatter: NSObject, DDLogFormatter {
     func format(message logMessage: DDLogMessage) -> String? {
         var logLevel = ""
         switch logMessage.flag {
@@ -17,7 +19,7 @@ class LogFormatter {
         default: logLevel = "[Verbose] -> "
         }
 
-        let formatterString = logLevel + logMessage.fileName + " -> " + logMessage.function + " -> " + "\(logMessage.line)" + " -> " + logMessage.message
+        let formatterString = "\(logLevel) \(logMessage.fileName) | \(logMessage.function ?? "") | \(logMessage.line) | \(logMessage.message) \r "
 
         return formatterString
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
 protocol DetailViewModelProtocol {
     var text: String { get }

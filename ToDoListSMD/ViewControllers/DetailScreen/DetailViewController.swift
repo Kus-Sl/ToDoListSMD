@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 protocol DetailViewControllerDelegate: AnyObject {
     func showDatePicker()

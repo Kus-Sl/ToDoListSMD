@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
 struct TodoItem {
     let id: String

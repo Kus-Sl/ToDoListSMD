@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class ListCell: UITableViewCell {
     private var todoItem: TodoItem!

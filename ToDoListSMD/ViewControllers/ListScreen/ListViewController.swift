@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class ListViewController: UIViewController {
     override var navigationItem: UINavigationItem {

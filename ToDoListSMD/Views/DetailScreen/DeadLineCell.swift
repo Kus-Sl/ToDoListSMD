@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class DeadlineCell: BaseCell {
     private var deadlineButton: UIButton?

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class BaseCell: UITableViewCell {
     lazy var content = defaultContentConfiguration()

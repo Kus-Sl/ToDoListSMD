@@ -6,23 +6,24 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
         let navigationController = UINavigationController(rootViewController: ListViewController())
         setupNavigationController(navigationController)
-        
+        setupLogger()
+
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = navigationController
         return true
     }
 
-    func setupNavigationController(_ controller: UINavigationController) {
+    private func setupNavigationController(_ controller: UINavigationController) {
         let style = NSMutableParagraphStyle()
         style.firstLineHeadIndent = 16
 
@@ -35,5 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         controller.navigationBar.standardAppearance = standardNavigationBarAppearance
         controller.navigationBar.tintColor = .ColorAsset.colorBlue
         controller.navigationBar.prefersLargeTitles = true
+    }
+
+    private func setupLogger() {
+        let fileLogger: DDFileLogger = DDFileLogger()
+        fileLogger.rollingFrequency = TimeInterval(60*60*24)
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+
+        let formatter = LogFormatter()
+        DDOSLogger.sharedInstance.logFormatter = formatter
+        DDLog.add(DDOSLogger.sharedInstance)
+        DDLog.add(fileLogger)
     }
 }

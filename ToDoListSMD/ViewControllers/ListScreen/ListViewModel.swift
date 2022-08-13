@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
 protocol ListViewModelProtocol {
     var isFilteredWithoutCompletedItems: Bool { get set }
