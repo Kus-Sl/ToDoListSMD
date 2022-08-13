@@ -17,18 +17,6 @@ struct TodoItem {
     let changeDate: Date?
     let deadline: Date?
 
-    var asCompleted: TodoItem {
-        TodoItem(
-            id: id,
-            text: text,
-            importance: importance,
-            isDone: true,
-            creationDate: creationDate,
-            changeDate: Date(),
-            deadline: deadline
-        )
-    }
-
     init(
         id: String = UUID().uuidString,
         text: String,
@@ -88,6 +76,22 @@ extension TodoItem {
     }
 }
 
+extension TodoItem {
+    var asCompleted: TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: true,
+            creationDate: creationDate,
+            changeDate: Date(),
+            deadline: deadline
+        )
+    }
+
+    // NB: реализовать обратный функционал
+}
+
 // MARK: Constants
 extension TodoItem {
     private enum Keys {
@@ -102,7 +106,7 @@ extension TodoItem {
 }
 
 enum Importance: String {
-     case important = "важная"
-     case ordinary = "обычная"
-     case unimportant = "неважная"
- }
+    case important = "важная"
+    case ordinary = "обычная"
+    case unimportant = "неважная"
+}
