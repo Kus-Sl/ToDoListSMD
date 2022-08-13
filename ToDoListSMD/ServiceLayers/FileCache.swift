@@ -9,36 +9,36 @@ import Foundation
 
 class FileCache {
     static private let fileName = "TaskList.txt"
-    private(set) var todoItems: [TodoItem] = []
+    private(set) var todoItems: Box<[TodoItem]> = Box(value: [])
 
     init() {
         try? load()
     }
 
     func add(_ todoItem: TodoItem) throws {
-        guard !todoItems.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
-        todoItems.append(todoItem)
+        guard !todoItems.value.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
+        todoItems.value.append(todoItem)
     }
 
     func update( _ todoItem: TodoItem) throws {
-        guard let index = todoItems.firstIndex(where: { $0.id == todoItem.id }) else { throw CacheError.nonexistentID }
-        todoItems[index] = todoItem
+        guard let index = todoItems.value.firstIndex(where: { $0.id == todoItem.id }) else { throw CacheError.nonexistentID }
+        todoItems.value[index] = todoItem
     }
 
     func delete(_ todoItemID: String) {
-        guard let index = todoItems.firstIndex(where: { $0.id == todoItemID }) else { return }
-        todoItems.remove(at: index)
+        guard let index = todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { return }
+        todoItems.value.remove(at: index)
     }
 
     func load(_ file: String = fileName) throws {
         guard let path = getPath(to: file) else { throw CacheError.invalidPath }
         guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
         guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
-        todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
+        todoItems.value = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
     func save(_ file: String = fileName) throws {
-        let jsonDict = todoItems.map { $0.json }
+        let jsonDict = todoItems.value.map { $0.json }
 
         guard JSONSerialization.isValidJSONObject(jsonDict),
               let path = getPath(to: file),

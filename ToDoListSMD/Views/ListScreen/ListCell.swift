@@ -9,19 +9,21 @@ import UIKit
 
 final class ListCell: UITableViewCell {
     private var todoItem: TodoItem!
-    private var viewModel: ListViewModelProtocol!
+    private var content: UIListContentConfiguration?
 
-    private lazy var content = defaultContentConfiguration()
+    override func prepareForReuse() {
+        contentConfiguration = nil
+    }
 
-    func configure(for indexPath: IndexPath, with viewModel: ListViewModelProtocol) {
-        self.viewModel = viewModel
-        todoItem = viewModel.getTodoItem(for: indexPath)
+    func configure(with todoItem: TodoItem) {
+        self.todoItem = todoItem
         setupContent()
     }
 
     private func setupContent() {
         backgroundColor = .ColorAsset.backSecondary
-        content.textProperties.numberOfLines = Constants.numberOfLines
+        content = defaultContentConfiguration()
+        content?.textProperties.numberOfLines = Constants.numberOfLines
 
         setupCheckmarkIcon()
         setupText()
@@ -33,16 +35,16 @@ final class ListCell: UITableViewCell {
 
     private func setupCheckmarkIcon() {
         guard !todoItem.isDone else {
-            content.image = .IconAsset.listCellCheckmarkDoneIcon
+            content?.image = .IconAsset.listCellCheckmarkDoneIcon
             return
         }
 
         guard let deadline = todoItem.deadline, deadline <= Date() else {
-            content.image = .IconAsset.listCellCheckmarkIcon
+            content?.image = .IconAsset.listCellCheckmarkIcon
             return
         }
 
-        content.image = .IconAsset.listCellCheckmarkExpiredIcon
+        content?.image = .IconAsset.listCellCheckmarkExpiredIcon
     }
 
     private func setupText() {
@@ -52,7 +54,7 @@ final class ListCell: UITableViewCell {
             attributesForText[.foregroundColor] = UIColor.ColorAsset.labelTertiary!
             attributesForText[.strikethroughStyle] = Constants.strikethroughStyleValue
 
-            content.attributedText = NSAttributedString(string: todoItem.text, attributes: attributesForText)
+            content?.attributedText = NSAttributedString(string: todoItem.text, attributes: attributesForText)
             return
         }
 
@@ -65,12 +67,12 @@ final class ListCell: UITableViewCell {
             let textString = NSMutableAttributedString(string: " \(todoItem.text)", attributes: attributesForText)
 
             textString.insert(attributedStringWithIcon, at: Constants.firstIndex)
-            content.attributedText = textString
+            content?.attributedText = textString
             return
         }
 
-        content.textProperties.color = .ColorAsset.labelPrimary!
-        content.text = todoItem.text
+        content?.textProperties.color = .ColorAsset.labelPrimary!
+        content?.text = todoItem.text
     }
 
     private func setupSecondaryText() {
@@ -90,7 +92,7 @@ final class ListCell: UITableViewCell {
         let secondaryTextString = NSMutableAttributedString(string: "", attributes: attributesForSecondaryText)
         secondaryTextString.append(attributedStringWithIcon)
         secondaryTextString.append(attributedStringWithDate)
-        content.secondaryAttributedText = secondaryTextString
+        content?.secondaryAttributedText = secondaryTextString
     }
 }
 

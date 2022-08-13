@@ -28,6 +28,7 @@ protocol DetailViewModelProtocol {
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
+    //NB: оптимизировать
     var text: String
     var importance: Importance
     var deadline: Box<Date?>
@@ -60,7 +61,7 @@ extension DetailViewModel {
     func saveOrUpdateTodoItem() {
         let newTodoItem = TodoItem(
             id: todoItem.id,
-            text: text,
+            text: delegate.getText(),
             importance: importance,
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,

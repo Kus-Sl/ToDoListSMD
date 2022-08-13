@@ -11,6 +11,7 @@ protocol DetailViewControllerDelegate: AnyObject {
     func showDatePicker()
     func hideDatePicker()
     func animateDatePicker()
+    func getText() -> String
 }
 
 final class DetailViewController: UIViewController {
@@ -194,6 +195,10 @@ extension DetailViewController: DetailViewControllerDelegate {
         UIView.animate(withDuration: Constants.animationDuration) {
             self.scrollView.layoutIfNeeded()
         }
+    }
+
+    func getText() -> String {
+        textView.text
     }
 }
 

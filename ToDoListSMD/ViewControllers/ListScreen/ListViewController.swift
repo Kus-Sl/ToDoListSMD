@@ -9,8 +9,7 @@ import UIKit
 
 final class ListViewController: UIViewController {
     override var navigationItem: UINavigationItem {
-        let item = UINavigationItem(title: Constants.navigationItemTitle)
-        return item
+        UINavigationItem(title: Constants.navigationItemTitle)
     }
 
     private lazy var tableView = UITableView()
@@ -23,11 +22,13 @@ final class ListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = .ColorAsset.backPrimary
         setupView()
         setupLayout()
-        viewModel = ListViewModel()
+
+        viewModel.bindViewControllerWithModel { _ in
+            self.tableView.reloadData()
+        }
     }
 
     private func setupView() {
@@ -90,17 +91,17 @@ final class ListViewController: UIViewController {
         newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon!.withTintColor(.ColorAsset.colorBlue!), for: .normal)
         newTodoItemButton.addTarget(self, action: #selector(newTodoItemButtonTapped), for: .touchUpInside)
 
-        let mopViewForNewTodoItemButton = UIView()
-        mopViewForNewTodoItemButton.backgroundColor = .ColorAsset.colorWhite
-        mopViewForNewTodoItemButton.isUserInteractionEnabled = false
+        let mockView = UIView()
+        mockView.backgroundColor = .ColorAsset.colorWhite
+        mockView.isUserInteractionEnabled = false
 
-        newTodoItemButton.insertSubview(mopViewForNewTodoItemButton, belowSubview: newTodoItemButton.imageView!)
-        mopViewForNewTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
+        newTodoItemButton.insertSubview(mockView, belowSubview: newTodoItemButton.imageView!)
+        mockView.translatesAutoresizingMaskIntoConstraints = false
 
-        mopViewForNewTodoItemButton.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
-        mopViewForNewTodoItemButton.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
-        mopViewForNewTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
-        mopViewForNewTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
+        mockView.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
+        mockView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
+        mockView.heightAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
+        mockView.widthAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
     }
 
     private func setupLayout() {
@@ -130,14 +131,14 @@ final class ListViewController: UIViewController {
 //MARK: Actions
 extension ListViewController {
     @objc private func newTodoItemButtonTapped() {
-
+        openDetailsScreen(for: nil)
     }
 
     @objc private func completedItemsButtonTapped() {
 
     }
 
-    private func openDetailsScreen(for indexPath: IndexPath) {
+    private func openDetailsScreen(for indexPath: IndexPath?) {
         let detailScreen = DetailViewController()
         detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
         present(UINavigationController(rootViewController: detailScreen), animated: true)
@@ -160,7 +161,7 @@ extension ListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as? ListCell else { return UITableViewCell() }
-        cell.configure(for: indexPath, with: viewModel)
+        cell.configure(with: viewModel.getTodoItem(for: indexPath))
         return cell
     }
 }
@@ -225,6 +226,6 @@ extension ListViewController {
         static let newTodoItemButtonShadowRadius: CGFloat = 8
         static let newTodoItemButtonSide: CGFloat = 46
         static let newTodoItemButtonBottomInset: CGFloat = -54
-        static let mopViewForNewTodoItemButtonSide: CGFloat = 20
+        static let moсkViewSide: CGFloat = 20
     }
 }

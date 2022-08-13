@@ -10,7 +10,8 @@ import Foundation
 protocol ListViewModelProtocol {
     var completedCount: Int { get }
 
-    func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel
+    func bindViewControllerWithModel(_ listener: @escaping ([TodoItem]) -> ())
+    func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel
 
     func completeTodoItem(with indexPath: IndexPath)
     func deleteTodoItem(with indexPath: IndexPath)
@@ -21,7 +22,7 @@ protocol ListViewModelProtocol {
 
 final class ListViewModel: ListViewModelProtocol {
     var completedCount: Int {
-        fileCache.todoItems.filter { $0.isDone }.count
+        fileCache.todoItems.value.filter { $0.isDone }.count
     }
 
     private lazy var fileCache = FileCache()
@@ -30,15 +31,23 @@ final class ListViewModel: ListViewModelProtocol {
         createMockTasks()
     }
 
-    func createDetailViewModel(for indexPath: IndexPath) -> DetailViewModel {
-        DetailViewModel(todoItem: getTodoItem(for: indexPath), fileCache: fileCache)
+    func bindViewControllerWithModel(_ listener: @escaping ([TodoItem]) -> ()) {
+        fileCache.todoItems.listener = listener
+    }
+
+    func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel {
+        guard let indexPath = indexPath else {
+            return DetailViewModel(todoItem: TodoItem(text: ""), fileCache: fileCache)
+        }
+
+        return DetailViewModel(todoItem: getTodoItem(for: indexPath), fileCache: fileCache)
     }
 }
 
 //MARK: Actions
 extension ListViewModel {
     func completeTodoItem(with indexPath: IndexPath) {
-        let completedTodoItem = fileCache.todoItems[indexPath.row].asCompleted
+        let completedTodoItem = fileCache.todoItems.value[indexPath.row].asCompleted
         do {
             try fileCache.update(completedTodoItem)
         } catch {
@@ -47,7 +56,7 @@ extension ListViewModel {
     }
 
     func deleteTodoItem(with indexPath: IndexPath) {
-        let deletingTodoItem = fileCache.todoItems[indexPath.row]
+        let deletingTodoItem = fileCache.todoItems.value[indexPath.row]
         fileCache.delete(deletingTodoItem.id)
     }
 }
@@ -55,11 +64,11 @@ extension ListViewModel {
 //MARK: Cell's data source
 extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
-        fileCache.todoItems[indexPath.row]
+        fileCache.todoItems.value[indexPath.row]
     }
 
     func getNumberOfRows() -> Int {
-        fileCache.todoItems.count
+        fileCache.todoItems.value.count
     }
 }
 
@@ -105,7 +114,7 @@ extension ListViewModel {
 
         let t2 = TodoItem(id: "22", text: "свежая мысль", importance: .important, isDone: false, creationDate: Date(), changeDate: nil, deadline: nil)
 
-        let t3 = TodoItem(id: "33", text: "здесь без умной мысли", importance: .unimportant, isDone: true, creationDate: Date(), changeDate: nil, deadline: Date())
+        let t3 = TodoItem(id: "33", text: "здесь без умной мысли", importance: .unimportant, isDone: true, creationDate: Date(), changeDate: nil, deadline: nil)
 
         let t4 = TodoItem(id: "44", text: "просрочка", importance: .important, isDone: false, creationDate: Date(), changeDate: nil, deadline: Date(timeIntervalSince1970: 124521))
 
