@@ -46,7 +46,7 @@ final class ListViewController: UIViewController {
 
     private func setupTableView() {
         tableView.backgroundColor = .clear
-        tableView.layer.cornerRadius = Constants.tableViewRadius
+//        tableView.layer.cornerRadius = Constants.tableViewRadius
         tableView.separatorColor = .ColorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
@@ -162,7 +162,34 @@ extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as? ListCell else { return UITableViewCell() }
         cell.configure(with: viewModel.getTodoItem(for: indexPath))
+        cornerRadius(for: cell, with: indexPath)
         return cell
+    }
+
+    //NB: заречафить + разобраться со сбросом углов при свайпе
+    func cornerRadius(for cell: UITableViewCell, with indexPath: IndexPath) {
+        let isFirstCell = indexPath.row == 0
+        let isLastCell = indexPath.row == tableView.numberOfRows(inSection: Constants.firstIndex) - 1
+
+        cell.clipsToBounds = true
+        if isFirstCell && isLastCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [
+                .layerMinXMinYCorner,
+                .layerMaxXMinYCorner,
+                .layerMaxXMaxYCorner,
+                .layerMinXMaxYCorner
+            ]
+        } else if isFirstCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if isLastCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            cell.layer.cornerRadius = .zero
+            cell.layer.maskedCorners = []
+        }
     }
 }
 
@@ -227,5 +254,6 @@ extension ListViewController {
         static let newTodoItemButtonSide: CGFloat = 46
         static let newTodoItemButtonBottomInset: CGFloat = -54
         static let moсkViewSide: CGFloat = 20
+        static let firstIndex = 0
     }
 }

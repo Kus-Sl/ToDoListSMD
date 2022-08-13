@@ -34,7 +34,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     var deadline: Box<Date?>
     var delegate: DetailViewControllerDelegate!
 
-    // NB: доковырять
+    //NB: доковырять
     private let todoItem: TodoItem
     private let fileCache: FileCache
     private var isNewTodoItem: Bool
