@@ -44,7 +44,7 @@ final class DeadlineCell: BaseCell {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension DeadlineCell {
     @objc private func switchControlChanged(target: UISwitch) {
         viewModel.changedSwitchControl(to: target.isOn)
@@ -91,7 +91,7 @@ extension DeadlineCell {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension DeadlineCell {
     private enum Constants {
         static let titleLabelTopInset: CGFloat = 17

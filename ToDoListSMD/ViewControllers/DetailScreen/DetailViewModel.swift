@@ -28,13 +28,13 @@ protocol DetailViewModelProtocol {
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
-    //NB: оптимизировать
+    // NB: оптимизировать
     var text: String
     var importance: Importance
     var deadline: Box<Date?>
     var delegate: DetailViewControllerDelegate!
 
-    //NB: доковырять
+    // NB: доковырять
     private let todoItem: TodoItem
     private let fileCache: FileCache
     private var isNewTodoItem: Bool
@@ -52,7 +52,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension DetailViewModel {
     func deleteTodoItem() {
         fileCache.delete(todoItem.id)
@@ -76,7 +76,7 @@ extension DetailViewModel {
         do {
             try fileCache.add(newTodoItem)
         } catch {
-            //NB: Показать алерт
+            // NB: Показать алерт
         }
     }
 
@@ -84,12 +84,12 @@ extension DetailViewModel {
         do {
             try fileCache.update(updatingTodoItem)
         } catch {
-            //NB: Показать алерт
+            // NB: Показать алерт
         }
     }
 }
 
-//MARK: Cell's controls methods
+// MARK: Cell's controls methods
 extension DetailViewModel {
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes) {
         switch index {
@@ -147,7 +147,7 @@ extension DetailViewModel {
     }
 }
 
-//MARK: Data source
+// MARK: Data source
 extension DetailViewModel {
     func getCellID(_ indexPath: IndexPath) -> String {
         cellTypes[indexPath.row].getClass().cellReuseIdentifier()

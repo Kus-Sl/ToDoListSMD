@@ -1,0 +1,38 @@
+disabled_rules:
+    - control_statement
+    - comma
+    - colon
+    - function_parameter_count
+    - trailing_whitespace
+    - void_return
+
+opt_in_rules:
+    - empty_count
+    - missing_docs
+    - trailing_newline
+    - force_unwrapping
+    - weak_delegate
+
+excluded:
+    - Pods
+
+force_cast: warning
+force_try:
+    severity: warning
+
+line_length:
+    - 200
+
+type_body_length:
+    - 300
+
+file_length:
+    warning: 500
+    error: 800
+
+type_name:
+    max_length:
+    warning: 30
+    error: 35
+    excluded: iPhone
+reporter: "xcode"

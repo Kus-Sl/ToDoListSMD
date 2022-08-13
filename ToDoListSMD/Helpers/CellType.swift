@@ -44,7 +44,7 @@ enum CellType {
         }
     }
 
-    func getClass() -> BaseCell.Type{
+    func getClass() -> BaseCell.Type {
         switch self {
         case .importance:
             return ImportanceCell.self

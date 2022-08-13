@@ -27,8 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         style.firstLineHeadIndent = 16
 
         let standardNavigationBarAppearance = UINavigationBarAppearance()
-        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary!]
-        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary!, .paragraphStyle: style]
+        standardNavigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary]
+        standardNavigationBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.ColorAsset.labelPrimary, .paragraphStyle: style]
         standardNavigationBarAppearance.backgroundColor = .ColorAsset.backPrimary
         standardNavigationBarAppearance.shadowColor = nil
 

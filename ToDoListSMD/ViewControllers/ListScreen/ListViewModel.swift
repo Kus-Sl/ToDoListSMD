@@ -43,14 +43,14 @@ final class ListViewModel: ListViewModelProtocol {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension ListViewModel {
     func completeTodoItem(with indexPath: IndexPath) {
         let completedTodoItem = fileCache.todoItems.value[indexPath.row].asCompleted
         do {
             try fileCache.update(completedTodoItem)
         } catch {
-            //NB: Показать алерт
+            // NB: Показать алерт
         }
     }
 
@@ -60,7 +60,7 @@ extension ListViewModel {
     }
 }
 
-//MARK: Data source
+// MARK: Data source
 extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
         isFilteredWithoutCompletedItems

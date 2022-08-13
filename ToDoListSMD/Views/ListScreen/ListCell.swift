@@ -51,7 +51,7 @@ final class ListCell: UITableViewCell {
         var attributesForText: [NSAttributedString.Key: Any] = [.font: UIFont.FontAsset.body]
 
         guard !todoItem.isDone else {
-            attributesForText[.foregroundColor] = UIColor.ColorAsset.labelTertiary!
+            attributesForText[.foregroundColor] = UIColor.ColorAsset.labelTertiary
             attributesForText[.strikethroughStyle] = Constants.strikethroughStyleValue
 
             content?.attributedText = NSAttributedString(string: todoItem.text, attributes: attributesForText)
@@ -59,11 +59,11 @@ final class ListCell: UITableViewCell {
         }
 
         guard todoItem.importance != .important else {
-            let textIcon = UIImage.IconAsset.importantSegmentedControlIcon!
+            let textIcon = UIImage.IconAsset.importantSegmentedControlIcon
             let textAttachmentIcon = NSTextAttachment(image: textIcon)
             let attributedStringWithIcon = NSAttributedString(attachment: textAttachmentIcon)
 
-            attributesForText[.foregroundColor] = UIColor.ColorAsset.labelPrimary!
+            attributesForText[.foregroundColor] = UIColor.ColorAsset.labelPrimary
             let textString = NSMutableAttributedString(string: " \(todoItem.text)", attributes: attributesForText)
 
             textString.insert(attributedStringWithIcon, at: Constants.firstIndex)
@@ -71,20 +71,20 @@ final class ListCell: UITableViewCell {
             return
         }
 
-        content?.textProperties.color = .ColorAsset.labelPrimary!
+        content?.textProperties.color = .ColorAsset.labelPrimary
         content?.text = todoItem.text
     }
 
     private func setupSecondaryText() {
         guard let deadline = todoItem.deadline, !todoItem.isDone else { return }
 
-        let secondaryTextIcon = UIImage.IconAsset.listCellDeadlineIcon!
+        let secondaryTextIcon = UIImage.IconAsset.listCellDeadlineIcon
         let secondaryTextAttachmentIcon = NSTextAttachment(image: secondaryTextIcon)
         let attributedStringWithIcon = NSAttributedString(attachment: secondaryTextAttachmentIcon)
 
         let attributesForSecondaryText: [NSAttributedString.Key: Any] = [
             .font: UIFont.FontAsset.subhead,
-            .foregroundColor: UIColor.ColorAsset.labelTertiary!
+            .foregroundColor: UIColor.ColorAsset.labelTertiary
         ]
 
         let stringDate = DateFormatter.formatter.string(from: deadline)
@@ -96,7 +96,7 @@ final class ListCell: UITableViewCell {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension ListCell {
     private enum Constants {
         static let strikethroughStyleValue = 1

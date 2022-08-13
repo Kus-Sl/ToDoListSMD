@@ -47,14 +47,14 @@ struct TodoItem {
     }
 }
 
-//MARK: JSON Conversion
+// MARK: JSON Conversion
 extension TodoItem {
     var json: Any {
         var jsonDict: [String: Any] = [
-            Keys.idKey : id,
-            Keys.textKey : text,
-            Keys.isDoneKey : isDone,
-            Keys.creationDateKey : creationDate.timeIntervalSince1970
+            Keys.idKey: id,
+            Keys.textKey: text,
+            Keys.isDoneKey: isDone,
+            Keys.creationDateKey: creationDate.timeIntervalSince1970
         ]
 
         if importance != .ordinary {
@@ -87,7 +87,7 @@ extension TodoItem {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension TodoItem {
     private enum Keys {
         static let idKey = "id"
@@ -105,4 +105,3 @@ enum Importance: String {
      case ordinary = "обычная"
      case unimportant = "неважная"
  }
-

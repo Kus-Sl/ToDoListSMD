@@ -57,7 +57,7 @@ final class ListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        //NB: зарефачить
+        // NB: зарефачить
         tableView.register(ListCell.self, forCellReuseIdentifier: ListCell.cellReuseIdentifier())
     }
 
@@ -82,21 +82,21 @@ final class ListViewController: UIViewController {
 
     private func setupNewTodoItemButton() {
         newTodoItemButton.backgroundColor = .clear
-        newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue?.cgColor
+        newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue.cgColor
         newTodoItemButton.layer.shadowOffset = Constants.newTodoItemButtonShadowOffset
         newTodoItemButton.layer.shadowOpacity = Constants.newTodoItemButtonShadowOpacity
         newTodoItemButton.layer.shadowRadius = Constants.newTodoItemButtonShadowRadius
         newTodoItemButton.layer.cornerRadius = Constants.newTodoItemButtonRadius
         newTodoItemButton.contentVerticalAlignment = .fill
         newTodoItemButton.contentHorizontalAlignment = .fill
-        newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon!.withTintColor(.ColorAsset.colorBlue!), for: .normal)
+        newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon.withTintColor(.ColorAsset.colorBlue), for: .normal)
         newTodoItemButton.addTarget(self, action: #selector(newTodoItemButtonTapped), for: .touchUpInside)
 
         let mockView = UIView()
         mockView.backgroundColor = .ColorAsset.colorWhite
         mockView.isUserInteractionEnabled = false
 
-        newTodoItemButton.insertSubview(mockView, belowSubview: newTodoItemButton.imageView!)
+        newTodoItemButton.insertSubview(mockView, belowSubview: newTodoItemButton.imageView ?? UIImageView())
         mockView.translatesAutoresizingMaskIntoConstraints = false
 
         mockView.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
@@ -129,7 +129,7 @@ final class ListViewController: UIViewController {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension ListViewController {
     @objc private func newTodoItemButtonTapped() {
         openDetailsScreen(for: nil)
@@ -156,7 +156,7 @@ extension ListViewController {
     }
 }
 
-//MARK: Table view data source
+// MARK: Table view data source
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.getNumberOfRows()
@@ -169,7 +169,7 @@ extension ListViewController: UITableViewDataSource {
         return cell
     }
 
-    //NB: заречафить + разобраться со сбросом углов при свайпе
+    // NB: заречафить + разобраться со сбросом углов при свайпе
     func cornerRadius(for cell: UITableViewCell, with indexPath: IndexPath) {
         let isFirstCell = indexPath.row == 0
         let isLastCell = indexPath.row == tableView.numberOfRows(inSection: Constants.firstIndex) - 1
@@ -196,7 +196,7 @@ extension ListViewController: UITableViewDataSource {
     }
 }
 
-//MARK: Table view delegate
+// MARK: Table view delegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -231,7 +231,7 @@ extension ListViewController: UITableViewDelegate {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension ListViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16

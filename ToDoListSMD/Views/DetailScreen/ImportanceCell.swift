@@ -28,7 +28,7 @@ final class ImportanceCell: BaseCell {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension ImportanceCell {
     @objc func segmentedControlChanged(target: UISegmentedControl) {
         if let selectedIndex = SegmentedControlIndexes(rawValue: target.selectedSegmentIndex) {
@@ -37,7 +37,7 @@ extension ImportanceCell {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension ImportanceCell {
     enum SegmentedControlIndexes: Int {
         case unimportant = 0
@@ -45,7 +45,7 @@ extension ImportanceCell {
         case important = 2
     }
     
-    private enum Constants  {
+    private enum Constants {
         static let ordinarySegmentedControlTitle = "нет"
         static let segmentedControlWidth = 150
         static let segmentedControlHeight = 36

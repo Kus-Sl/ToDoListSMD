@@ -9,22 +9,22 @@ import UIKit
 
 extension UIColor {
     enum ColorAsset {
-        static let backElevated = UIColor(named: "BackElevated")
-        static let backiOSPrimary = UIColor(named: "BackiOSPrimary")
-        static let backPrimary = UIColor(named: "BackPrimary")
-        static let backSecondary = UIColor(named: "BackSecondary")
-        static let colorBlue = UIColor(named: "ColorBlue")
-        static let colorGray = UIColor(named: "ColorGray")
-        static let colorGrayLight = UIColor(named: "ColorGrayLight")
-        static let colorGreen = UIColor(named: "ColorGreen")
-        static let colorRed = UIColor(named: "ColorRed")
-        static let colorWhite = UIColor(named: "ColorWhite")
-        static let labelDisable = UIColor(named: "LabelDisable")
-        static let labelPrimary = UIColor(named: "LabelPrimary")
-        static let labelSecondary = UIColor(named: "LabelSecondary")
-        static let labelTertiary = UIColor(named: "LabelTertiary")
-        static let supportNavBarBlur = UIColor(named: "SupportNavBarBlur")
-        static let supportOverlay = UIColor(named: "SupportOverlay")
-        static let supportSeparator = UIColor(named: "SupportSeparator")
+        static let backElevated = UIColor(named: "BackElevated") ?? .clear
+        static let backiOSPrimary = UIColor(named: "BackiOSPrimary") ?? .clear
+        static let backPrimary = UIColor(named: "BackPrimary") ?? .clear
+        static let backSecondary = UIColor(named: "BackSecondary") ?? .clear
+        static let colorBlue = UIColor(named: "ColorBlue") ?? .clear
+        static let colorGray = UIColor(named: "ColorGray") ?? .clear
+        static let colorGrayLight = UIColor(named: "ColorGrayLight") ?? .clear
+        static let colorGreen = UIColor(named: "ColorGreen") ?? .clear
+        static let colorRed = UIColor(named: "ColorRed") ?? .clear
+        static let colorWhite = UIColor(named: "ColorWhite") ?? .clear
+        static let labelDisable = UIColor(named: "LabelDisable") ?? .clear
+        static let labelPrimary = UIColor(named: "LabelPrimary") ?? .clear
+        static let labelSecondary = UIColor(named: "LabelSecondary") ?? .clear
+        static let labelTertiary = UIColor(named: "LabelTertiary") ?? .clear
+        static let supportNavBarBlur = UIColor(named: "SupportNavBarBlur") ?? .clear
+        static let supportOverlay = UIColor(named: "SupportOverlay") ?? .clear
+        static let supportSeparator = UIColor(named: "SupportSeparator") ?? .clear
     }
 }

@@ -39,7 +39,7 @@ final class CalendarCell: BaseCell {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension CalendarCell {
     @objc private func datePickerTapped() {
         viewModel.deadline.value = datePicker.date

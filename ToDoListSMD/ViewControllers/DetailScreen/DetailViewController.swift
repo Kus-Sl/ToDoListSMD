@@ -20,7 +20,7 @@ final class DetailViewController: UIViewController {
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
-        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.ColorAsset.labelTertiary!], for: .disabled)
+        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.ColorAsset.labelTertiary], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
@@ -85,7 +85,7 @@ final class DetailViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        //NB: зарефачить
+        // NB: зарефачить
         tableView.register(CellType.deadline.getClass(), forCellReuseIdentifier: CellType.deadline.getClass().cellReuseIdentifier())
         tableView.register(CellType.importance.getClass(), forCellReuseIdentifier: CellType.importance.getClass().cellReuseIdentifier())
         tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
@@ -133,7 +133,7 @@ final class DetailViewController: UIViewController {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension DetailViewController {
     @objc private func deleteButtonTapped() {
         viewModel.deleteTodoItem()
@@ -156,7 +156,7 @@ extension DetailViewController {
     }
 }
 
-//MARK: Table view data source
+// MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.getNumberOfRows()
@@ -170,14 +170,14 @@ extension DetailViewController: UITableViewDataSource {
     }
 }
 
-//MARK: Table view delegate
+// MARK: Table view delegate
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.getHeightForRows(indexPath)
     }
 }
 
-//MARK: Detail view controller delegate
+// MARK: Detail view controller delegate
 extension DetailViewController: DetailViewControllerDelegate {
     func showDatePicker() {
         tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
@@ -202,14 +202,14 @@ extension DetailViewController: DetailViewControllerDelegate {
     }
 }
 
-//MARK: Text view delegate
+// MARK: Text view delegate
 extension DetailViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         isEnableToSaveOrDelete()
     }
 }
 
-//MARK: Keyboards methods
+// MARK: Keyboards methods
 extension DetailViewController {
     private func registerForKeyBoardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -231,7 +231,7 @@ extension DetailViewController {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension DetailViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
