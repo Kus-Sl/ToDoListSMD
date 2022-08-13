@@ -9,6 +9,6 @@ s.author    = "Vyacheslav Kusakin"
 s.source = { :git => "/Helpers" }
 
 s.source_files  = "Helpers/**/*.{swift}"
-# s.resource  = "icon.png"
-# s.resources = "Resources/*.png"
+#s.resource_bundles = {
+#    'PodResources' => ['Helpers/*.{xcassets}'] }
 end
