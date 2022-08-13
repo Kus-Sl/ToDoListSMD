@@ -28,6 +28,7 @@ final class ListViewController: UIViewController {
 
         viewModel.bindViewControllerWithModel { _ in
             self.tableView.reloadData()
+            self.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self.viewModel.getCompletedTodoItemsCount())"
         }
     }
 
@@ -46,7 +47,6 @@ final class ListViewController: UIViewController {
 
     private func setupTableView() {
         tableView.backgroundColor = .clear
-//        tableView.layer.cornerRadius = Constants.tableViewRadius
         tableView.separatorColor = .ColorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
@@ -69,13 +69,14 @@ final class ListViewController: UIViewController {
     private func setupCompletedItemsCountLabel() {
         completedItemsCountLabel.textColor = .ColorAsset.labelTertiary
         completedItemsCountLabel.font = .FontAsset.subhead
-        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.completedCount)"
+        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.getCompletedTodoItemsCount())"
     }
 
     private func setupCompletedItemsButton() {
         completedItemsButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
         completedItemsButton.titleLabel?.font = .FontAsset.subheadline
-        completedItemsButton.setTitle(Constants.showCompletedItemsButtonTitle, for: .normal)
+        completedItemsButton.setTitle(Constants.hideCompletedItemsButtonTitle, for: .normal)
+        completedItemsButton.setTitle(Constants.showCompletedItemsButtonTitle, for: .selected)
         completedItemsButton.addTarget(self, action: #selector(completedItemsButtonTapped), for: .touchUpInside)
     }
 
@@ -134,8 +135,10 @@ extension ListViewController {
         openDetailsScreen(for: nil)
     }
 
-    @objc private func completedItemsButtonTapped() {
-
+    @objc private func completedItemsButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        viewModel.isFilteredWithoutCompletedItems = sender.isSelected
+        tableView.reloadData()
     }
 
     private func openDetailsScreen(for indexPath: IndexPath?) {

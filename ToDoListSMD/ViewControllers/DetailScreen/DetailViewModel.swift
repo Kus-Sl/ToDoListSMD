@@ -147,7 +147,7 @@ extension DetailViewModel {
     }
 }
 
-//MARK: Cell's data source
+//MARK: Data source
 extension DetailViewModel {
     func getCellID(_ indexPath: IndexPath) -> String {
         cellTypes[indexPath.row].getClass().cellReuseIdentifier()
