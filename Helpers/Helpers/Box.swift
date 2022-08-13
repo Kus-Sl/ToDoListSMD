@@ -7,21 +7,21 @@
 
 import Foundation
 
-class Box<T> {
-    typealias Listener = (T) -> ()
+public class Box<T> {
+    public typealias Listener = (T) -> ()
 
-    var listener: Listener?
-    var value: T {
+    public var listener: Listener?
+    public var value: T {
         didSet {
             listener?(value)
         }
     }
 
-    init(value: T) {
+    public init(value: T) {
         self.value = value
     }
 
-    func bind(listener: @escaping Listener) {
+    public func bind(listener: @escaping Listener) {
         self.listener = listener
         listener(value)
     }

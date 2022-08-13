@@ -7,6 +7,7 @@
 
 import Foundation
 import CocoaLumberjack
+import Helpers
 
 protocol DetailViewModelProtocol {
     var text: String { get }

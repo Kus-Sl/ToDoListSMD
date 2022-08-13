@@ -7,6 +7,7 @@
 
 import Foundation
 import CocoaLumberjack
+import Helpers
 
 class FileCache {
     static private let fileName = "TaskList.txt"

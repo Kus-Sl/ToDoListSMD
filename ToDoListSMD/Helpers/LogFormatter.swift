@@ -19,7 +19,7 @@ class LogFormatter: NSObject, DDLogFormatter {
         default: logLevel = "[Verbose] -> "
         }
 
-        let formatterString = "\(logLevel) \(logMessage.fileName) | \(logMessage.function ?? "") | \(logMessage.line) | \(logMessage.message) \r "
+        let formatterString = "\(logLevel) \(logMessage.fileName) | \(logMessage.function ?? "") | \(logMessage.line) | \(logMessage.message)"
 
         return formatterString
     }

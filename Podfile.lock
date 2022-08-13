@@ -2,10 +2,12 @@ PODS:
   - CocoaLumberjack/Core (3.7.0)
   - CocoaLumberjack/Swift (3.7.0):
     - CocoaLumberjack/Core
+  - Helpers (0.0.1)
   - SwiftLint (0.46.2)
 
 DEPENDENCIES:
   - CocoaLumberjack/Swift (= 3.7)
+  - Helpers (from `Helpers`)
   - SwiftLint (= 0.46.2)
 
 SPEC REPOS:
@@ -13,10 +15,15 @@ SPEC REPOS:
     - CocoaLumberjack
     - SwiftLint
 
+EXTERNAL SOURCES:
+  Helpers:
+    :path: Helpers
+
 SPEC CHECKSUMS:
   CocoaLumberjack: e8955b9d337ac307103b0a34fd141c32f27e53c5
+  Helpers: b775032488140d309c0c012d3067befaeea9d8dc
   SwiftLint: 6bc52a21f0fd44cab9aa2dc8e534fb9f5e3ec507
 
-PODFILE CHECKSUM: d429fb73b681722bafc93147fbcc7e827f8d9bc5
+PODFILE CHECKSUM: 1f6fdd142b509746a0bb845bad9a4fe9ddcd6412
 
 COCOAPODS: 1.11.3

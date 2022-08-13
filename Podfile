@@ -5,6 +5,7 @@ target 'ToDoListSMD' do
 	
 	pod 'SwiftLint', '= 0.46.2'
 	pod 'CocoaLumberjack/Swift', '= 3.7'
+	pod ‘Helpers’, :path => 'Helpers‘
 
   target 'ToDoListSMDTests' do
     inherit! :search_paths
