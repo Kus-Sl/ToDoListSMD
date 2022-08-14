@@ -138,7 +138,9 @@ extension TodoService {
 // MARK: Network actions
 extension TodoService {
     private func loadDataFromNetwork(completion: @escaping (Result<([TodoItem]), Error>) -> ()) {
-        completion(.failure(CacheError.nonexistentID))
+        networkService.load { result in
+            completion(result)
+        }
     }
 }
 
