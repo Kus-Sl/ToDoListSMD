@@ -9,20 +9,16 @@ import Foundation
 import CocoaLumberjack
 import Helpers
 
-class FileCache {
+final class FileCache {
     static private let fileName = "TaskList.txt"
     private(set) var todoItems: Box<[TodoItem]> = Box(value: [])
-
-    init() {
-        try? load()
-    }
 
     func add(_ todoItem: TodoItem) throws {
         guard !todoItems.value.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
         todoItems.value.append(todoItem)
     }
 
-    func update( _ todoItem: TodoItem) throws {
+    func update(_ todoItem: TodoItem) throws {
         guard let index = todoItems.value.firstIndex(where: { $0.id == todoItem.id }) else { throw CacheError.nonexistentID }
         todoItems.value[index] = todoItem
     }
@@ -30,13 +26,6 @@ class FileCache {
     func delete(_ todoItemID: String) {
         guard let index = todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { return }
         todoItems.value.remove(at: index)
-    }
-
-    func load(_ file: String = fileName) throws {
-        guard let path = getPath(to: file) else { throw CacheError.invalidPath }
-        guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
-        guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
-        todoItems.value = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
     func save(_ file: String = fileName) throws {
@@ -53,6 +42,13 @@ class FileCache {
         } catch {
             throw CacheError.savingError
         }
+    }
+
+    func load(_ file: String = fileName) throws {
+        guard let path = getPath(to: file) else { throw CacheError.invalidPath }
+        guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
+        guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
+        todoItems.value = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
     private func getPath(to file: String) -> URL? {

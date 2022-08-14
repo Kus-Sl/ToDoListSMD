@@ -11,6 +11,9 @@
 		7AE6E7DBBA1476AA4160246A /* Pods_ToDoListSMD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF6337B9C557601BDC7AEEF /* Pods_ToDoListSMD.framework */; };
 		A82056AC289FEBE100738AE1 /* Extension + UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */; };
 		A87F2F34289113880079713C /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F2F33289113880079713C /* FileCache.swift */; };
+		A89621BC28A8F064004ADDE9 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89621BB28A8F064004ADDE9 /* NetworkService.swift */; };
+		A89621BE28A8F0A7004ADDE9 /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89621BD28A8F0A7004ADDE9 /* FileCacheService.swift */; };
+		A89621C228A917E0004ADDE9 /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89621C128A917E0004ADDE9 /* TodoService.swift */; };
 		A8A253D028A8057A0036A107 /* LogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A253CF28A8057A0036A107 /* LogFormatter.swift */; };
 		A8A6E2532896F89200CEFEEF /* DeadLineCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */; };
 		A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6E24F2896F89200CEFEEF /* CalendarCell.swift */; };
@@ -64,6 +67,9 @@
 		94AB854A0CBB2801E4F0E518 /* Pods-ToDoListSMDUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoListSMDUITests.release.xcconfig"; path = "Target Support Files/Pods-ToDoListSMDUITests/Pods-ToDoListSMDUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIImage.swift"; sourceTree = "<group>"; };
 		A87F2F33289113880079713C /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
+		A89621BB28A8F064004ADDE9 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		A89621BD28A8F0A7004ADDE9 /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
+		A89621C128A917E0004ADDE9 /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoService.swift; sourceTree = "<group>"; };
 		A8A253CF28A8057A0036A107 /* LogFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFormatter.swift; sourceTree = "<group>"; };
 		A8A6E24E2896F89200CEFEEF /* DeadLineCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeadLineCell.swift; sourceTree = "<group>"; };
 		A8A6E24F2896F89200CEFEEF /* CalendarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
@@ -304,6 +310,9 @@
 		A8C1805B289015050085E331 /* ServiceLayers */ = {
 			isa = PBXGroup;
 			children = (
+				A89621C128A917E0004ADDE9 /* TodoService.swift */,
+				A89621BD28A8F0A7004ADDE9 /* FileCacheService.swift */,
+				A89621BB28A8F064004ADDE9 /* NetworkService.swift */,
 				A87F2F33289113880079713C /* FileCache.swift */,
 			);
 			path = ServiceLayers;
@@ -573,11 +582,14 @@
 				A8A6E2562896F89200CEFEEF /* ImportanceCell.swift in Sources */,
 				A8ADE1D1289D99EB000FFBA3 /* Extension + UIFont.swift in Sources */,
 				A8A6E2552896F89200CEFEEF /* BaseCell.swift in Sources */,
+				A89621BC28A8F064004ADDE9 /* NetworkService.swift in Sources */,
 				A8ADE1CD289D8F65000FFBA3 /* Extension + UITableViewCell.swift in Sources */,
+				A89621BE28A8F0A7004ADDE9 /* FileCacheService.swift in Sources */,
 				A8ADE1CB289D8EA6000FFBA3 /* CellType.swift in Sources */,
 				A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */,
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8B5CE7E289FB1E300F2CDFC /* ListViewModel.swift in Sources */,
+				A89621C228A917E0004ADDE9 /* TodoService.swift in Sources */,
 				A8A253D028A8057A0036A107 /* LogFormatter.swift in Sources */,
 				A82056AC289FEBE100738AE1 /* Extension + UIImage.swift in Sources */,
 				A8D1BF58289970AB00E35E4C /* DetailViewModel.swift in Sources */,
