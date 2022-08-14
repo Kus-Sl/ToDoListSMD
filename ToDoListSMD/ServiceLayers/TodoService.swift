@@ -12,7 +12,7 @@ import Helpers
 protocol TodoServiceProtocol {
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func delete(_ todoItemID: String)
+    func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
     func save()
 }
 
@@ -48,8 +48,12 @@ extension TodoService {
         }
     }
 
-    func delete(_ todoItemID: String) {
-        deleteFromCache(todoItemID: todoItemID)
+    func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
+        deleteFromCache(todoItemID: todoItemID) { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
     }
 
     func save() {
@@ -123,8 +127,10 @@ extension TodoService {
         }
     }
 
-    private func deleteFromCache(todoItemID: String) {
-        fileCacheService.delete(todoItemID: todoItemID)
+    private func deleteFromCache(todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
+        fileCacheService.delete(todoItemID: todoItemID) { result in
+            completion(result)
+        }
     }
 
     private func saveToCache(completion: @escaping (Result<(), Error>) -> ()) {

@@ -57,7 +57,11 @@ extension ListViewModel {
 
     func deleteTodoItem(with indexPath: IndexPath) {
         let deletingTodoItem = fileCache.todoItems.value[indexPath.row]
-        fileCache.delete(deletingTodoItem.id)
+        do {
+            try fileCache.delete(deletingTodoItem.id)
+        } catch {
+            // NB: Показать алерт
+        }
     }
 }
 

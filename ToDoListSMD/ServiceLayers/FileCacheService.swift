@@ -11,7 +11,7 @@ import Helpers
 protocol FileCacheServiceProtocol {
     func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func delete(todoItemID: String)
+    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
     func save(to file: String, completion: @escaping (Result<(), Error>) -> ())
     func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ())
 }
@@ -42,9 +42,14 @@ final class FileCacheService: FileCacheServiceProtocol {
         }
     }
 
-    func delete(todoItemID: String) {
+    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
         fileCacheQueue.async { [weak self] in
-            self?.fileCache.delete(todoItemID)
+            do {
+                try self?.fileCache.delete(todoItemID)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
 

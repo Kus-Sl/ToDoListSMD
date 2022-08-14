@@ -23,8 +23,8 @@ final class FileCache {
         todoItems.value[index] = todoItem
     }
 
-    func delete(_ todoItemID: String) {
-        guard let index = todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { return }
+    func delete(_ todoItemID: String) throws {
+        guard let index = todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { throw CacheError.nonexistentID }
         todoItems.value.remove(at: index)
     }
 

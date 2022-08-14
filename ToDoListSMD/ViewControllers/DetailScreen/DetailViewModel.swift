@@ -57,7 +57,11 @@ final class DetailViewModel: DetailViewModelProtocol {
 // MARK: Actions
 extension DetailViewModel {
     func deleteTodoItem() {
-        fileCache.delete(todoItem.id)
+        do {
+            try fileCache.delete(todoItem.id)
+        } catch {
+            // NB: Показать алерт
+        }
     }
 
     func saveOrUpdateTodoItem() {
