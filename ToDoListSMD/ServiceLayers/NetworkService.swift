@@ -15,6 +15,24 @@ protocol NetworkServiceProtocol {
     func load(completion: @escaping (Result<([TodoItem]), Error>) -> ())
 }
 
-final class NetworkService {
-    
+final class NetworkService: NetworkServiceProtocol {
+    func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
+
+    }
+
+    func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
+
+    }
+
+    func delete(todoItemID: String) {
+
+    }
+
+    func save(completion: @escaping (Result<(), Error>) -> ()) {
+
+    }
+
+    func load(completion: @escaping (Result<([TodoItem]), Error>) -> ()) {
+
+    }
 }

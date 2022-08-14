@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CocoaLumberjack
 import Helpers
 
 protocol FileCacheServiceProtocol {
@@ -69,7 +70,7 @@ final class FileCacheService: FileCacheServiceProtocol {
             guard let self = self else { return }
             do {
                 try self.fileCache.load(file)
-                completion(.success(self.fileCache.todoItems.value))
+                completion(.success(self.fileCache.todoItems))
             } catch {
                 completion(.failure(error))
             }

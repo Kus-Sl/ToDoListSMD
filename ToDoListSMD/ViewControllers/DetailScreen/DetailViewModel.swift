@@ -38,14 +38,14 @@ final class DetailViewModel: DetailViewModelProtocol {
 
     // NB: доковырять
     private let todoItem: TodoItem
-    private let fileCache: FileCache
+    private let todoService: TodoServiceProtocol
     private var isNewTodoItem: Bool
     private lazy var isHiddenDatePicker = true
     private lazy var cellTypes: [CellType] = [.importance, .deadline]
 
-    required init(todoItem: TodoItem, fileCache: FileCache) {
+    required init(_ todoItem: TodoItem, _ todoService: TodoServiceProtocol) {
         self.todoItem = todoItem
-        self.fileCache = fileCache
+        self.todoService = todoService
         text = todoItem.text
         importance = todoItem.importance
         deadline = Box(value: todoItem.deadline)
@@ -57,10 +57,14 @@ final class DetailViewModel: DetailViewModelProtocol {
 // MARK: Actions
 extension DetailViewModel {
     func deleteTodoItem() {
-        do {
-            try fileCache.delete(todoItem.id)
-        } catch {
-            // NB: Показать алерт
+        todoService.delete(todoItem.id) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
         }
     }
 
@@ -79,18 +83,26 @@ extension DetailViewModel {
     }
 
     private func save(_ newTodoItem: TodoItem) {
-        do {
-            try fileCache.add(newTodoItem)
-        } catch {
-            // NB: Показать алерт
+        todoService.add(newTodoItem) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
         }
     }
 
     private func update(_ updatingTodoItem: TodoItem) {
-        do {
-            try fileCache.update(updatingTodoItem)
-        } catch {
-            // NB: Показать алерт
+        todoService.update(updatingTodoItem) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
         }
     }
 }

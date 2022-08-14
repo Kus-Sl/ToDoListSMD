@@ -13,13 +13,21 @@ final class ListViewController: UIViewController {
         UINavigationItem(title: Constants.navigationItemTitle)
     }
 
+    private var viewModel: ListViewModelProtocol
     private lazy var tableView = UITableView()
     private lazy var tableViewHeaderView = UIView()
     private lazy var completedItemsCountLabel = UILabel()
     private lazy var completedItemsButton = UIButton()
     private lazy var newTodoItemButton = UIButton()
 
-    private lazy var viewModel: ListViewModelProtocol = ListViewModel()
+    init(_ viewModel: ListViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,9 +35,11 @@ final class ListViewController: UIViewController {
         setupView()
         setupLayout()
 
-        viewModel.bindViewControllerWithModel { _ in
-            self.tableView.reloadData()
-            self.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self.viewModel.getCompletedTodoItemsCount())"
+        viewModel.bindViewControllerWithModel { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                self?.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self?.viewModel.getCompletedTodoItemsCount() ?? 0)"
+            }
         }
     }
 

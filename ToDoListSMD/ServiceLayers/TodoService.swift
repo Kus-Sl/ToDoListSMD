@@ -10,6 +10,8 @@ import CocoaLumberjack
 import Helpers
 
 protocol TodoServiceProtocol {
+    var todoItems: Box<[TodoItem]> { get }
+
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
@@ -21,9 +23,9 @@ final class TodoService: TodoServiceProtocol {
     private let fileCacheService: FileCacheServiceProtocol
     private let networkService: NetworkServiceProtocol
     private let todoServiceQueue = DispatchQueue(label: "todoServiceQueue", attributes: [.concurrent])
-    private var todoItems: Box<[TodoItem]> = Box(value: []) // завязать модель с этим
+    private(set) var todoItems: Box<[TodoItem]> = Box(value: [])
 
-    init(fileCacheService: FileCacheServiceProtocol, networkService: NetworkServiceProtocol) {
+    init(_ fileCacheService: FileCacheServiceProtocol, _ networkService: NetworkServiceProtocol) {
         self.fileCacheService = fileCacheService
         self.networkService = networkService
         loadData()
@@ -33,24 +35,27 @@ final class TodoService: TodoServiceProtocol {
 // MARK: Main actions
 extension TodoService {
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        addToCache(todoItem) { result in
+        addToCache(todoItem) { [weak self] result in
             DispatchQueue.main.async {
+                self?.add(todoItem)
                 completion(result)
             }
         }
     }
 
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        updateInCache(todoItem) { result in
+        updateInCache(todoItem) { [weak self] result in
             DispatchQueue.main.async {
+                self?.update(todoItem)
                 completion(result)
             }
         }
     }
 
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
-        deleteFromCache(todoItemID: todoItemID) { result in
+        deleteFromCache(todoItemID: todoItemID) { [weak self] result in
             DispatchQueue.main.async {
+                self?.delete(todoItemID)
                 completion(result)
             }
         }
@@ -63,7 +68,7 @@ extension TodoService {
                 break
             case .failure(let error):
                 DDLogInfo(error)
-                // NB: выдать аллерт
+                // NB: обработать
             }
         }
     }
@@ -81,7 +86,7 @@ extension TodoService {
                         self.setTodoItems(cacheItems)
                     case .failure(let error):
                         DDLogInfo(error)
-                        // NB: выдать аллерт
+                        // NB: обработать
                     }
                 }
             }
@@ -106,10 +111,34 @@ extension TodoService {
     }
 }
 
+// MARK: TodoItems model methods
+extension TodoService {
+    private func add(_ todoItem: TodoItem) {
+        todoServiceQueue.async { [weak self] in
+            guard !(self?.todoItems.value.contains(where: { $0.id == todoItem.id}) ?? true) else { return }
+            self?.todoItems.value.append(todoItem)
+        }
+    }
+
+    private func update(_ todoItem: TodoItem) {
+        todoServiceQueue.async { [weak self] in
+            guard let index = self?.todoItems.value.firstIndex(where: { $0.id == todoItem.id }) else { return }
+            self?.todoItems.value[index] = todoItem
+        }
+    }
+
+    private func delete(_ todoItemID: String) {
+        todoServiceQueue.async { [weak self] in
+            guard let index = self?.todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { return }
+            self?.todoItems.value.remove(at: index)
+        }
+    }
+}
+
 // MARK: Network actions
 extension TodoService {
     private func loadDataFromNetwork(completion: @escaping (Result<([TodoItem]), Error>) -> ()) {
-
+        completion(.failure(CacheError.nonexistentID))
     }
 }
 

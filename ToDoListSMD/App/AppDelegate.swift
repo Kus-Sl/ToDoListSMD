@@ -11,9 +11,12 @@ import CocoaLumberjack
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    let todoService = TodoService(FileCacheService(), NetworkService())
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        let navigationController = UINavigationController(rootViewController: ListViewController())
+        let listViewModel = ListViewModel(todoService)
+        let listViewController = ListViewController(listViewModel)
+        let navigationController = UINavigationController(rootViewController: listViewController)
         setupNavigationController(navigationController)
         setupLogger()
 
@@ -23,6 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func applicationWillResignActive(_ application: UIApplication) {
+        todoService.save()
+    }
+}
+
+// MARK: Support methods
+extension AppDelegate {
     private func setupNavigationController(_ controller: UINavigationController) {
         let style = NSMutableParagraphStyle()
         style.firstLineHeadIndent = 16
