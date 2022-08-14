@@ -13,7 +13,7 @@ protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
     var deadline: Box<Date?> { get set }
-    var delegate: DetailViewControllerDelegate! { get set }
+    var delegate: DetailViewControllerDelegate? { get set }
 
     func deleteTodoItem()
     func saveOrUpdateTodoItem()
@@ -34,7 +34,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     var text: String
     var importance: Importance
     var deadline: Box<Date?>
-    var delegate: DetailViewControllerDelegate!
+    weak var delegate: DetailViewControllerDelegate?
 
     // NB: доковырять
     private let todoItem: TodoItem
@@ -67,7 +67,7 @@ extension DetailViewModel {
     func saveOrUpdateTodoItem() {
         let newTodoItem = TodoItem(
             id: todoItem.id,
-            text: delegate.getText(),
+            text: delegate?.getText() ?? "",
             importance: importance,
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,
@@ -138,18 +138,18 @@ extension DetailViewModel {
         ? showDatePicker()
         : hideDatePicker()
 
-        delegate.animateDatePicker()
+        delegate?.animateDatePicker()
         isHiddenDatePicker.toggle()
     }
 
     private func showDatePicker() {
         cellTypes.append(.calendar)
-        delegate.showDatePicker()
+        delegate?.showDatePicker()
     }
 
     private func hideDatePicker() {
         cellTypes.removeLast()
-        delegate.hideDatePicker()
+        delegate?.hideDatePicker()
     }
 }
 

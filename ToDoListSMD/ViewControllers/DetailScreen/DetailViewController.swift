@@ -16,7 +16,7 @@ protocol DetailViewControllerDelegate: AnyObject {
 }
 
 final class DetailViewController: UIViewController {
-    var viewModel: DetailViewModelProtocol!
+    private var viewModel: DetailViewModelProtocol
 
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
@@ -33,6 +33,15 @@ final class DetailViewController: UIViewController {
     private lazy var deleteButton = UIButton()
 
     private lazy var tableViewHeight = NSLayoutConstraint()
+
+    init(_ viewModel: DetailViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

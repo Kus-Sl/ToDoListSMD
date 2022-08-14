@@ -143,8 +143,8 @@ extension ListViewController {
     }
 
     private func openDetailsScreen(for indexPath: IndexPath?) {
-        let detailScreen = DetailViewController()
-        detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
+        let detailScreenViewModel = viewModel.createDetailViewModel(for: indexPath)
+        let detailScreen = DetailViewController(detailScreenViewModel)
         present(UINavigationController(rootViewController: detailScreen), animated: true)
     }
 
