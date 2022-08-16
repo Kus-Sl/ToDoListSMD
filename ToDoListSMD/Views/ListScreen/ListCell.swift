@@ -40,7 +40,7 @@ final class ListCell: UITableViewCell {
             return
         }
 
-        guard let deadline = todoItem.deadline, deadline <= Date() else {
+        guard let deadline = todoItem.deadline, Date(timeIntervalSince1970: TimeInterval(deadline)) <= Date() else {
             content?.image = .IconAsset.listCellCheckmarkIcon
             return
         }
@@ -88,7 +88,7 @@ final class ListCell: UITableViewCell {
             .foregroundColor: UIColor.ColorAsset.labelTertiary
         ]
 
-        let stringDate = DateFormatter.formatter.string(from: deadline)
+        let stringDate = DateFormatter.formatter.string(from: Date(timeIntervalSince1970: TimeInterval(deadline)))
         let attributedStringWithDate = NSAttributedString(string: stringDate, attributes: attributesForSecondaryText)
         let secondaryTextString = NSMutableAttributedString(string: "", attributes: attributesForSecondaryText)
         secondaryTextString.append(attributedStringWithIcon)

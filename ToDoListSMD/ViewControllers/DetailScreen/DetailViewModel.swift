@@ -12,7 +12,7 @@ import Helpers
 protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
-    var deadline: Box<Date?> { get set }
+    var deadline: Box<Int?> { get set }
     var delegate: DetailViewControllerDelegate? { get set }
 
     func deleteTodoItem()
@@ -33,7 +33,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     // NB: оптимизировать
     var text: String
     var importance: Importance
-    var deadline: Box<Date?>
+    var deadline: Box<Int?>
     weak var delegate: DetailViewControllerDelegate?
 
     // NB: доковырять
@@ -75,7 +75,7 @@ extension DetailViewModel {
             importance: importance,
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,
-            changeDate: Date(),
+            changeDate: Int(Date().timeIntervalSince1970),
             deadline: deadline.value
         )
 
@@ -137,7 +137,7 @@ extension DetailViewModel {
 
     func changedSwitchControl(to status: Bool) {
         deadline.value = status
-        ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        ? Int((Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()).timeIntervalSince1970)
         : nil
 
         if !isHiddenDatePicker && deadline.value == nil {

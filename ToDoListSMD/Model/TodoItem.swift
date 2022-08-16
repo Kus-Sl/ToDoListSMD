@@ -13,18 +13,18 @@ struct TodoItem {
     let text: String
     let importance: Importance
     let isDone: Bool
-    let creationDate: Date
-    let changeDate: Date?
-    let deadline: Date?
+    let creationDate: Int
+    let changeDate: Int?
+    let deadline: Int?
 
     init(
         id: String = UUID().uuidString,
         text: String,
         importance: Importance = .ordinary,
         isDone: Bool = false,
-        creationDate: Date = Date(),
-        changeDate: Date? = nil,
-        deadline: Date? = nil
+        creationDate: Int = Int(Date().timeIntervalSince1970),
+        changeDate: Int? = nil,
+        deadline: Int? = nil
     ) {
         self.id = id
         self.text = text
@@ -43,7 +43,7 @@ extension TodoItem {
             Keys.idKey: id,
             Keys.textKey: text,
             Keys.isDoneKey: isDone,
-            Keys.creationDateKey: creationDate.timeIntervalSince1970
+            Keys.creationDateKey: creationDate
         ]
 
         if importance != .ordinary {
@@ -51,11 +51,11 @@ extension TodoItem {
         }
 
         if let deadline = deadline {
-            jsonDict[Keys.deadlineKey] = deadline.timeIntervalSince1970
+            jsonDict[Keys.deadlineKey] = deadline
         }
 
         if let changeDate = changeDate {
-            jsonDict[Keys.changeDateKey] = changeDate.timeIntervalSince1970
+            jsonDict[Keys.changeDateKey] = changeDate
         }
 
         return jsonDict
@@ -69,9 +69,9 @@ extension TodoItem {
             text: jsonDict[Keys.textKey] as? String ?? "",
             importance: .init(rawValue: jsonDict[Keys.importanceKey] as? String ?? "") ?? .ordinary,
             isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
-            creationDate: DateFormatter.getDate(from: jsonDict[Keys.creationDateKey] as Any) ?? Date(),
-            changeDate: DateFormatter.getDate(from: jsonDict[Keys.changeDateKey] as Any),
-            deadline: DateFormatter.getDate(from: jsonDict[Keys.deadlineKey] as Any)
+            creationDate: jsonDict[Keys.creationDateKey] as? Int ?? Int(Date().timeIntervalSince1970),
+            changeDate: jsonDict[Keys.changeDateKey] as? Int,
+            deadline: jsonDict[Keys.deadlineKey] as? Int
         )
     }
 }
@@ -84,7 +84,7 @@ extension TodoItem {
             importance: importance,
             isDone: true,
             creationDate: creationDate,
-            changeDate: Date(),
+            changeDate: Int(Date().timeIntervalSince1970),
             deadline: deadline
         )
     }

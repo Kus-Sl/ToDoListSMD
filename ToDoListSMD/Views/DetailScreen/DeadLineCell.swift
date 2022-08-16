@@ -63,7 +63,8 @@ extension DeadlineCell {
         deadlineButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
         deadlineButton.titleLabel?.font = .FontAsset.footnote
         viewModel.deadline.bind { date in
-            deadlineButton.setTitle(DateFormatter.formatter.string(from: date ?? Date()), for: .normal)
+            guard let date = date else { return }
+            deadlineButton.setTitle(DateFormatter.formatter.string(from: Date(timeIntervalSince1970: TimeInterval(date))), for: .normal)
         }
         deadlineButton.addTarget(self, action: #selector(deadlineButtonTapped), for: .touchUpInside)
 
