@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 struct Response: Codable {
-    let status: String
-    let list: [TodoItemNetwork]
+    let element: TodoItemNetwork?
+    let list: [TodoItemNetwork]?
     let revision: Int?
 }
 

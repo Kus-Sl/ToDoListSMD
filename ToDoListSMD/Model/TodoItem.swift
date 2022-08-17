@@ -134,7 +134,7 @@ extension TodoItem {
 }
 
 enum Importance: String {
-    case important = "важная"
-    case ordinary = "обычная"
-    case unimportant = "неважная"
+    case important = "important"
+    case ordinary = "basic"
+    case unimportant = "low"
 }
