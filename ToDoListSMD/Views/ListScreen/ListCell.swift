@@ -59,7 +59,7 @@ final class ListCell: UITableViewCell {
             return
         }
 
-        guard todoItem.importance != .important else {
+        guard todoItem.importance != Importance.important.rawValue else {
             let textIcon = UIImage.IconAsset.importantSegmentedControlIcon
             let textAttachmentIcon = NSTextAttachment(image: textIcon)
             let attributedStringWithIcon = NSAttributedString(attachment: textAttachmentIcon)

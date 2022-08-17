@@ -47,7 +47,7 @@ final class DetailViewModel: DetailViewModelProtocol {
         self.todoItem = todoItem
         self.todoService = todoService
         text = todoItem.text
-        importance = todoItem.importance
+        importance = Importance(rawValue: todoItem.importance) ?? Importance.ordinary
         deadline = Box(value: todoItem.deadline)
 
         isNewTodoItem = todoItem.text.isEmpty
@@ -72,11 +72,12 @@ extension DetailViewModel {
         let newTodoItem = TodoItem(
             id: todoItem.id,
             text: delegate?.getText() ?? "",
-            importance: importance,
+            importance: importance.rawValue,
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,
             changeDate: Int(Date().timeIntervalSince1970),
-            deadline: deadline.value
+            deadline: deadline.value,
+            isDirty: todoItem.isDirty
         )
 
         isNewTodoItem ? save(newTodoItem) : update(newTodoItem)

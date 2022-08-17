@@ -11,20 +11,22 @@ import CocoaLumberjack
 struct TodoItem {
     let id: String
     let text: String
-    let importance: Importance
+    let importance: String
     let isDone: Bool
     let creationDate: Int
     let changeDate: Int?
     let deadline: Int?
+    let isDirty: Bool
 
     init(
         id: String = UUID().uuidString,
         text: String,
-        importance: Importance = .ordinary,
+        importance: String = Importance.ordinary.rawValue,
         isDone: Bool = false,
         creationDate: Int = Int(Date().timeIntervalSince1970),
         changeDate: Int? = nil,
-        deadline: Int? = nil
+        deadline: Int? = nil,
+        isDirty: Bool = false
     ) {
         self.id = id
         self.text = text
@@ -33,6 +35,18 @@ struct TodoItem {
         self.creationDate = creationDate
         self.changeDate = changeDate
         self.deadline = deadline
+        self.isDirty = false
+    }
+
+    init(_ todoItemNetwork: TodoItemNetwork) {
+        id = todoItemNetwork.id
+        text = todoItemNetwork.text
+        importance = todoItemNetwork.importance
+        isDone = todoItemNetwork.isDone
+        creationDate = todoItemNetwork.creationDate
+        changeDate = todoItemNetwork.changeDate
+        deadline = todoItemNetwork.deadline
+        isDirty = false
     }
 }
 
@@ -46,8 +60,8 @@ extension TodoItem {
             Keys.creationDateKey: creationDate
         ]
 
-        if importance != .ordinary {
-            jsonDict[Keys.importanceKey] = importance.rawValue
+        if importance != Importance.ordinary.rawValue {
+            jsonDict[Keys.importanceKey] = importance
         }
 
         if let deadline = deadline {
@@ -67,7 +81,7 @@ extension TodoItem {
         return TodoItem(
             id: jsonDict[Keys.idKey] as? String ?? "",
             text: jsonDict[Keys.textKey] as? String ?? "",
-            importance: .init(rawValue: jsonDict[Keys.importanceKey] as? String ?? "") ?? .ordinary,
+            importance: jsonDict[Keys.importanceKey] as? String ?? Importance.ordinary.rawValue,
             isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
             creationDate: jsonDict[Keys.creationDateKey] as? Int ?? Int(Date().timeIntervalSince1970),
             changeDate: jsonDict[Keys.changeDateKey] as? Int,
@@ -85,11 +99,25 @@ extension TodoItem {
             isDone: true,
             creationDate: creationDate,
             changeDate: Int(Date().timeIntervalSince1970),
-            deadline: deadline
+            deadline: deadline,
+            isDirty: isDirty
         )
     }
 
     // NB: реализовать обратный функционал
+
+    var asDirty: TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: isDone,
+            creationDate: creationDate,
+            changeDate: changeDate,
+            deadline: deadline,
+            isDirty: true
+        )
+    }
 }
 
 // MARK: Constants
