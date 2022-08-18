@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Response: Codable {
     let element: TodoItemNetwork?
@@ -31,7 +32,7 @@ struct TodoItemNetwork: Codable {
         creationDate = todoItem.creationDate
         changeDate = todoItem.changeDate ?? todoItem.creationDate
         deadline = todoItem.deadline
-        lastUpdatedBy = "zdes id"
+        lastUpdatedBy = UIDevice.current.identifierForVendor?.uuidString ?? ""
     }
 
     enum CodingKeys: String, CodingKey {

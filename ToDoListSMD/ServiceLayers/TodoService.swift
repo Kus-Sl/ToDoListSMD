@@ -19,10 +19,10 @@ protocol TodoServiceProtocol {
 }
 
 final class TodoService: TodoServiceProtocol {
-    private let fileName = "TaskList.txt"
+    private let fileName = Constants.fileNameForWriteCache
     private let fileCacheService: FileCacheServiceProtocol
     private let networkService: NetworkServiceProtocol
-    private let todoServiceQueue = DispatchQueue(label: "todoServiceQueue", attributes: [.concurrent])
+    private let todoServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
     private(set) var todoItems: Box<[TodoItem]> = Box(value: [])
 
     init(_ fileCacheService: FileCacheServiceProtocol, _ networkService: NetworkServiceProtocol) {
@@ -174,5 +174,12 @@ extension TodoService {
         fileCacheService.load(from: fileName) { result in
             completion(result)
         }
+    }
+}
+
+extension TodoService {
+    private enum Constants {
+        static let queueLabel = "todoServiceQueue"
+        static let fileNameForWriteCache = "TaskList.txt"
     }
 }

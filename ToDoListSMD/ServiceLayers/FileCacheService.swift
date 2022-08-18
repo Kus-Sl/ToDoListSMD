@@ -19,7 +19,7 @@ protocol FileCacheServiceProtocol {
 
 final class FileCacheService: FileCacheServiceProtocol {
     private let fileCache: FileCache = FileCache()
-    private let fileCacheQueue = DispatchQueue(label: "fileCacheQueue")
+    private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel)
 
     func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
         fileCacheQueue.async { [weak self] in
@@ -75,5 +75,11 @@ final class FileCacheService: FileCacheServiceProtocol {
                 completion(.failure(error))
             }
         }
+    }
+}
+
+extension FileCacheService {
+    private enum Constants {
+        static let queueLabel = "fileCacheQueue"
     }
 }

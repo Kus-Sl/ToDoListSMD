@@ -17,8 +17,8 @@ protocol NetworkServiceProtocol {
 }
 
 final class NetworkService: NetworkServiceProtocol {
-    private let baseURL = "https://beta.mrdekk.ru/todobackend/list"
-    private let networkServiceQueue = DispatchQueue(label: "networkServiceQueue", attributes: [.concurrent])
+    private let baseURL = Constants.baseURL
+    private let networkServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
     private let customSession: URLSession = {
         let session = URLSession.init(configuration: .default)
         session.configuration.timeoutIntervalForRequest = 15.0
@@ -82,14 +82,14 @@ extension NetworkService {
     private func createRequest(with url: URL, httpMethod: HTTPMethods, httpBody: Data? = nil, revisionNumber: Int? = nil) -> URLRequest? {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = httpMethod.rawValue
-        urlRequest.setValue("Bearer AbnormalBloodMagic", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue(Constants.headerBearerTokenValue, forHTTPHeaderField: Constants.headerBearerTokenField)
 
         guard let httpBody = httpBody, let revisionNumber = revisionNumber else {
             return urlRequest
         }
 
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.setValue("\(revisionNumber)", forHTTPHeaderField: "X-Last-Known-Revision")
+        urlRequest.setValue(Constants.headerContentTypeValue, forHTTPHeaderField: Constants.headerContentTypeField)
+        urlRequest.setValue("\(revisionNumber)", forHTTPHeaderField: Constants.headerRevisionField)
         urlRequest.httpBody = httpBody
         return urlRequest
     }
@@ -177,5 +177,15 @@ extension NetworkService {
         case put = "PUT"
         case post = "POST"
         case delete = "DELETE"
+    }
+
+    private enum Constants {
+        static let baseURL = "https://beta.mrdekk.ru/todobackend/list"
+        static let queueLabel = "networkServiceQueue"
+        static let headerContentTypeField = "Content-Type"
+        static let headerContentTypeValue = "application/json"
+        static let headerRevisionField = "X-Last-Known-Revision"
+        static let headerBearerTokenField = "Authorization"
+        static let headerBearerTokenValue = "Bearer AbnormalBloodMagic"
     }
 }
