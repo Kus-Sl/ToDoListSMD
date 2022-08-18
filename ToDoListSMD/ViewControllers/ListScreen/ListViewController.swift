@@ -6,28 +6,41 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class ListViewController: UIViewController {
     override var navigationItem: UINavigationItem {
-        let item = UINavigationItem(title: Constants.navigationItemTitle)
-        return item
+        UINavigationItem(title: Constants.navigationItemTitle)
     }
 
+    private var viewModel: ListViewModelProtocol
     private lazy var tableView = UITableView()
     private lazy var tableViewHeaderView = UIView()
     private lazy var completedItemsCountLabel = UILabel()
     private lazy var completedItemsButton = UIButton()
     private lazy var newTodoItemButton = UIButton()
 
-    private lazy var viewModel: ListViewModelProtocol = ListViewModel()
+    init(_ viewModel: ListViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = .ColorAsset.backPrimary
         setupView()
         setupLayout()
-        viewModel = ListViewModel()
+
+        viewModel.bindViewControllerWithModel { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                self?.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self?.viewModel.getCompletedTodoItemsCount() ?? 0)"
+            }
+        }
     }
 
     private func setupView() {
@@ -45,7 +58,6 @@ final class ListViewController: UIViewController {
 
     private func setupTableView() {
         tableView.backgroundColor = .clear
-        tableView.layer.cornerRadius = Constants.tableViewRadius
         tableView.separatorColor = .ColorAsset.supportSeparator
         tableView.separatorInset = UIEdgeInsets(
             top: Constants.separatorTopInset,
@@ -56,7 +68,7 @@ final class ListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        //NB: зарефачить
+        // NB: зарефачить
         tableView.register(ListCell.self, forCellReuseIdentifier: ListCell.cellReuseIdentifier())
     }
 
@@ -68,39 +80,40 @@ final class ListViewController: UIViewController {
     private func setupCompletedItemsCountLabel() {
         completedItemsCountLabel.textColor = .ColorAsset.labelTertiary
         completedItemsCountLabel.font = .FontAsset.subhead
-        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.completedCount)"
+        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.getCompletedTodoItemsCount())"
     }
 
     private func setupCompletedItemsButton() {
         completedItemsButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
         completedItemsButton.titleLabel?.font = .FontAsset.subheadline
-        completedItemsButton.setTitle(Constants.showCompletedItemsButtonTitle, for: .normal)
+        completedItemsButton.setTitle(Constants.hideCompletedItemsButtonTitle, for: .normal)
+        completedItemsButton.setTitle(Constants.showCompletedItemsButtonTitle, for: .selected)
         completedItemsButton.addTarget(self, action: #selector(completedItemsButtonTapped), for: .touchUpInside)
     }
 
     private func setupNewTodoItemButton() {
         newTodoItemButton.backgroundColor = .clear
-        newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue?.cgColor
+        newTodoItemButton.layer.shadowColor = UIColor.ColorAsset.colorBlue.cgColor
         newTodoItemButton.layer.shadowOffset = Constants.newTodoItemButtonShadowOffset
         newTodoItemButton.layer.shadowOpacity = Constants.newTodoItemButtonShadowOpacity
         newTodoItemButton.layer.shadowRadius = Constants.newTodoItemButtonShadowRadius
         newTodoItemButton.layer.cornerRadius = Constants.newTodoItemButtonRadius
         newTodoItemButton.contentVerticalAlignment = .fill
         newTodoItemButton.contentHorizontalAlignment = .fill
-        newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon!.withTintColor(.ColorAsset.colorBlue!), for: .normal)
+        newTodoItemButton.setImage(.IconAsset.newTodoItemButtonIcon.withTintColor(.ColorAsset.colorBlue), for: .normal)
         newTodoItemButton.addTarget(self, action: #selector(newTodoItemButtonTapped), for: .touchUpInside)
 
-        let mopViewForNewTodoItemButton = UIView()
-        mopViewForNewTodoItemButton.backgroundColor = .ColorAsset.colorWhite
-        mopViewForNewTodoItemButton.isUserInteractionEnabled = false
+        let mockView = UIView()
+        mockView.backgroundColor = .ColorAsset.colorWhite
+        mockView.isUserInteractionEnabled = false
 
-        newTodoItemButton.insertSubview(mopViewForNewTodoItemButton, belowSubview: newTodoItemButton.imageView!)
-        mopViewForNewTodoItemButton.translatesAutoresizingMaskIntoConstraints = false
+        newTodoItemButton.insertSubview(mockView, belowSubview: newTodoItemButton.imageView ?? UIImageView())
+        mockView.translatesAutoresizingMaskIntoConstraints = false
 
-        mopViewForNewTodoItemButton.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
-        mopViewForNewTodoItemButton.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
-        mopViewForNewTodoItemButton.heightAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
-        mopViewForNewTodoItemButton.widthAnchor.constraint(equalToConstant: Constants.mopViewForNewTodoItemButtonSide).isActive = true
+        mockView.centerXAnchor.constraint(equalTo: newTodoItemButton.centerXAnchor).isActive = true
+        mockView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
+        mockView.heightAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
+        mockView.widthAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
     }
 
     private func setupLayout() {
@@ -130,25 +143,27 @@ final class ListViewController: UIViewController {
 // MARK: Actions
 extension ListViewController {
     @objc private func newTodoItemButtonTapped() {
-
+        openDetailsScreen(for: nil)
     }
 
-    @objc private func completedItemsButtonTapped() {
-
+    @objc private func completedItemsButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        viewModel.isFilteredWithoutCompletedItems = sender.isSelected
+        tableView.reloadData()
     }
 
-    private func openDetailsScreen(for indexPath: IndexPath) {
-        let detailScreen = DetailViewController()
-        detailScreen.viewModel = viewModel.createDetailViewModel(for: indexPath)
+    private func openDetailsScreen(for indexPath: IndexPath?) {
+        let detailScreenViewModel = viewModel.createDetailViewModel(for: indexPath)
+        let detailScreen = DetailViewController(detailScreenViewModel)
         present(UINavigationController(rootViewController: detailScreen), animated: true)
     }
 
     private func deleteTodoItem(with indexPath: IndexPath) {
-
+        viewModel.deleteTodoItem(with: indexPath)
     }
 
     private func completeTodoItem(with indexPath: IndexPath) {
-
+        viewModel.completeTodoItem(with: indexPath)
     }
 }
 
@@ -159,9 +174,36 @@ extension ListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as! ListCell
-        cell.configure(for: indexPath, with: viewModel)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.cellReuseIdentifier(), for: indexPath) as? ListCell else { return UITableViewCell() }
+        cell.configure(with: viewModel.getTodoItem(for: indexPath))
+        cornerRadius(for: cell, with: indexPath)
         return cell
+    }
+
+    // NB: заречафить + разобраться со сбросом углов при свайпе
+    func cornerRadius(for cell: UITableViewCell, with indexPath: IndexPath) {
+        let isFirstCell = indexPath.row == 0
+        let isLastCell = indexPath.row == tableView.numberOfRows(inSection: Constants.firstIndex) - 1
+
+        cell.clipsToBounds = true
+        if isFirstCell && isLastCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [
+                .layerMinXMinYCorner,
+                .layerMaxXMinYCorner,
+                .layerMaxXMaxYCorner,
+                .layerMinXMaxYCorner
+            ]
+        } else if isFirstCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if isLastCell {
+            cell.layer.cornerRadius = Constants.tableViewRadius
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            cell.layer.cornerRadius = .zero
+            cell.layer.maskedCorners = []
+        }
     }
 }
 
@@ -225,6 +267,7 @@ extension ListViewController {
         static let newTodoItemButtonShadowRadius: CGFloat = 8
         static let newTodoItemButtonSide: CGFloat = 46
         static let newTodoItemButtonBottomInset: CGFloat = -54
-        static let mopViewForNewTodoItemButtonSide: CGFloat = 20
+        static let moсkViewSide: CGFloat = 20
+        static let firstIndex = 0
     }
 }

@@ -6,20 +6,22 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 protocol DetailViewControllerDelegate: AnyObject {
     func showDatePicker()
     func hideDatePicker()
     func animateDatePicker()
+    func getText() -> String
 }
 
 final class DetailViewController: UIViewController {
-    var viewModel: DetailViewModelProtocol!
+    private var viewModel: DetailViewModelProtocol
 
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
-        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.ColorAsset.labelTertiary!], for: .disabled)
+        saveButton.setTitleTextAttributes([.foregroundColor: UIColor.ColorAsset.labelTertiary], for: .disabled)
         item.rightBarButtonItem = saveButton
         item.leftBarButtonItem = UIBarButtonItem(title: Constants.navigationBarCancelButtonTitle, style: .plain, target: self, action: #selector(cancelButtonTapped))
         return item
@@ -31,6 +33,15 @@ final class DetailViewController: UIViewController {
     private lazy var deleteButton = UIButton()
 
     private lazy var tableViewHeight = NSLayoutConstraint()
+
+    init(_ viewModel: DetailViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,7 +95,7 @@ final class DetailViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
 
-        //NB: зарефачить
+        // NB: зарефачить
         tableView.register(CellType.deadline.getClass(), forCellReuseIdentifier: CellType.deadline.getClass().cellReuseIdentifier())
         tableView.register(CellType.importance.getClass(), forCellReuseIdentifier: CellType.importance.getClass().cellReuseIdentifier())
         tableView.register(CellType.calendar.getClass(), forCellReuseIdentifier: CellType.calendar.getClass().cellReuseIdentifier())
@@ -155,7 +166,6 @@ extension DetailViewController {
     }
 }
 
-
 // MARK: Table view data source
 extension DetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -164,7 +174,7 @@ extension DetailViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellID = viewModel.getCellID(indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! BaseCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? BaseCell else { return UITableViewCell() }
         cell.viewModel = viewModel
         return cell
     }
@@ -196,6 +206,10 @@ extension DetailViewController: DetailViewControllerDelegate {
             self.scrollView.layoutIfNeeded()
         }
     }
+
+    func getText() -> String {
+        textView.text
+    }
 }
 
 // MARK: Text view delegate
@@ -205,7 +219,7 @@ extension DetailViewController: UITextViewDelegate {
     }
 }
 
-//MARK: Keyboards methods
+// MARK: Keyboards methods
 extension DetailViewController {
     private func registerForKeyBoardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)

@@ -6,24 +6,27 @@
 //
 
 import Foundation
+import CocoaLumberjack
 
 struct TodoItem {
     let id: String
     let text: String
-    let importance: Importance
+    let importance: String
     let isDone: Bool
-    let creationDate: Date
-    let changeDate: Date?
-    let deadline: Date?
+    let creationDate: Int
+    let changeDate: Int?
+    let deadline: Int?
+    let isDirty: Bool
 
     init(
         id: String = UUID().uuidString,
         text: String,
-        importance: Importance = .ordinary,
+        importance: String = Importance.ordinary.rawValue,
         isDone: Bool = false,
-        creationDate: Date = Date(),
-        changeDate: Date? = nil,
-        deadline: Date? = nil
+        creationDate: Int = Int(Date().timeIntervalSince1970),
+        changeDate: Int? = nil,
+        deadline: Int? = nil,
+        isDirty: Bool = false
     ) {
         self.id = id
         self.text = text
@@ -32,18 +35,18 @@ struct TodoItem {
         self.creationDate = creationDate
         self.changeDate = changeDate
         self.deadline = deadline
+        self.isDirty = false
     }
 
-    func makeCompleted() -> TodoItem {
-        TodoItem(
-            id: id,
-            text: text,
-            importance: importance,
-            isDone: true,
-            creationDate: creationDate,
-            changeDate: Date(),
-            deadline: deadline
-        )
+    init(_ todoItemNetwork: TodoItemNetwork) {
+        id = todoItemNetwork.id
+        text = todoItemNetwork.text
+        importance = todoItemNetwork.importance
+        isDone = todoItemNetwork.isDone
+        creationDate = todoItemNetwork.creationDate
+        changeDate = todoItemNetwork.changeDate
+        deadline = todoItemNetwork.deadline
+        isDirty = false
     }
 }
 
@@ -51,22 +54,22 @@ struct TodoItem {
 extension TodoItem {
     var json: Any {
         var jsonDict: [String: Any] = [
-            Keys.idKey : id,
-            Keys.textKey : text,
-            Keys.isDoneKey : isDone,
-            Keys.creationDateKey : creationDate.timeIntervalSince1970
+            Keys.idKey: id,
+            Keys.textKey: text,
+            Keys.isDoneKey: isDone,
+            Keys.creationDateKey: creationDate
         ]
 
-        if importance != .ordinary {
-            jsonDict[Keys.importanceKey] = importance.rawValue
+        if importance != Importance.ordinary.rawValue {
+            jsonDict[Keys.importanceKey] = importance
         }
 
         if let deadline = deadline {
-            jsonDict[Keys.deadlineKey] = deadline.timeIntervalSince1970
+            jsonDict[Keys.deadlineKey] = deadline
         }
 
         if let changeDate = changeDate {
-            jsonDict[Keys.changeDateKey] = changeDate.timeIntervalSince1970
+            jsonDict[Keys.changeDateKey] = changeDate
         }
 
         return jsonDict
@@ -78,11 +81,41 @@ extension TodoItem {
         return TodoItem(
             id: jsonDict[Keys.idKey] as? String ?? "",
             text: jsonDict[Keys.textKey] as? String ?? "",
-            importance: .init(rawValue: jsonDict[Keys.importanceKey] as? String ?? "") ?? .ordinary,
+            importance: jsonDict[Keys.importanceKey] as? String ?? Importance.ordinary.rawValue,
             isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
-            creationDate: DateFormatter.getDate(from: jsonDict[Keys.creationDateKey] as Any) ?? Date(),
-            changeDate: DateFormatter.getDate(from: jsonDict[Keys.changeDateKey] as Any),
-            deadline: DateFormatter.getDate(from: jsonDict[Keys.deadlineKey] as Any)
+            creationDate: jsonDict[Keys.creationDateKey] as? Int ?? Int(Date().timeIntervalSince1970),
+            changeDate: jsonDict[Keys.changeDateKey] as? Int,
+            deadline: jsonDict[Keys.deadlineKey] as? Int
+        )
+    }
+}
+
+extension TodoItem {
+    var asCompleted: TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: true,
+            creationDate: creationDate,
+            changeDate: Int(Date().timeIntervalSince1970),
+            deadline: deadline,
+            isDirty: isDirty
+        )
+    }
+
+    // NB: реализовать обратный функционал
+
+    var asDirty: TodoItem {
+        TodoItem(
+            id: id,
+            text: text,
+            importance: importance,
+            isDone: isDone,
+            creationDate: creationDate,
+            changeDate: changeDate,
+            deadline: deadline,
+            isDirty: true
         )
     }
 }
@@ -101,8 +134,7 @@ extension TodoItem {
 }
 
 enum Importance: String {
-     case important = "важная"
-     case ordinary = "обычная"
-     case unimportant = "неважная"
- }
-
+    case important = "important"
+    case ordinary = "basic"
+    case unimportant = "low"
+}

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 class BaseCell: UITableViewCell {
     lazy var content = defaultContentConfiguration()
@@ -19,7 +20,7 @@ class BaseCell: UITableViewCell {
 
     func setupContent() {
         backgroundColor = .ColorAsset.backSecondary
-        content.textProperties.color = .ColorAsset.labelPrimary!
+        content.textProperties.color = .ColorAsset.labelPrimary
         content.textProperties.font = .FontAsset.body
     }
 

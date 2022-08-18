@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class CalendarCell: BaseCell {
     private lazy var datePicker = UIDatePicker()
@@ -20,7 +21,7 @@ final class CalendarCell: BaseCell {
         datePicker.datePickerMode = .date
 
         guard let deadline = viewModel.deadline.value else { return }
-        datePicker.date = deadline
+        datePicker.date = Date(timeIntervalSince1970: TimeInterval(deadline))
         datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
 
         setDatePickerConstraints()
@@ -39,9 +40,9 @@ final class CalendarCell: BaseCell {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension CalendarCell {
     @objc private func datePickerTapped() {
-        viewModel.deadline.value = datePicker.date
+        viewModel.deadline.value = Int(datePicker.date.timeIntervalSince1970)
     }
 }

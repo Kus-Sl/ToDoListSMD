@@ -6,40 +6,29 @@
 //
 
 import Foundation
+import CocoaLumberjack
+import Helpers
 
-class FileCache {
-    static private let fileName = "TaskList.txt"
+final class FileCache {
     private(set) var todoItems: [TodoItem] = []
-
-    init() {
-        try? load()
-    }
 
     func add(_ todoItem: TodoItem) throws {
         guard !todoItems.contains(where: { $0.id == todoItem.id }) else { throw CacheError.existingID }
         todoItems.append(todoItem)
     }
 
-    func update( _ todoItem: TodoItem) throws {
+    func update(_ todoItem: TodoItem) throws {
         guard let index = todoItems.firstIndex(where: { $0.id == todoItem.id }) else { throw CacheError.nonexistentID }
         todoItems[index] = todoItem
     }
 
-    func delete(_ todoItemID: String) {
-        guard let index = todoItems.firstIndex(where: { $0.id == todoItemID }) else { return }
+    func delete(_ todoItemID: String) throws {
+        guard let index = todoItems.firstIndex(where: { $0.id == todoItemID }) else { throw CacheError.nonexistentID }
         todoItems.remove(at: index)
     }
 
-    func load(_ file: String = fileName) throws {
-        guard let path = getPath(to: file) else { throw CacheError.invalidPath }
-        guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
-        guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
-        todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
-    }
-
-    func save(_ file: String = fileName) throws {
+    func save(_ file: String) throws {
         let jsonDict = todoItems.map { $0.json }
-
         guard JSONSerialization.isValidJSONObject(jsonDict),
               let path = getPath(to: file),
               let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict) else {
@@ -51,6 +40,13 @@ class FileCache {
         } catch {
             throw CacheError.savingError
         }
+    }
+
+    func load(_ file: String) throws {
+        guard let path = getPath(to: file) else { throw CacheError.invalidPath }
+        guard let jsonData = try? Data(contentsOf: path) else { throw JSONError.deserializationError }
+        guard let jsonDict = try JSONSerialization.jsonObject(with: jsonData) as? [Any] else { throw CacheError.loadingError }
+        todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
     private func getPath(to file: String) -> URL? {

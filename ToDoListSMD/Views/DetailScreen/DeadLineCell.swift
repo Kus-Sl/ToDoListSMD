@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CocoaLumberjack
 
 final class DeadlineCell: BaseCell {
     private var deadlineButton: UIButton?
@@ -44,7 +45,7 @@ final class DeadlineCell: BaseCell {
     }
 }
 
-//MARK: Actions
+// MARK: Actions
 extension DeadlineCell {
     @objc private func switchControlChanged(target: UISwitch) {
         viewModel.changedSwitchControl(to: target.isOn)
@@ -62,7 +63,8 @@ extension DeadlineCell {
         deadlineButton.setTitleColor(.ColorAsset.colorBlue, for: .normal)
         deadlineButton.titleLabel?.font = .FontAsset.footnote
         viewModel.deadline.bind { date in
-            deadlineButton.setTitle(DateFormatter.formatter.string(from: date ?? Date()), for: .normal)
+            guard let date = date else { return }
+            deadlineButton.setTitle(DateFormatter.formatter.string(from: Date(timeIntervalSince1970: TimeInterval(date))), for: .normal)
         }
         deadlineButton.addTarget(self, action: #selector(deadlineButtonTapped), for: .touchUpInside)
 
@@ -91,7 +93,7 @@ extension DeadlineCell {
     }
 }
 
-//MARK: Constants
+// MARK: Constants
 extension DeadlineCell {
     private enum Constants {
         static let titleLabelTopInset: CGFloat = 17

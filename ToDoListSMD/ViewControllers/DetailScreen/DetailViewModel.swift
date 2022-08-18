@@ -6,99 +6,105 @@
 //
 
 import Foundation
+import CocoaLumberjack
+import Helpers
 
 protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
-    var deadline: Box<Date?> { get set }
-    var delegate: DetailViewControllerDelegate! { get set }
-
-    init(todoItem: TodoItem, fileCache: FileCache)
+    var deadline: Box<Int?> { get set }
+    var delegate: DetailViewControllerDelegate? { get set }
 
     func deleteTodoItem()
     func saveOrUpdateTodoItem()
-
-    func getCellID(_ indexPath: IndexPath) -> String
-    func getNumberOfRows() -> Int
-    func getHeightForRows(_ indexPath: IndexPath) -> Double
 
     func changedImportanceControl(to index: ImportanceCell.SegmentedControlIndexes)
     func setImportanceControl() -> Int
     func isDeadlineExist() -> Bool
     func changedSwitchControl(to status: Bool)
     func showOrHideDatePicker()
+
+    func getCellID(_ indexPath: IndexPath) -> String
+    func getNumberOfRows() -> Int
+    func getHeightForRows(_ indexPath: IndexPath) -> Double
 }
 
 final class DetailViewModel: DetailViewModelProtocol {
+    // NB: оптимизировать
     var text: String
     var importance: Importance
-    var deadline: Box<Date?>
-    var delegate: DetailViewControllerDelegate!
+    var deadline: Box<Int?>
+    weak var delegate: DetailViewControllerDelegate?
 
     // NB: доковырять
     private let todoItem: TodoItem
-    private let fileCache: FileCache
+    private let todoService: TodoServiceProtocol
     private var isNewTodoItem: Bool
     private lazy var isHiddenDatePicker = true
     private lazy var cellTypes: [CellType] = [.importance, .deadline]
 
-    required init(todoItem: TodoItem, fileCache: FileCache) {
+    required init(_ todoItem: TodoItem, _ todoService: TodoServiceProtocol) {
         self.todoItem = todoItem
-        self.fileCache = fileCache
+        self.todoService = todoService
         text = todoItem.text
-        importance = todoItem.importance
+        importance = Importance(rawValue: todoItem.importance) ?? Importance.ordinary
         deadline = Box(value: todoItem.deadline)
 
         isNewTodoItem = todoItem.text.isEmpty
     }
+}
 
+// MARK: Actions
+extension DetailViewModel {
     func deleteTodoItem() {
-        fileCache.delete(todoItem.id)
+        todoService.delete(todoItem.id) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
+        }
     }
 
     func saveOrUpdateTodoItem() {
         let newTodoItem = TodoItem(
             id: todoItem.id,
-            text: text,
-            importance: importance,
+            text: delegate?.getText() ?? "",
+            importance: importance.rawValue,
             isDone: todoItem.isDone,
             creationDate: todoItem.creationDate,
-            changeDate: Date(),
-            deadline: deadline.value
+            changeDate: Int(Date().timeIntervalSince1970),
+            deadline: deadline.value,
+            isDirty: todoItem.isDirty
         )
 
         isNewTodoItem ? save(newTodoItem) : update(newTodoItem)
     }
 
     private func save(_ newTodoItem: TodoItem) {
-        do {
-            try fileCache.add(newTodoItem)
-        } catch {
-            //NB: Показать алерт
+        todoService.add(newTodoItem) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
         }
     }
 
     private func update(_ updatingTodoItem: TodoItem) {
-        do {
-            try fileCache.update(updatingTodoItem)
-        } catch {
-            //NB: Показать алерт
+        todoService.update(updatingTodoItem) { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                DDLogInfo(error)
+                // NB: обработать
+            }
         }
-    }
-}
-
-// MARK: Cell's data source
-extension DetailViewModel {
-    func getCellID(_ indexPath: IndexPath) -> String {
-        cellTypes[indexPath.row].getClass().cellReuseIdentifier()
-    }
-
-    func getNumberOfRows() -> Int {
-        cellTypes.count
-    }
-
-    func getHeightForRows(_ indexPath: IndexPath) -> Double {
-        cellTypes[indexPath.row].getHeight()
     }
 }
 
@@ -132,7 +138,7 @@ extension DetailViewModel {
 
     func changedSwitchControl(to status: Bool) {
         deadline.value = status
-        ? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        ? Int((Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()).timeIntervalSince1970)
         : nil
 
         if !isHiddenDatePicker && deadline.value == nil {
@@ -145,17 +151,32 @@ extension DetailViewModel {
         ? showDatePicker()
         : hideDatePicker()
 
-        delegate.animateDatePicker()
+        delegate?.animateDatePicker()
         isHiddenDatePicker.toggle()
     }
 
     private func showDatePicker() {
         cellTypes.append(.calendar)
-        delegate.showDatePicker()
+        delegate?.showDatePicker()
     }
 
     private func hideDatePicker() {
         cellTypes.removeLast()
-        delegate.hideDatePicker()
+        delegate?.hideDatePicker()
+    }
+}
+
+// MARK: Data source
+extension DetailViewModel {
+    func getCellID(_ indexPath: IndexPath) -> String {
+        cellTypes[indexPath.row].getClass().cellReuseIdentifier()
+    }
+
+    func getNumberOfRows() -> Int {
+        cellTypes.count
+    }
+
+    func getHeightForRows(_ indexPath: IndexPath) -> Double {
+        cellTypes[indexPath.row].getHeight()
     }
 }
