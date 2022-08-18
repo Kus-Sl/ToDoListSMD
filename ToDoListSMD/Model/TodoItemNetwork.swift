@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct Response: Codable {
     let element: TodoItemNetwork?
@@ -20,7 +19,7 @@ struct TodoItemNetwork: Codable {
     let importance: String
     let isDone: Bool
     let creationDate: Int
-    let changeDate: Int?
+    let changeDate: Int
     let deadline: Int?
     let lastUpdatedBy: String
 
@@ -30,9 +29,9 @@ struct TodoItemNetwork: Codable {
         importance = todoItem.importance
         isDone = todoItem.isDone
         creationDate = todoItem.creationDate
-        changeDate = todoItem.changeDate
+        changeDate = todoItem.changeDate ?? todoItem.creationDate
         deadline = todoItem.deadline
-        lastUpdatedBy = UIDevice.current.identifierForVendor?.uuidString ?? ""
+        lastUpdatedBy = "zdes id"
     }
 
     enum CodingKeys: String, CodingKey {
