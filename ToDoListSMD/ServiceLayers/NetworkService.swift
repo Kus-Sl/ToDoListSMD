@@ -17,7 +17,7 @@ protocol NetworkServiceProtocol {
 }
 
 final class NetworkService: NetworkServiceProtocol {
-    private let baseURL = Constants.baseURL
+    private static let baseURL = Constants.baseURL
     private let networkServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
     private let customSession: URLSession = {
         let session = URLSession.init(configuration: .default)
@@ -27,7 +27,7 @@ final class NetworkService: NetworkServiceProtocol {
 
     func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
         let todoItemNetwork = TodoItemNetwork(newTodoItem)
-        guard let url = createURL(baseURL) else {
+        guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
         }
@@ -53,7 +53,7 @@ final class NetworkService: NetworkServiceProtocol {
 
     func update(_ updatingTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
         let todoItemNetwork = TodoItemNetwork(updatingTodoItem)
-        guard let url = createURL(baseURL, todoItemID: todoItemNetwork.id) else {
+        guard let url = createURL(NetworkService.baseURL, todoItemID: todoItemNetwork.id) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
         }
@@ -75,11 +75,10 @@ final class NetworkService: NetworkServiceProtocol {
         networkServiceQueue.async {
             task.resume()
         }
-
     }
 
     func delete(todoItemID: String, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
-        guard let url = createURL(baseURL, todoItemID: todoItemID) else {
+        guard let url = createURL(NetworkService.baseURL, todoItemID: todoItemID) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
         }
@@ -100,7 +99,7 @@ final class NetworkService: NetworkServiceProtocol {
 
     func sync(_ todoItems: [TodoItem], completion: @escaping (Result<([TodoItem], Int), Error>) -> ()) {
         let todoItemsNetwork = todoItems.map { TodoItemNetwork($0) }
-        guard let url = createURL(baseURL) else {
+        guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
         }
@@ -125,7 +124,7 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     func fetchTodoItems(completion: @escaping (Result<([TodoItem], Int), Error>) -> ()) {
-        guard let url = createURL(baseURL) else {
+        guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
         }
@@ -219,8 +218,11 @@ extension NetworkService {
             DispatchQueue.main.async {
                 completion(.success(revision))
             }
+
         case .failure(let error):
-            completion(.failure(error))
+            DispatchQueue.main.async {
+                completion(.failure(error))
+            }
         }
     }
 
@@ -237,8 +239,11 @@ extension NetworkService {
             DispatchQueue.main.async {
                 completion(.success(responceData))
             }
+            
         case .failure(let error):
-            completion(.failure(error))
+            DispatchQueue.main.async {
+                completion(.failure(error))
+            }
         }
     }
 }
