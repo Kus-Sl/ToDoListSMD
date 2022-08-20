@@ -19,49 +19,29 @@ protocol FileCacheServiceProtocol {
 
 final class FileCacheService: FileCacheServiceProtocol {
     private let fileCache: FileCache = FileCache()
-    private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel)
+    private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
 
     func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.add(newTodoItem)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+        callAction(completion: completion) { [weak self] in
+             try self?.fileCache.add(newTodoItem)
         }
     }
 
     func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.update(updatingTodoItem)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+        callAction(completion: completion) { [weak self] in
+            try self?.fileCache.update(updatingTodoItem)
         }
     }
 
     func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.delete(todoItemID)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+        callAction(completion: completion) { [weak self] in
+            try self?.fileCache.delete(todoItemID)
         }
     }
 
     func save(to file: String, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.save(file)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+        callAction(completion: completion) { [weak self] in
+            try self?.fileCache.save(file)
         }
     }
 
@@ -70,14 +50,37 @@ final class FileCacheService: FileCacheServiceProtocol {
             guard let self = self else { return }
             do {
                 try self.fileCache.load(file)
-                completion(.success(self.fileCache.todoItems))
+                DispatchQueue.main.async {
+                    completion(.success(self.fileCache.todoItems))
+                }
             } catch {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
     }
 }
 
+// MARK: Support methods
+extension FileCacheService {
+    private func callAction(completion: @escaping (Result<(), Error>) -> (), action: @escaping () throws -> ()) {
+        fileCacheQueue.async(flags: .barrier) {
+            do {
+                try action()
+                DispatchQueue.main.async {
+                    completion(.success(()))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+}
+
+// MARK: Constants
 extension FileCacheService {
     private enum Constants {
         static let queueLabel = "fileCacheQueue"
