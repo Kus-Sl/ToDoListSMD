@@ -21,11 +21,12 @@ public enum JSONError: Error {
 }
 
 public enum NetworkErrors: Int, Error {
-    case incorrectUrl = 400
+    case incorrectRequest = 400
     case incorrectToken = 401
     case notFound = 404
     case serverError = 500
-    case incorrectRequest
+    case incorrectUrl
     case noConnection
     case unownedError
+    case noResponseData
 }
