@@ -8,13 +8,6 @@
 import UIKit
 import CocoaLumberjack
 
-protocol DetailViewControllerDelegate: AnyObject {
-    func showDatePicker()
-    func hideDatePicker()
-    func animateDatePicker()
-    func getText() -> String
-}
-
 final class DetailViewController: UIViewController {
     private var viewModel: DetailViewModelProtocol
 
@@ -46,7 +39,7 @@ final class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         registerForKeyBoardNotifications()
-        viewModel.delegate = self
+        viewModel.assignDelegate(self)
 
         view.backgroundColor = .ColorAsset.backPrimary
         setupScrollView()
@@ -188,7 +181,7 @@ extension DetailViewController: UITableViewDelegate {
 }
 
 // MARK: Detail view controller delegate
-extension DetailViewController: DetailViewControllerDelegate {
+extension DetailViewController: DetailViewModelDelegate {
     func showDatePicker() {
         tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
         tableViewHeight.constant = tableView.contentSize.height

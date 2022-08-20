@@ -32,15 +32,10 @@ final class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ColorAsset.backPrimary
+
+        viewModel.assignTodoServiceDelegate(self)
         setupView()
         setupLayout()
-
-        viewModel.bindViewControllerWithModel { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-                self?.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self?.viewModel.getCompletedTodoItemsCount() ?? 0)"
-            }
-        }
     }
 
     private func setupView() {
@@ -239,6 +234,13 @@ extension ListViewController: UITableViewDelegate {
         completeAction.backgroundColor = .ColorAsset.colorGreen
         completeAction.image = .IconAsset.completeActionIcon
         return UISwipeActionsConfiguration(actions: [completeAction])
+    }
+}
+
+extension ListViewController: TodoServiceDelegate {
+    func todoItemsChanged() {
+        tableView.reloadData()
+        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.getCompletedTodoItemsCount())"
     }
 }
 

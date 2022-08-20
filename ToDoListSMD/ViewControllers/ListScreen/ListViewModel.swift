@@ -10,10 +10,10 @@ import CocoaLumberjack
 
 protocol ListViewModelProtocol {
     var isFilteredWithoutCompletedItems: Bool { get set }
-    
-    func bindViewControllerWithModel(_ listener: @escaping ([TodoItem]) -> ())
+
+    func assignTodoServiceDelegate(_ delegate: TodoServiceDelegate)
+
     func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel
-    
     func completeTodoItem(with indexPath: IndexPath)
     func deleteTodoItem(with indexPath: IndexPath)
     
@@ -25,32 +25,32 @@ protocol ListViewModelProtocol {
 final class ListViewModel: ListViewModelProtocol {
     var isFilteredWithoutCompletedItems = false
     private let todoService: TodoServiceProtocol
-
+    
     private var uncompletedTodoItems: [TodoItem] {
-        todoService.todoItems.value.filter { !$0.isDone }
+        todoService.todoItems.filter { !$0.isDone }
     }
 
     init(_ todoService: TodoServiceProtocol) {
         self.todoService = todoService
     }
 
-    func bindViewControllerWithModel(_ listener: @escaping ([TodoItem]) -> ()) {
-        todoService.todoItems.listener = listener
-    }
-
-    func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel {
-        guard let indexPath = indexPath else {
-            return DetailViewModel(TodoItem(text: ""), todoService)
-        }
-        
-        return DetailViewModel(getTodoItem(for: indexPath), todoService)
+    func assignTodoServiceDelegate(_ delegate: TodoServiceDelegate) {
+        todoService.assignDelegate(delegate)
     }
 }
 
 // MARK: Actions
 extension ListViewModel {
+    func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel {
+        guard let indexPath = indexPath else {
+            return DetailViewModel(TodoItem(text: ""), todoService)
+        }
+
+        return DetailViewModel(getTodoItem(for: indexPath), todoService)
+    }
+
     func completeTodoItem(with indexPath: IndexPath) {
-        let completedTodoItem = todoService.todoItems.value[indexPath.row].asCompleted
+        let completedTodoItem = todoService.todoItems[indexPath.row].asCompleted
         todoService.update(completedTodoItem) { result in
             switch result {
             case .success:
@@ -63,7 +63,7 @@ extension ListViewModel {
     }
     
     func deleteTodoItem(with indexPath: IndexPath) {
-        let deletingTodoItem = todoService.todoItems.value[indexPath.row]
+        let deletingTodoItem = todoService.todoItems[indexPath.row]
         todoService.delete(deletingTodoItem.id) { result in
             switch result {
             case .success:
@@ -81,16 +81,16 @@ extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
         isFilteredWithoutCompletedItems
         ? uncompletedTodoItems[indexPath.row]
-        : todoService.todoItems.value[indexPath.row]
+        : todoService.todoItems[indexPath.row]
     }
     
     func getNumberOfRows() -> Int {
         isFilteredWithoutCompletedItems
         ? uncompletedTodoItems.count
-        : todoService.todoItems.value.count
+        : todoService.todoItems.count
     }
     
     func getCompletedTodoItemsCount() -> Int {
-        todoService.todoItems.value.filter { $0.isDone }.count
+        todoService.todoItems.filter { $0.isDone }.count
     }
 }

@@ -9,13 +9,19 @@ import Foundation
 import CocoaLumberjack
 import Helpers
 
+protocol TodoServiceDelegate: AnyObject {
+    func todoItemsChanged()
+}
+
 protocol TodoServiceProtocol {
-    var todoItems: Box<[TodoItem]> { get }
+    var todoItems: [TodoItem] { get }
 
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
     func save()
+
+    func assignDelegate(_ delegate: TodoServiceDelegate)
 }
 
 final class TodoService: TodoServiceProtocol {
@@ -23,12 +29,21 @@ final class TodoService: TodoServiceProtocol {
     private let fileCacheService: FileCacheServiceProtocol
     private let networkService: NetworkServiceProtocol
     private let todoServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
-    private(set) var todoItems: Box<[TodoItem]> = Box(value: [])
+    private weak var delegate: TodoServiceDelegate?
+    private(set) var todoItems: [TodoItem] = [] {
+        didSet {
+            delegate?.todoItemsChanged()
+        }
+    }
 
     init(_ fileCacheService: FileCacheServiceProtocol, _ networkService: NetworkServiceProtocol) {
         self.fileCacheService = fileCacheService
         self.networkService = networkService
         loadData()
+    }
+
+    func assignDelegate(_ delegate: TodoServiceDelegate) {
+        self.delegate = delegate
     }
 }
 
@@ -106,7 +121,7 @@ extension TodoService {
 
     private func setTodoItems(_ todoItems: [TodoItem]) {
         self.todoServiceQueue.async(flags: .barrier) { [weak self] in
-            self?.todoItems.value = todoItems
+            self?.todoItems = todoItems
         }
     }
 }
@@ -115,22 +130,22 @@ extension TodoService {
 extension TodoService {
     private func add(_ todoItem: TodoItem) {
         todoServiceQueue.async { [weak self] in
-            guard !(self?.todoItems.value.contains(where: { $0.id == todoItem.id}) ?? true) else { return }
-            self?.todoItems.value.append(todoItem)
+            guard !(self?.todoItems.contains(where: { $0.id == todoItem.id}) ?? true) else { return }
+            self?.todoItems.append(todoItem)
         }
     }
 
     private func update(_ todoItem: TodoItem) {
         todoServiceQueue.async { [weak self] in
-            guard let index = self?.todoItems.value.firstIndex(where: { $0.id == todoItem.id }) else { return }
-            self?.todoItems.value[index] = todoItem
+            guard let index = self?.todoItems.firstIndex(where: { $0.id == todoItem.id }) else { return }
+            self?.todoItems[index] = todoItem
         }
     }
 
     private func delete(_ todoItemID: String) {
         todoServiceQueue.async { [weak self] in
-            guard let index = self?.todoItems.value.firstIndex(where: { $0.id == todoItemID }) else { return }
-            self?.todoItems.value.remove(at: index)
+            guard let index = self?.todoItems.firstIndex(where: { $0.id == todoItemID }) else { return }
+            self?.todoItems.remove(at: index)
         }
     }
 }
