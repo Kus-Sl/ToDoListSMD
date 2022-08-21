@@ -11,7 +11,7 @@ import CocoaLumberjack
 protocol ListViewModelProtocol {
     var isFilteredWithoutCompletedItems: Bool { get set }
 
-    func assignTodoServiceDelegate(_ delegate: TodoServiceDelegate)
+    func assignListViewModelDelegate(_ delegate: ListViewModelDelegate)
 
     func createDetailViewModel(for indexPath: IndexPath?) -> DetailViewModel
     func completeTodoItem(with indexPath: IndexPath)
@@ -22,9 +22,17 @@ protocol ListViewModelProtocol {
     func getCompletedTodoItemsCount() -> Int
 }
 
+protocol ListViewModelDelegate: AnyObject {
+    func startSpinner()
+    func stopSpinner()
+    func reloadTableView()
+}
+
 final class ListViewModel: ListViewModelProtocol {
     var isFilteredWithoutCompletedItems = false
+
     private let todoService: TodoServiceProtocol
+    private weak var delegate: ListViewModelDelegate?
     
     private var uncompletedTodoItems: [TodoItem] {
         todoService.threadSafeTodoItems.filter { !$0.isDone }
@@ -32,10 +40,11 @@ final class ListViewModel: ListViewModelProtocol {
 
     init(_ todoService: TodoServiceProtocol) {
         self.todoService = todoService
+        todoService.assignDelegate(self)
     }
 
-    func assignTodoServiceDelegate(_ delegate: TodoServiceDelegate) {
-        todoService.assignDelegate(delegate)
+    func assignListViewModelDelegate(_ delegate: ListViewModelDelegate) {
+        self.delegate = delegate
     }
 }
 
@@ -50,11 +59,12 @@ extension ListViewModel {
     }
 
     func completeTodoItem(with indexPath: IndexPath) {
+        delegate?.startSpinner()
         let completedTodoItem = todoService.threadSafeTodoItems[indexPath.row].asCompleted
-        todoService.update(completedTodoItem) { result in
+        todoService.update(completedTodoItem) { [weak self] result in
             switch result {
             case .success:
-                break
+                self?.delegate?.stopSpinner()
             case .failure(let error):
                 DDLogInfo(error)
                 // NB: обработать
@@ -63,11 +73,12 @@ extension ListViewModel {
     }
     
     func deleteTodoItem(with indexPath: IndexPath) {
+        delegate?.startSpinner()
         let deletingTodoItem = todoService.threadSafeTodoItems[indexPath.row]
-        todoService.delete(deletingTodoItem.id) { result in
+        todoService.delete(deletingTodoItem.id) { [weak self] result in
             switch result {
             case .success:
-                break
+                self?.delegate?.stopSpinner()
             case .failure(let error):
                 DDLogInfo(error)
                 // NB: обработать
@@ -92,5 +103,20 @@ extension ListViewModel {
     
     func getCompletedTodoItemsCount() -> Int {
         todoService.threadSafeTodoItems.filter { $0.isDone }.count
+    }
+}
+
+// MARK: TodoService delegate
+extension ListViewModel: TodoServiceDelegate {
+    func todoItemsChanged() {
+        delegate?.reloadTableView()
+    }
+
+    func requestStarted() {
+        delegate?.startSpinner()
+    }
+
+    func requestEnded() {
+        delegate?.stopSpinner()
     }
 }

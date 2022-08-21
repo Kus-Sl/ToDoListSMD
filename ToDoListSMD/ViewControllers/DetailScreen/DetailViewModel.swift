@@ -42,7 +42,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     var text: String
     var importance: Importance
     var deadline: Box<Int?>
-    weak var delegate: DetailViewModelDelegate?
+    private weak var delegate: DetailViewModelDelegate?
 
     // NB: доковырять
     private let todoItem: TodoItem

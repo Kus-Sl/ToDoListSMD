@@ -11,6 +11,8 @@ import Helpers
 
 protocol TodoServiceDelegate: AnyObject {
     func todoItemsChanged()
+    func requestStarted()
+    func requestEnded()
 }
 
 protocol TodoServiceProtocol {
@@ -58,9 +60,11 @@ final class TodoService: TodoServiceProtocol {
 extension TodoService {
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
         add(todoItem)
+        delegate?.requestStarted()
         networkService.add(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
             switch result {
             case .success(let revision):
+                self?.delegate?.requestEnded()
                 self?.fileCacheService.lastKnownRevision = revision
                 self?.fileCacheService.add(todoItem) { cacheResult in
                     completion(cacheResult)
@@ -77,9 +81,11 @@ extension TodoService {
 
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
         update(todoItem)
+        delegate?.requestStarted()
         networkService.update(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
             switch result {
             case .success(let revision):
+                self?.delegate?.requestEnded()
                 self?.fileCacheService.lastKnownRevision = revision
                 self?.fileCacheService.update(todoItem) { cacheResult in
                     completion(cacheResult)
@@ -96,9 +102,9 @@ extension TodoService {
 
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
         delete(todoItemID)
-
+        delegate?.requestStarted()
         networkService.delete(todoItemID: todoItemID, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
-
+            self?.delegate?.requestEnded()
             self?.fileCacheService.delete(todoItemID: todoItemID) { cacheResult in
                 completion(cacheResult)
             }
@@ -127,12 +133,12 @@ extension TodoService {
     }
 
     func load() {
+        delegate?.requestStarted()
         fileCacheService.load(from: fileName) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let cacheItems):
                 self.load(cacheItems)
-
                 self.networkService.fetchTodoItems { result in
                     switch result {
                     case .success((_, let revision)):
@@ -157,8 +163,10 @@ extension TodoService {
         guard fileCacheService.isDirtiesExist
                 || fileCacheService.isTombstonesExist
                 || revision != fileCacheService.lastKnownRevision else {
+            delegate?.requestEnded()
             return
         }
+
         sync()
     }
 
@@ -166,6 +174,7 @@ extension TodoService {
         self.networkService.sync(threadSafeTodoItems) { [weak self] result in
             switch result {
             case .success((let todoItems, let revision)):
+                self?.delegate?.requestEnded()
                 self?.load(todoItems)
                 self?.fileCacheService.lastKnownRevision = revision
                 self?.fileCacheService.isTombstonesExist = false

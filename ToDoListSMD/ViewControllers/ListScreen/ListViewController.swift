@@ -19,6 +19,7 @@ final class ListViewController: UIViewController {
     private lazy var completedItemsCountLabel = UILabel()
     private lazy var completedItemsButton = UIButton()
     private lazy var newTodoItemButton = UIButton()
+    private lazy var spinnerView = UIActivityIndicatorView()
 
     init(_ viewModel: ListViewModelProtocol) {
         self.viewModel = viewModel
@@ -33,7 +34,7 @@ final class ListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ColorAsset.backPrimary
 
-        viewModel.assignTodoServiceDelegate(self)
+        viewModel.assignListViewModelDelegate(self)
         setupView()
         setupLayout()
     }
@@ -44,6 +45,7 @@ final class ListViewController: UIViewController {
         setupCompletedItemsCountLabel()
         setupCompletedItemsButton()
         setupNewTodoItemButton()
+        setupSpinnerView()
 
         view.addSubview(tableView)
         tableViewHeaderView.addSubview(completedItemsCountLabel)
@@ -109,6 +111,14 @@ final class ListViewController: UIViewController {
         mockView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
         mockView.heightAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
         mockView.widthAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
+    }
+
+    private func setupSpinnerView() {
+        spinnerView = UIActivityIndicatorView(style: .medium)
+        spinnerView.hidesWhenStopped = true
+        let spinnerItem = UIBarButtonItem(customView: spinnerView)
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = spinnerItem
+        spinnerView.startAnimating()
     }
 
     private func setupLayout() {
@@ -236,10 +246,20 @@ extension ListViewController: UITableViewDelegate {
     }
 }
 
-extension ListViewController: TodoServiceDelegate {
-    func todoItemsChanged() {
+// MARK: Custom delegates
+extension ListViewController: ListViewModelDelegate {
+    func reloadTableView() {
         tableView.reloadData()
         completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.getCompletedTodoItemsCount())"
+    }
+
+    func startSpinner() {
+        spinnerView.isHidden = false
+        spinnerView.startAnimating()
+    }
+
+    func stopSpinner() {
+        spinnerView.stopAnimating()
     }
 }
 
