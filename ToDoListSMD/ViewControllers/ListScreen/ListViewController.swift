@@ -226,9 +226,8 @@ extension ListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+        let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
             self.completeTodoItem(with: indexPath)
-            isDone(true)
         }
 
         completeAction.backgroundColor = .ColorAsset.colorGreen

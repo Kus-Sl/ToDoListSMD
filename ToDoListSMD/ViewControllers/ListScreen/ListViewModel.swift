@@ -27,7 +27,7 @@ final class ListViewModel: ListViewModelProtocol {
     private let todoService: TodoServiceProtocol
     
     private var uncompletedTodoItems: [TodoItem] {
-        todoService.todoItems.filter { !$0.isDone }
+        todoService.threadSafeTodoItems.filter { !$0.isDone }
     }
 
     init(_ todoService: TodoServiceProtocol) {
@@ -50,7 +50,7 @@ extension ListViewModel {
     }
 
     func completeTodoItem(with indexPath: IndexPath) {
-        let completedTodoItem = todoService.todoItems[indexPath.row].asCompleted
+        let completedTodoItem = todoService.threadSafeTodoItems[indexPath.row].asCompleted
         todoService.update(completedTodoItem) { result in
             switch result {
             case .success:
@@ -63,7 +63,7 @@ extension ListViewModel {
     }
     
     func deleteTodoItem(with indexPath: IndexPath) {
-        let deletingTodoItem = todoService.todoItems[indexPath.row]
+        let deletingTodoItem = todoService.threadSafeTodoItems[indexPath.row]
         todoService.delete(deletingTodoItem.id) { result in
             switch result {
             case .success:
@@ -81,16 +81,16 @@ extension ListViewModel {
     func getTodoItem(for indexPath: IndexPath) -> TodoItem {
         isFilteredWithoutCompletedItems
         ? uncompletedTodoItems[indexPath.row]
-        : todoService.todoItems[indexPath.row]
+        : todoService.threadSafeTodoItems[indexPath.row]
     }
     
     func getNumberOfRows() -> Int {
         isFilteredWithoutCompletedItems
         ? uncompletedTodoItems.count
-        : todoService.todoItems.count
+        : todoService.threadSafeTodoItems.count
     }
     
     func getCompletedTodoItemsCount() -> Int {
-        todoService.todoItems.filter { $0.isDone }.count
+        todoService.threadSafeTodoItems.filter { $0.isDone }.count
     }
 }
