@@ -7,6 +7,7 @@
 
 import Foundation
 import Helpers
+import CocoaLumberjack
 
 protocol NetworkServiceProtocol {
     func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ())
@@ -83,7 +84,7 @@ final class NetworkService: NetworkServiceProtocol {
             return
         }
 
-        guard let request = createRequest(with: url, httpMethod: .delete, httpBody: nil, revision: lastKnownRevision) else {
+        guard let request = createRequest(with: url, httpMethod: .delete, revision: lastKnownRevision) else {
             completion(.failure(NetworkErrors.incorrectRequest))
             return
         }
@@ -129,7 +130,7 @@ final class NetworkService: NetworkServiceProtocol {
             return
         }
 
-        guard let request = createRequest(with: url, httpMethod: .get, httpBody: nil, revision: nil) else {
+        guard let request = createRequest(with: url, httpMethod: .get) else {
             completion(.failure(NetworkErrors.incorrectRequest))
             return
         }
@@ -162,13 +163,15 @@ extension NetworkService {
         urlRequest.httpMethod = httpMethod.rawValue
         urlRequest.setValue(Constants.headerBearerTokenValue, forHTTPHeaderField: Constants.headerBearerTokenField)
 
-        guard let httpBody = httpBody, let revision = revision else {
-            return urlRequest
+        if let httpBody = httpBody {
+            urlRequest.setValue(Constants.headerContentTypeValue, forHTTPHeaderField: Constants.headerContentTypeField)
+            urlRequest.httpBody = httpBody
         }
 
-        urlRequest.setValue(Constants.headerContentTypeValue, forHTTPHeaderField: Constants.headerContentTypeField)
-        urlRequest.setValue("\(revision)", forHTTPHeaderField: Constants.headerRevisionField)
-        urlRequest.httpBody = httpBody
+        if let revision = revision {
+            urlRequest.setValue("\(revision)", forHTTPHeaderField: Constants.headerRevisionField)
+        }
+
         return urlRequest
     }
 

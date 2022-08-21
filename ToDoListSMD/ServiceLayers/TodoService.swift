@@ -20,6 +20,7 @@ protocol TodoServiceProtocol {
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
     func save()
+    func load()
 
     func assignDelegate(_ delegate: TodoServiceDelegate)
 }
@@ -32,14 +33,15 @@ final class TodoService: TodoServiceProtocol {
     }
 
     private let fileName = Constants.fileNameForWriteCache
-    private let fileCacheService: FileCacheServiceProtocol
+    private var fileCacheService: FileCacheServiceProtocol
     private let networkService: NetworkServiceProtocol
     private let todoServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
-    private weak var delegate: TodoServiceDelegate?
 
     private var todoItems: [TodoItem] = [] {
         didSet { callDelegate() }
     }
+
+    private weak var delegate: TodoServiceDelegate?
 
     init(_ fileCacheService: FileCacheServiceProtocol, _ networkService: NetworkServiceProtocol) {
         self.fileCacheService = fileCacheService
@@ -56,27 +58,59 @@ final class TodoService: TodoServiceProtocol {
 extension TodoService {
     func add(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
         add(todoItem)
-        fileCacheService.add(todoItem) { result in
-            DispatchQueue.main.async {
-                completion(result)
+        networkService.add(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.lastKnownRevision = revision
+                self?.fileCacheService.add(todoItem) { cacheResult in
+                    completion(cacheResult)
+                }
+            case .failure(let error):
+                self?.fileCacheService.add(todoItem.asDirty) { cacheResult in
+                    completion(cacheResult)
+                }
+                DDLogInfo(error)
+                // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
             }
         }
     }
 
     func update(_ todoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
         update(todoItem)
-        fileCacheService.update(todoItem) { result in
-            DispatchQueue.main.async {
-                completion(result)
+        networkService.update(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.lastKnownRevision = revision
+                self?.fileCacheService.update(todoItem) { cacheResult in
+                    completion(cacheResult)
+                }
+            case .failure(let error):
+                self?.fileCacheService.update(todoItem.asDirty) { cacheResult in
+                    completion(cacheResult)
+                }
+                DDLogInfo(error)
+                // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
             }
         }
     }
 
     func delete(_ todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
         delete(todoItemID)
-        fileCacheService.delete(todoItemID: todoItemID) { result in
-            DispatchQueue.main.async {
-                completion(result)
+
+        networkService.delete(todoItemID: todoItemID, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
+
+            self?.fileCacheService.delete(todoItemID: todoItemID) { cacheResult in
+                completion(cacheResult)
+            }
+
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.lastKnownRevision = revision
+            case .failure(let error):
+                self?.fileCacheService.isTombstonesExist = true
+
+                DDLogInfo(error)
+                // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
             }
         }
     }
@@ -88,19 +122,30 @@ extension TodoService {
                 break
             case .failure(let error):
                 DDLogInfo(error)
-                // NB: обработать
             }
         }
     }
 
-    private func load() {
-        fileCacheService.load(from: fileName) { result in
+    func load() {
+        fileCacheService.load(from: fileName) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let cacheItems):
                 self.load(cacheItems)
+
+                self.networkService.fetchTodoItems { result in
+                    switch result {
+                    case .success((_, let revision)):
+                        self.syncIfNeeded(revision)
+                    case .failure(let error):
+                        DDLogInfo(error)
+                        // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
+                    }
+                }
             case .failure(let error):
                 DDLogInfo(error)
                 // NB: обработать
+                // NB: при запуске на новом устройстве не видит ничего в кеше и не грузит с сервера
             }
         }
     }
@@ -108,12 +153,28 @@ extension TodoService {
 
 // MARK: Sync methods
 extension TodoService {
-    private func isSynchronized() {
-
+    private func syncIfNeeded(_ revision: Int) {
+        guard fileCacheService.isDirtiesExist
+                || fileCacheService.isTombstonesExist
+                || revision != fileCacheService.lastKnownRevision else {
+            return
+        }
+        sync()
     }
 
-    private func synchronizeData() {
-
+    private func sync() {
+        self.networkService.sync(threadSafeTodoItems) { [weak self] result in
+            switch result {
+            case .success((let todoItems, let revision)):
+                self?.load(todoItems)
+                self?.fileCacheService.lastKnownRevision = revision
+                self?.fileCacheService.isTombstonesExist = false
+                self?.fileCacheService.reloadCache(with: todoItems)
+            case .failure(let error):
+                DDLogInfo(error)
+                // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
+            }
+        }
     }
 }
 

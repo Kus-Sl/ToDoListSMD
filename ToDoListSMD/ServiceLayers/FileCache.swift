@@ -49,6 +49,10 @@ final class FileCache {
         todoItems = jsonDict.compactMap { TodoItem.parse(json: $0) }
     }
 
+    func reloadCache(with todoItems: [TodoItem]) {
+        self.todoItems = todoItems
+    }
+
     private func getPath(to file: String) -> URL? {
         guard var path = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else { return nil }
 

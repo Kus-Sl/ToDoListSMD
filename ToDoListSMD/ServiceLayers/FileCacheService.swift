@@ -10,14 +10,34 @@ import CocoaLumberjack
 import Helpers
 
 protocol FileCacheServiceProtocol {
+    var lastKnownRevision: Int { get set }
+    var isTombstonesExist: Bool { get set }
+    var isDirtiesExist: Bool { get }
+
     func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
     func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
     func save(to file: String, completion: @escaping (Result<(), Error>) -> ())
     func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ())
+    func reloadCache(with todoItems: [TodoItem]) 
 }
 
 final class FileCacheService: FileCacheServiceProtocol {
+    var isDirtiesExist: Bool {
+        let t33 = fileCache.todoItems.contains(where: { $0.isDirty })
+        return t33
+    }
+
+    var isTombstonesExist : Bool {
+        get { UserDefaults.standard.bool(forKey: Constants.isTombstonesExist) }
+        set { UserDefaults.standard.set(newValue, forKey: Constants.isTombstonesExist) }
+    }
+
+    var lastKnownRevision: Int {
+        get { UserDefaults.standard.integer(forKey: Constants.lastKnownRevision) }
+        set { UserDefaults.standard.set(newValue, forKey: Constants.lastKnownRevision) }
+    }
+
     private let fileCache: FileCache = FileCache()
     private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
 
@@ -60,6 +80,12 @@ final class FileCacheService: FileCacheServiceProtocol {
             }
         }
     }
+
+    func reloadCache(with todoItems: [TodoItem]) {
+        fileCacheQueue.async(flags: .barrier) { [weak self] in
+            self?.fileCache.reloadCache(with: todoItems)
+        }
+    }
 }
 
 // MARK: Support methods
@@ -84,5 +110,7 @@ extension FileCacheService {
 extension FileCacheService {
     private enum Constants {
         static let queueLabel = "fileCacheQueue"
+        static let isTombstonesExist = "isTombstonesExist"
+        static let lastKnownRevision = "LastKnownRevision"
     }
 }

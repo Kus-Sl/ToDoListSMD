@@ -35,7 +35,7 @@ struct TodoItem {
         self.creationDate = creationDate
         self.changeDate = changeDate
         self.deadline = deadline
-        self.isDirty = false
+        self.isDirty = isDirty
     }
 
     init(_ todoItemNetwork: TodoItemNetwork) {
@@ -57,7 +57,8 @@ extension TodoItem {
             Keys.idKey: id,
             Keys.textKey: text,
             Keys.isDoneKey: isDone,
-            Keys.creationDateKey: creationDate
+            Keys.creationDateKey: creationDate,
+            Keys.isDirtyKey: isDirty
         ]
 
         if importance != Importance.ordinary.rawValue {
@@ -85,7 +86,8 @@ extension TodoItem {
             isDone: jsonDict[Keys.isDoneKey] as? Bool ?? false,
             creationDate: jsonDict[Keys.creationDateKey] as? Int ?? Int(Date().timeIntervalSince1970),
             changeDate: jsonDict[Keys.changeDateKey] as? Int,
-            deadline: jsonDict[Keys.deadlineKey] as? Int
+            deadline: jsonDict[Keys.deadlineKey] as? Int,
+            isDirty: jsonDict[Keys.isDirtyKey] as? Bool ?? false
         )
     }
 }
@@ -130,6 +132,7 @@ extension TodoItem {
         static let creationDateKey = "creationDate"
         static let changeDateKey = "changeDate"
         static let deadlineKey = "deadline"
+        static let isDirtyKey = "IsDirty"
     }
 }
 
