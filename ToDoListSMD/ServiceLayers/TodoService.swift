@@ -135,14 +135,13 @@ extension TodoService {
     func load() {
         delegate?.requestStarted()
         fileCacheService.load(from: fileName) { [weak self] result in
-            guard let self = self else { return }
             switch result {
             case .success(let cacheItems):
-                self.load(cacheItems)
-                self.networkService.fetchTodoItems { result in
+                self?.load(cacheItems)
+                self?.networkService.fetchTodoItems { result in
                     switch result {
                     case .success((_, let revision)):
-                        self.syncIfNeeded(revision)
+                        self?.syncIfNeeded(revision)
                     case .failure(let error):
                         DDLogInfo(error)
                         // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
@@ -151,7 +150,17 @@ extension TodoService {
             case .failure(let error):
                 DDLogInfo(error)
                 // NB: обработать
-                // NB: при запуске на новом устройстве не видит ничего в кеше и не грузит с сервера
+                self?.networkService.fetchTodoItems { result in
+                    switch result {
+                    case .success((let todoItems, let revision)):
+                        self?.delegate?.requestEnded()
+                        self?.load(todoItems)
+                        self?.fileCacheService.lastKnownRevision = revision
+                    case .failure(let error):
+                        DDLogInfo(error)
+                        // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
+                    }
+                }
             }
         }
     }
