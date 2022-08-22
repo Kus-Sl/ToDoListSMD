@@ -153,9 +153,10 @@ extension TodoService {
                 self?.networkService.fetchTodoItems { result in
                     switch result {
                     case .success((let todoItems, let revision)):
-                        self?.delegate?.requestEnded()
                         self?.load(todoItems)
                         self?.fileCacheService.lastKnownRevision = revision
+                        self?.fileCacheService.reloadCache(with: todoItems)
+                        self?.delegate?.requestEnded()
                     case .failure(let error):
                         DDLogInfo(error)
                         // Помечаю как NeedsSync и пытаюсь повторить, вызывая retry
