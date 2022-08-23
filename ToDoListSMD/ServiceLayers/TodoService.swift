@@ -166,8 +166,6 @@ extension TodoService {
 
 // MARK: Sync methods
 extension TodoService {
-    // Сначала несколько раз дергать retry, и только потом дергать ручку sync. Подумать о том, надо ли стопить запущенные retry
-
     private func syncIfNeeded(_ revision: Int) {
         guard fileCacheService.isDirtiesExist
                 || fileCacheService.isTombstonesExist
