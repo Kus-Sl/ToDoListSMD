@@ -69,15 +69,7 @@ final class DetailViewModel: DetailViewModelProtocol {
 // MARK: Actions
 extension DetailViewModel {
     func deleteTodoItem() {
-        todoService.delete(todoItem.id) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.delete(todoItem.id)
     }
 
     func saveOrUpdateTodoItem() {
@@ -96,27 +88,11 @@ extension DetailViewModel {
     }
 
     private func save(_ newTodoItem: TodoItem) {
-        todoService.add(newTodoItem) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.add(newTodoItem)
     }
 
     private func update(_ updatingTodoItem: TodoItem) {
-        todoService.update(updatingTodoItem) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.update(updatingTodoItem)
     }
 }
 

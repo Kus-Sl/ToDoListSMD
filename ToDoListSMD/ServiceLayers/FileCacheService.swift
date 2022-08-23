@@ -14,18 +14,17 @@ protocol FileCacheServiceProtocol {
     var isTombstonesExist: Bool { get set }
     var isDirtiesExist: Bool { get }
 
-    func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
-    func save(to file: String, completion: @escaping (Result<(), Error>) -> ())
-    func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ())
+    func add(_ newTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
+    func update(_ updatingTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
+    func delete(todoItemID: String, completion: @escaping (VoidResult) -> ())
+    func save(to file: String, completion: @escaping (VoidResult) -> ())
+    func load(from file: String, completion: @escaping (ListResult) -> ())
     func reloadCache(with todoItems: [TodoItem]) 
 }
 
 final class FileCacheService: FileCacheServiceProtocol {
     var isDirtiesExist: Bool {
-        let t33 = fileCache.todoItems.contains(where: { $0.isDirty })
-        return t33
+        fileCache.todoItems.contains(where: { $0.isDirty })
     }
 
     var isTombstonesExist : Bool {
@@ -41,31 +40,31 @@ final class FileCacheService: FileCacheServiceProtocol {
     private let fileCache: FileCache = FileCache()
     private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
 
-    func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
+    func add(_ newTodoItem: TodoItem, completion: @escaping (VoidResult) -> ()) {
         callAction(completion: completion) { [weak self] in
              try self?.fileCache.add(newTodoItem)
         }
     }
 
-    func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
+    func update(_ updatingTodoItem: TodoItem, completion: @escaping (VoidResult) -> ()) {
         callAction(completion: completion) { [weak self] in
             try self?.fileCache.update(updatingTodoItem)
         }
     }
 
-    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
+    func delete(todoItemID: String, completion: @escaping (VoidResult) -> ()) {
         callAction(completion: completion) { [weak self] in
             try self?.fileCache.delete(todoItemID)
         }
     }
 
-    func save(to file: String, completion: @escaping (Result<(), Error>) -> ()) {
+    func save(to file: String, completion: @escaping (VoidResult) -> ()) {
         callAction(completion: completion) { [weak self] in
             try self?.fileCache.save(file)
         }
     }
 
-    func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ()) {
+    func load(from file: String, completion: @escaping (ListResult) -> ()) {
         fileCacheQueue.async { [weak self] in
             guard let self = self else { return }
             do {
@@ -90,7 +89,7 @@ final class FileCacheService: FileCacheServiceProtocol {
 
 // MARK: Support methods
 extension FileCacheService {
-    private func callAction(completion: @escaping (Result<(), Error>) -> (), action: @escaping () throws -> ()) {
+    private func callAction(completion: @escaping (VoidResult) -> (), action: @escaping () throws -> ()) {
         fileCacheQueue.async(flags: .barrier) {
             do {
                 try action()

@@ -10,11 +10,11 @@ import Helpers
 import CocoaLumberjack
 
 protocol NetworkServiceProtocol {
-    func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ())
-    func update(_ updatingTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ())
-    func delete(todoItemID: String, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ())
-    func sync(_ todoItems: [TodoItem], completion: @escaping (Result<([TodoItem], Int), Error>) -> ())
-    func fetchTodoItems(completion: @escaping (Result<([TodoItem], Int), Error>) -> ())
+    func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ())
+    func update(_ updatingTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ())
+    func delete(todoItemID: String, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ())
+    func sync(_ todoItems: [TodoItem], completion: @escaping (TupleResult) -> ())
+    func fetchTodoItems(completion: @escaping (TupleResult) -> ())
 }
 
 final class NetworkService: NetworkServiceProtocol {
@@ -26,7 +26,7 @@ final class NetworkService: NetworkServiceProtocol {
         return session
     }()
 
-    func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
+    func add(_ newTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ()) {
         let todoItemNetwork = TodoItemNetwork(newTodoItem)
         guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
@@ -52,7 +52,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 
-    func update(_ updatingTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
+    func update(_ updatingTodoItem: TodoItem, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ()) {
         let todoItemNetwork = TodoItemNetwork(updatingTodoItem)
         guard let url = createURL(NetworkService.baseURL, todoItemID: todoItemNetwork.id) else {
             completion(.failure(NetworkErrors.incorrectUrl))
@@ -78,7 +78,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 
-    func delete(todoItemID: String, lastKnownRevision: Int, completion: @escaping (Result<Int, Error>) -> ()) {
+    func delete(todoItemID: String, lastKnownRevision: Int, completion: @escaping (RevisionResult) -> ()) {
         guard let url = createURL(NetworkService.baseURL, todoItemID: todoItemID) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
@@ -98,7 +98,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 
-    func sync(_ todoItems: [TodoItem], completion: @escaping (Result<([TodoItem], Int), Error>) -> ()) {
+    func sync(_ todoItems: [TodoItem], completion: @escaping (TupleResult) -> ()) {
         let todoItemsNetwork = todoItems.map { TodoItemNetwork($0) }
         guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
@@ -124,7 +124,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
     }
 
-    func fetchTodoItems(completion: @escaping (Result<([TodoItem], Int), Error>) -> ()) {
+    func fetchTodoItems(completion: @escaping (TupleResult) -> ()) {
         guard let url = createURL(NetworkService.baseURL) else {
             completion(.failure(NetworkErrors.incorrectUrl))
             return
@@ -210,7 +210,7 @@ extension NetworkService {
         return false
     }
 
-    private func handleElementResult(result: Result<Response, Error>, completion: @escaping (Result<Int, Error>) -> ()) {
+    private func handleElementResult(result: Result<Response, Error>, completion: @escaping (RevisionResult) -> ()) {
         switch result {
         case .success(let response):
             guard let revision = response.revision else {
@@ -229,7 +229,7 @@ extension NetworkService {
         }
     }
 
-    private func handleListResult(result: Result<Response, Error>, completion: @escaping (Result<([TodoItem], Int), Error>) -> ()) {
+    private func handleListResult(result: Result<Response, Error>, completion: @escaping (TupleResult) -> ()) {
         switch result {
         case .success(let response):
             guard let revision = response.revision, let todoItemsNetwork = response.list else {

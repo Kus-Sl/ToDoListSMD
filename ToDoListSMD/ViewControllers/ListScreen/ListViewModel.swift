@@ -59,32 +59,13 @@ extension ListViewModel {
     }
 
     func completeTodoItem(with indexPath: IndexPath) {
-        delegate?.startSpinner()
         let completedTodoItem = todoService.threadSafeTodoItems[indexPath.row].asCompleted
-        todoService.update(completedTodoItem) { [weak self] result in
-            switch result {
-            case .success:
-                self?.delegate?.stopSpinner()
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.update(completedTodoItem)
     }
     
     func deleteTodoItem(with indexPath: IndexPath) {
-        delegate?.startSpinner()
         let deletingTodoItem = todoService.threadSafeTodoItems[indexPath.row]
-        todoService.delete(deletingTodoItem.id) { [weak self] result in
-            switch result {
-            case .success:
-                self?.delegate?.stopSpinner()
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
-    }
+        todoService.delete(deletingTodoItem.id)        }
 }
 
 // MARK: Data source
