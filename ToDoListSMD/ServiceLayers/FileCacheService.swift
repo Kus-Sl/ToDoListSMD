@@ -10,7 +10,7 @@ import CocoaLumberjack
 import Helpers
 
 protocol FileCacheServiceProtocol {
-    var lastKnownRevision: Int { get set }
+    var revision: Int { get set }
     var isTombstonesExist: Bool { get set }
     var isDirtiesExist: Bool { get }
 
@@ -32,7 +32,7 @@ final class FileCacheService: FileCacheServiceProtocol {
         set { UserDefaults.standard.set(newValue, forKey: Constants.isTombstonesExist) }
     }
 
-    var lastKnownRevision: Int {
+    var revision: Int {
         get { UserDefaults.standard.integer(forKey: Constants.lastKnownRevision) }
         set { UserDefaults.standard.set(newValue, forKey: Constants.lastKnownRevision) }
     }

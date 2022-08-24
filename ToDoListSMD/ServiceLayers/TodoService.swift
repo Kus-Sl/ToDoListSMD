@@ -15,7 +15,7 @@ protocol TodoServiceProtocol {
     func add(_ todoItem: TodoItem)
     func update(_ todoItem: TodoItem)
     func delete(_ todoItemID: String)
-    func save()
+    func saveToCache()
     func load()
 
     func assignDelegate(_ delegate: TodoServiceDelegate)
@@ -38,6 +38,7 @@ final class TodoService: TodoServiceProtocol {
     private let fileName = Constants.fileNameForWriteCache
     private let networkService: NetworkServiceProtocol
     private var fileCacheService: FileCacheServiceProtocol
+    private var retryNumber: Int = .zero
 
     private var todoItems: [TodoItem] = [] {
         didSet { callDelegate() }
@@ -60,70 +61,20 @@ final class TodoService: TodoServiceProtocol {
 extension TodoService {
     func add(_ todoItem: TodoItem) {
         addToCurrentList(todoItem)
-        delegate?.requestStarted()
-
-        networkService.add(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
-            switch result {
-            case .success(let revision):
-                self?.delegate?.requestEnded()
-                self?.fileCacheService.lastKnownRevision = revision
-                self?.fileCacheService.add(todoItem) { [weak self] cacheResult in
-                    self?.handleVoidResult(cacheResult)
-                }
-            case .failure(let error):
-                self?.fileCacheService.add(todoItem.asDirty) { [weak self] cacheResult in
-                    self?.handleVoidResult(cacheResult)
-                }
-                // retry
-                DDLogInfo(error)
-            }
-        }
+        addToServices(todoItem)
     }
 
     func update(_ todoItem: TodoItem) {
         updateIntoCurrentList(todoItem)
-        delegate?.requestStarted()
-
-        networkService.update(todoItem, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
-            switch result {
-            case .success(let revision):
-                self?.delegate?.requestEnded()
-                self?.fileCacheService.lastKnownRevision = revision
-                self?.fileCacheService.update(todoItem) { cacheResult in
-                    self?.handleVoidResult(cacheResult)
-                }
-            case .failure(let error):
-                self?.fileCacheService.update(todoItem.asDirty) { cacheResult in
-                    self?.handleVoidResult(cacheResult)
-                }
-                // retry
-                DDLogInfo(error)
-            }
-        }
+        updateIntoServices(todoItem)
     }
 
     func delete(_ todoItemID: String) {
         deleteFromCurrentList(todoItemID)
-        delegate?.requestStarted()
-        
-        networkService.delete(todoItemID: todoItemID, lastKnownRevision: fileCacheService.lastKnownRevision) { [weak self] result in
-            self?.delegate?.requestEnded()
-            self?.fileCacheService.delete(todoItemID: todoItemID) { cacheResult in
-                self?.handleVoidResult(cacheResult)
-            }
-
-            switch result {
-            case .success(let revision):
-                self?.fileCacheService.lastKnownRevision = revision
-            case .failure(let error):
-                self?.fileCacheService.isTombstonesExist = true
-                // retry
-                DDLogInfo(error)
-            }
-        }
+        deleteFromServices(todoItemID)
     }
 
-    func save() {
+    func saveToCache() {
         fileCacheService.save(to: fileName) { [weak self] result in
             self?.handleVoidResult(result)
         }
@@ -135,28 +86,31 @@ extension TodoService {
             switch result {
             case .success(let cacheItems):
                 self?.loadToCurrentList(cacheItems)
-                self?.networkService.fetchTodoItems { result in
+                self?.networkService.fetchTodoItems { [weak self] result in
+                    self?.delegate?.requestEnded()
+
                     switch result {
                     case .success((_, let revision)):
                         self?.syncIfNeeded(revision)
                     case .failure(let error):
                         DDLogInfo(error)
-                        // NB: Обработать
+                        // NB: Уведомить, что не прошло
                     }
                 }
             case .failure(let error):
                 DDLogInfo(error)
 
-                self?.networkService.fetchTodoItems { result in
+                self?.networkService.fetchTodoItems { [weak self] result in
+                    self?.delegate?.requestEnded()
+
                     switch result {
                     case .success((let todoItems, let revision)):
                         self?.loadToCurrentList(todoItems)
-                        self?.fileCacheService.lastKnownRevision = revision
+                        self?.fileCacheService.revision = revision
                         self?.fileCacheService.reloadCache(with: todoItems)
-                        self?.delegate?.requestEnded()
                     case .failure(let error):
                         DDLogInfo(error)
-                        // NB: Обработать
+                        // NB: Уведомить, что не прошло
                     }
                 }
             }
@@ -164,35 +118,7 @@ extension TodoService {
     }
 }
 
-// MARK: Sync methods
-extension TodoService {
-    private func syncIfNeeded(_ revision: Int) {
-        guard fileCacheService.isDirtiesExist
-                || fileCacheService.isTombstonesExist
-                || revision != fileCacheService.lastKnownRevision else {
-            delegate?.requestEnded()
-            return
-        }
-        sync()
-    }
-
-    private func sync() {
-        self.networkService.sync(threadSafeTodoItems) { [weak self] result in
-            switch result {
-            case .success((let todoItems, let revision)):
-                self?.delegate?.requestEnded()
-                self?.loadToCurrentList(todoItems)
-                self?.fileCacheService.lastKnownRevision = revision
-                self?.fileCacheService.isTombstonesExist = false
-                self?.fileCacheService.reloadCache(with: todoItems)
-            case .failure(let error):
-                DDLogInfo(error)
-            }
-        }
-    }
-}
-
-// MARK: TodoItems model methods
+// MARK: TodoItems model actions
 extension TodoService {
     private func addToCurrentList(_ todoItem: TodoItem) {
         todoServiceQueue.async(flags: .barrier) { [weak self] in
@@ -222,6 +148,116 @@ extension TodoService {
     }
 }
 
+// MARK: Services actions
+extension TodoService {
+    private func addToServices(_ todoItem: TodoItem) {
+        delegate?.requestStarted()
+        networkService.add(todoItem, lastKnownRevision: fileCacheService.revision) { [weak self] result in
+            self?.delegate?.requestEnded()
+
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.revision = revision
+                self?.fileCacheService.add(todoItem) { [weak self] cacheResult in
+                    self?.handleVoidResult(cacheResult)
+                }
+                self?.retryNumber = .zero
+            case .failure(let error):
+                self?.fileCacheService.add(todoItem.asDirty) { [weak self] cacheResult in
+                    self?.handleVoidResult(cacheResult)
+                }
+
+                self?.executeWithExponentialRetry() { [weak self] in
+                    self?.addToServices(todoItem)
+                }
+
+                DDLogInfo(error)
+            }
+        }
+    }
+
+    private func updateIntoServices(_ todoItem: TodoItem) {
+        delegate?.requestStarted()
+        networkService.update(todoItem, lastKnownRevision: fileCacheService.revision) { [weak self] result in
+            self?.delegate?.requestEnded()
+
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.revision = revision
+                self?.fileCacheService.update(todoItem) { cacheResult in
+                    self?.handleVoidResult(cacheResult)
+                }
+            case .failure(let error):
+                self?.fileCacheService.update(todoItem.asDirty) { cacheResult in
+                    self?.handleVoidResult(cacheResult)
+                }
+
+                self?.executeWithExponentialRetry() { [weak self] in
+                    self?.updateIntoServices(todoItem)
+                }
+
+                DDLogInfo(error)
+            }
+        }
+    }
+
+    private func deleteFromServices(_ todoItemID: String) {
+        delegate?.requestStarted()
+
+        fileCacheService.delete(todoItemID: todoItemID) { [weak self] cacheResult in
+            self?.handleVoidResult(cacheResult)
+        }
+
+        networkService.delete(todoItemID: todoItemID, lastKnownRevision: fileCacheService.revision) { [weak self] result in
+            self?.delegate?.requestEnded()
+
+            switch result {
+            case .success(let revision):
+                self?.fileCacheService.revision = revision
+            case .failure(let error):
+                self?.fileCacheService.isTombstonesExist = true
+
+                self?.executeWithExponentialRetry() { [weak self] in
+                    self?.deleteFromServices(todoItemID)
+                }
+
+                DDLogInfo(error)
+            }
+        }
+    }
+}
+
+// MARK: Sync methods
+extension TodoService {
+    private func syncIfNeeded(_ revision: Int) {
+        guard fileCacheService.isDirtiesExist
+                || fileCacheService.isTombstonesExist
+                || revision != fileCacheService.revision else {
+            return
+        }
+        sync()
+    }
+
+    private func sync() {
+        delegate?.requestStarted()
+        networkService.sync(threadSafeTodoItems) { [weak self] result in
+            self?.delegate?.requestEnded()
+            switch result {
+            case .success((let todoItems, let revision)):
+                self?.loadToCurrentList(todoItems)
+                self?.fileCacheService.revision = revision
+                self?.fileCacheService.isTombstonesExist = false
+                self?.fileCacheService.reloadCache(with: todoItems)
+            case .failure(let error):
+                self?.executeWithExponentialRetry {
+                    self?.sync()
+                }
+                DDLogInfo(error)
+            }
+        }
+    }
+}
+
 // MARK: Support methods
 extension TodoService {
     func callDelegate() {
@@ -239,6 +275,21 @@ extension TodoService {
             // NB: Обработать
         }
     }
+
+    private func executeWithExponentialRetry(closure: @escaping () -> Void) {
+        func getDelay() -> Int {
+            let exponentialDelay = Constants.minDelay * pow(Constants.factor, Double(retryNumber))
+            let delay = min(exponentialDelay, Constants.maxDelay)
+            let resultDelay = delay * Double.random(in: (Constants.oneHundredPercent - Constants.jitter)...(Constants.oneHundredPercent + Constants.jitter))
+            return Int(resultDelay.rounded())
+        }
+
+        let delay = getDelay()
+        retryNumber += 1
+        DispatchQueue.main.asyncAfter(
+            deadline: DispatchTime.now() + .milliseconds(delay),
+            execute: closure)
+    }
 }
 
 // MARK: Constants
@@ -246,5 +297,10 @@ extension TodoService {
     private enum Constants {
         static let queueLabel = "todoServiceQueue"
         static let fileNameForWriteCache = "TaskList.txt"
+        static let maxDelay: Double = 120000
+        static let minDelay: Double = 2000
+        static let factor = 1.5
+        static let jitter = 0.05
+        static let oneHundredPercent: Double = 1
     }
 }

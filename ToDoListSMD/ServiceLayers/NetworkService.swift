@@ -172,6 +172,8 @@ extension NetworkService {
             urlRequest.setValue("\(revision)", forHTTPHeaderField: Constants.headerRevisionField)
         }
 
+        urlRequest.timeoutInterval = Constants.timeoutInterval
+
         return urlRequest
     }
 
@@ -269,6 +271,6 @@ extension NetworkService {
         static let headerRevisionField = "X-Last-Known-Revision"
         static let headerBearerTokenField = "Authorization"
         static let headerBearerTokenValue = "Bearer AbnormalBloodMagic"
-        static let timeoutInterval: Double = 15
+        static let timeoutInterval: Double = 5
     }
 }
