@@ -50,7 +50,21 @@ struct TodoItem {
     }
 }
 
-// MARK: JSON Conversion
+// MARK: Core Data conversion
+extension TodoItem {
+    init(_ todoItemCD: TodoItemCD) {
+        id = todoItemCD.id
+        text = todoItemCD.text
+        importance = todoItemCD.importance
+        isDone = todoItemCD.isDone
+        creationDate = Int(todoItemCD.creationDate)
+        changeDate = todoItemCD.changeDate == 0 ? nil : Int(todoItemCD.changeDate)
+        deadline = todoItemCD.deadLine == 0 ? nil : Int(todoItemCD.deadLine)
+        isDirty = todoItemCD.isDirty
+    }
+}
+
+// MARK: JSON conversion
 extension TodoItem {
     var json: Any {
         var jsonDict: [String: Any] = [

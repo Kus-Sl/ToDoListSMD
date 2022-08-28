@@ -15,7 +15,6 @@ protocol TodoServiceProtocol {
     func add(_ todoItem: TodoItem)
     func update(_ todoItem: TodoItem)
     func delete(_ todoItemID: String)
-    func saveToCache()
     func load()
 
     func assignDelegate(_ delegate: TodoServiceDelegate)
@@ -35,7 +34,6 @@ final class TodoService: TodoServiceProtocol {
     }
 
     private let todoServiceQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
-    private let fileName = Constants.fileNameForWriteCache
     private let networkService: NetworkServiceProtocol
     private var fileCacheService: FileCacheServiceProtocol
     private var retryNumber: Int = .zero
@@ -74,15 +72,9 @@ extension TodoService {
         deleteFromServices(todoItemID)
     }
 
-    func saveToCache() {
-        fileCacheService.save(to: fileName) { [weak self] result in
-            self?.handleVoidResult(result)
-        }
-    }
-
     func load() {
         delegate?.requestStarted()
-        fileCacheService.load(from: fileName) { [weak self] result in
+        fileCacheService.load() { [weak self] result in
             switch result {
             case .success(let cacheItems):
                 self?.loadToCurrentList(cacheItems)
@@ -296,7 +288,6 @@ extension TodoService {
 extension TodoService {
     private enum Constants {
         static let queueLabel = "todoServiceQueue"
-        static let fileNameForWriteCache = "TaskList.txt"
         static let maxDelay: Double = 120000
         static let minDelay: Double = 2000
         static let factor = 1.5

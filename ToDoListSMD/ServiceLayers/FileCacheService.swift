@@ -17,8 +17,7 @@ protocol FileCacheServiceProtocol {
     func add(_ newTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
     func update(_ updatingTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
     func delete(todoItemID: String, completion: @escaping (VoidResult) -> ())
-    func save(to file: String, completion: @escaping (VoidResult) -> ())
-    func load(from file: String, completion: @escaping (ListResult) -> ())
+    func load(completion: @escaping (ListResult) -> ())
     func reloadCache(with todoItems: [TodoItem]) 
 }
 
@@ -58,17 +57,11 @@ final class FileCacheService: FileCacheServiceProtocol {
         }
     }
 
-    func save(to file: String, completion: @escaping (VoidResult) -> ()) {
-        callAction(completion: completion) { [weak self] in
-            try self?.fileCache.save(file)
-        }
-    }
-
-    func load(from file: String, completion: @escaping (ListResult) -> ()) {
+    func load(completion: @escaping (ListResult) -> ()) {
         fileCacheQueue.async { [weak self] in
             guard let self = self else { return }
             do {
-                try self.fileCache.load(file)
+                try self.fileCache.load()
                 DispatchQueue.main.async {
                     completion(.success(self.fileCache.todoItems))
                 }

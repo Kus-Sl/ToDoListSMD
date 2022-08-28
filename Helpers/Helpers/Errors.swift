@@ -7,15 +7,16 @@
 
 import Foundation
 
-public enum CacheError: Error {
+public enum CacheErrors: Error {
     case invalidPath
     case existingID
     case nonexistentID
     case loadingError
     case savingError
+    case emptyCache
 }
 
-public enum JSONError: Error {
+public enum JSONErrors: Error {
     case serializationError
     case deserializationError
 }

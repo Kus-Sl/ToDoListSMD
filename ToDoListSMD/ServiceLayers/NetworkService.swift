@@ -34,7 +34,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
 
         guard let body = try? JSONEncoder().encode(Response(element: todoItemNetwork, list: nil, revision: nil)) else {
-            completion(.failure(JSONError.serializationError))
+            completion(.failure(JSONErrors.serializationError))
             return
         }
 
@@ -60,7 +60,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
 
         guard let body = try? JSONEncoder().encode(Response(element: todoItemNetwork, list: nil, revision: nil)) else {
-            completion(.failure(JSONError.serializationError))
+            completion(.failure(JSONErrors.serializationError))
             return
         }
 
@@ -106,7 +106,7 @@ final class NetworkService: NetworkServiceProtocol {
         }
 
         guard let body = try? JSONEncoder().encode(Response(element: nil, list: todoItemsNetwork, revision: nil)) else {
-            completion(.failure(JSONError.serializationError))
+            completion(.failure(JSONErrors.serializationError))
             return
         }
 
@@ -197,7 +197,7 @@ extension NetworkService {
             }
 
             guard let networkResponse = try? JSONDecoder().decode(Response.self, from: data) else {
-                completion(.failure(JSONError.deserializationError))
+                completion(.failure(JSONErrors.deserializationError))
                 return
             }
 
