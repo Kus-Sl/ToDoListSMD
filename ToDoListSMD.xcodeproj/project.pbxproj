@@ -266,7 +266,7 @@
 			children = (
 				A8A6E24C2896F89200CEFEEF /* ViewControllers */,
 				A8A6E24D2896F89200CEFEEF /* Views */,
-				A8C1805A289014790085E331 /* Model */,
+				A8C1805A289014790085E331 /* Models */,
 				A8C1805B289015050085E331 /* ServiceLayers */,
 				A8ADE1C9289D8E8C000FFBA3 /* Helpers */,
 				A8A6E2582896F8F800CEFEEF /* Extensions */,
@@ -320,14 +320,14 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
-		A8C1805A289014790085E331 /* Model */ = {
+		A8C1805A289014790085E331 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				A8C1805C289017360085E331 /* TodoItem.swift */,
 				A81E571928AC0317002D1473 /* TodoItemNetwork.swift */,
 				A82E684828BBCCEB005199AA /* CoreData */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		A8C1805B289015050085E331 /* ServiceLayers */ = {
