@@ -62,6 +62,7 @@ final class ListViewController: UIViewController {
             bottom: Constants.separatorBottomInset,
             right: Constants.separatorRightInset
         )
+        tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
 
