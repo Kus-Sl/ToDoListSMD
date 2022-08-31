@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		54B8EAC59D56319ACDF66A91 /* Pods_ToDoListSMDTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 875CF0E35A34F8FCD8D084AC /* Pods_ToDoListSMDTests.framework */; };
 		7AE6E7DBBA1476AA4160246A /* Pods_ToDoListSMD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FF6337B9C557601BDC7AEEF /* Pods_ToDoListSMD.framework */; };
+		A809664728BFDBD800AA4CDB /* Exstension + UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A809664628BFDBD800AA4CDB /* Exstension + UIView.swift */; };
 		A81E571A28AC0317002D1473 /* TodoItemNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81E571928AC0317002D1473 /* TodoItemNetwork.swift */; };
 		A82056AC289FEBE100738AE1 /* Extension + UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */; };
 		A82E684528BBCCCD005199AA /* TodoItemCD+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82E684328BBCCCD005199AA /* TodoItemCD+CoreDataClass.swift */; };
@@ -70,6 +71,7 @@
 		875CF0E35A34F8FCD8D084AC /* Pods_ToDoListSMDTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListSMDTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FF6337B9C557601BDC7AEEF /* Pods_ToDoListSMD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoListSMD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94AB854A0CBB2801E4F0E518 /* Pods-ToDoListSMDUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoListSMDUITests.release.xcconfig"; path = "Target Support Files/Pods-ToDoListSMDUITests/Pods-ToDoListSMDUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A809664628BFDBD800AA4CDB /* Exstension + UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exstension + UIView.swift"; sourceTree = SOURCE_ROOT; };
 		A81E571928AC0317002D1473 /* TodoItemNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemNetwork.swift; sourceTree = "<group>"; };
 		A82056AB289FEBE100738AE1 /* Extension + UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIImage.swift"; sourceTree = "<group>"; };
 		A82E684328BBCCCD005199AA /* TodoItemCD+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItemCD+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 		A8A6E2582896F8F800CEFEEF /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				A809664628BFDBD800AA4CDB /* Exstension + UIView.swift */,
 				A8ADE1CC289D8F65000FFBA3 /* Extension + UITableViewCell.swift */,
 				A8ADE1D0289D99EB000FFBA3 /* Extension + UIFont.swift */,
 				A8A6E2592896F8F800CEFEEF /* Extension + UIColor.swift */,
@@ -615,6 +618,7 @@
 				A89621BE28A8F0A7004ADDE9 /* FileCacheService.swift in Sources */,
 				A8ADE1CB289D8EA6000FFBA3 /* CellType.swift in Sources */,
 				A8A6E25C28970F5300CEFEEF /* Extension + DateFormatter.swift in Sources */,
+				A809664728BFDBD800AA4CDB /* Exstension + UIView.swift in Sources */,
 				A8A6E2542896F89200CEFEEF /* CalendarCell.swift in Sources */,
 				A8B5CE7E289FB1E300F2CDFC /* ListViewModel.swift in Sources */,
 				A89621C228A917E0004ADDE9 /* TodoService.swift in Sources */,

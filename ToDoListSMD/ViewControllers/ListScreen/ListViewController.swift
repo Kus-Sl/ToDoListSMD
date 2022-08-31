@@ -247,7 +247,7 @@ extension ListViewController: UITableViewDelegate {
     }
 }
 
-// MARK: Custom delegates
+// MARK: List view model delegate
 extension ListViewController: ListViewModelDelegate {
     func reloadTableView() {
         tableView.reloadData()
