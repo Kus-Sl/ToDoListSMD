@@ -13,7 +13,8 @@ protocol DetailViewModelProtocol {
     var text: String { get }
     var importance: Importance { get }
     var deadline: Box<Int?> { get set }
-    var delegate: DetailViewControllerDelegate? { get set }
+
+    func assignDelegate(_ delegate: DetailViewModelDelegate)
 
     func deleteTodoItem()
     func saveOrUpdateTodoItem()
@@ -29,12 +30,19 @@ protocol DetailViewModelProtocol {
     func getHeightForRows(_ indexPath: IndexPath) -> Double
 }
 
+protocol DetailViewModelDelegate: AnyObject {
+    func showDatePicker()
+    func hideDatePicker()
+    func animateDatePicker()
+    func getText() -> String
+}
+
 final class DetailViewModel: DetailViewModelProtocol {
     // NB: оптимизировать
     var text: String
     var importance: Importance
     var deadline: Box<Int?>
-    weak var delegate: DetailViewControllerDelegate?
+    private weak var delegate: DetailViewModelDelegate?
 
     // NB: доковырять
     private let todoItem: TodoItem
@@ -43,7 +51,7 @@ final class DetailViewModel: DetailViewModelProtocol {
     private lazy var isHiddenDatePicker = true
     private lazy var cellTypes: [CellType] = [.importance, .deadline]
 
-    required init(_ todoItem: TodoItem, _ todoService: TodoServiceProtocol) {
+    init(_ todoItem: TodoItem, _ todoService: TodoServiceProtocol) {
         self.todoItem = todoItem
         self.todoService = todoService
         text = todoItem.text
@@ -52,20 +60,16 @@ final class DetailViewModel: DetailViewModelProtocol {
 
         isNewTodoItem = todoItem.text.isEmpty
     }
+
+    func assignDelegate(_ delegate: DetailViewModelDelegate) {
+        self.delegate = delegate
+    }
 }
 
 // MARK: Actions
 extension DetailViewModel {
     func deleteTodoItem() {
-        todoService.delete(todoItem.id) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.delete(todoItem.id)
     }
 
     func saveOrUpdateTodoItem() {
@@ -84,27 +88,11 @@ extension DetailViewModel {
     }
 
     private func save(_ newTodoItem: TodoItem) {
-        todoService.add(newTodoItem) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.add(newTodoItem)
     }
 
     private func update(_ updatingTodoItem: TodoItem) {
-        todoService.update(updatingTodoItem) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                DDLogInfo(error)
-                // NB: обработать
-            }
-        }
+        todoService.update(updatingTodoItem)
     }
 }
 

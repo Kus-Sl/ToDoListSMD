@@ -10,76 +10,99 @@ import CocoaLumberjack
 import Helpers
 
 protocol FileCacheServiceProtocol {
-    func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ())
-    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ())
-    func save(to file: String, completion: @escaping (Result<(), Error>) -> ())
-    func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ())
+    var revision: Int { get set }
+    var isTombstonesExist: Bool { get set }
+    var isDirtiesExist: Bool { get }
+
+    func add(_ newTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
+    func update(_ updatingTodoItem: TodoItem, completion: @escaping (VoidResult) -> ())
+    func delete(todoItemID: String, completion: @escaping (VoidResult) -> ())
+    func load(completion: @escaping (ListResult) -> ())
+    func reloadCache(with todoItems: [TodoItem]) 
 }
 
 final class FileCacheService: FileCacheServiceProtocol {
+    var isDirtiesExist: Bool {
+        fileCache.todoItems.contains(where: { $0.isDirty })
+    }
+
+    var isTombstonesExist : Bool {
+        get { UserDefaults.standard.bool(forKey: Constants.isTombstonesExist) }
+        set { UserDefaults.standard.set(newValue, forKey: Constants.isTombstonesExist) }
+    }
+
+    var revision: Int {
+        get { UserDefaults.standard.integer(forKey: Constants.lastKnownRevision) }
+        set { UserDefaults.standard.set(newValue, forKey: Constants.lastKnownRevision) }
+    }
+
     private let fileCache: FileCache = FileCache()
-    private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel)
+    private let fileCacheQueue = DispatchQueue(label: Constants.queueLabel, attributes: [.concurrent])
 
-    func add(_ newTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.add(newTodoItem)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+    func add(_ newTodoItem: TodoItem, completion: @escaping (VoidResult) -> ()) {
+        callAction(completion: completion) { [weak self] in
+             try self?.fileCache.add(newTodoItem)
         }
     }
 
-    func update(_ updatingTodoItem: TodoItem, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.update(updatingTodoItem)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+    func update(_ updatingTodoItem: TodoItem, completion: @escaping (VoidResult) -> ()) {
+        callAction(completion: completion) { [weak self] in
+            try self?.fileCache.update(updatingTodoItem)
         }
     }
 
-    func delete(todoItemID: String, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.delete(todoItemID)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+    func delete(todoItemID: String, completion: @escaping (VoidResult) -> ()) {
+        callAction(completion: completion) { [weak self] in
+            try self?.fileCache.delete(todoItemID)
         }
     }
 
-    func save(to file: String, completion: @escaping (Result<(), Error>) -> ()) {
-        fileCacheQueue.async { [weak self] in
-            do {
-                try self?.fileCache.save(file)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-
-    func load(from file: String, completion: @escaping (Result<([TodoItem]), Error>) -> ()) {
+    func load(completion: @escaping (ListResult) -> ()) {
         fileCacheQueue.async { [weak self] in
             guard let self = self else { return }
             do {
-                try self.fileCache.load(file)
-                completion(.success(self.fileCache.todoItems))
+                try self.fileCache.load()
+                DispatchQueue.main.async {
+                    completion(.success(self.fileCache.todoItems))
+                }
             } catch {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    func reloadCache(with todoItems: [TodoItem]) {
+        fileCacheQueue.async(flags: .barrier) { [weak self] in
+            self?.fileCache.reloadCache(with: todoItems)
+        }
+    }
+}
+
+// MARK: Support methods
+extension FileCacheService {
+    private func callAction(completion: @escaping (VoidResult) -> (), action: @escaping () throws -> ()) {
+        fileCacheQueue.async(flags: .barrier) {
+            do {
+                try action()
+                DispatchQueue.main.async {
+                    completion(.success(()))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
     }
 }
 
+// MARK: Constants
 extension FileCacheService {
     private enum Constants {
         static let queueLabel = "fileCacheQueue"
+        static let isTombstonesExist = "isTombstonesExist"
+        static let lastKnownRevision = "LastKnownRevision"
     }
 }

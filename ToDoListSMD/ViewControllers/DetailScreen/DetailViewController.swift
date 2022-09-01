@@ -8,16 +8,7 @@
 import UIKit
 import CocoaLumberjack
 
-protocol DetailViewControllerDelegate: AnyObject {
-    func showDatePicker()
-    func hideDatePicker()
-    func animateDatePicker()
-    func getText() -> String
-}
-
 final class DetailViewController: UIViewController {
-    private var viewModel: DetailViewModelProtocol
-
     override var navigationItem: UINavigationItem {
         let item = UINavigationItem(title: Constants.navigationItemTitle)
         let saveButton = UIBarButtonItem(title: Constants.navigationBarSaveButtonTitle, style: .done, target: self, action: #selector(saveButtonTapped))
@@ -27,7 +18,10 @@ final class DetailViewController: UIViewController {
         return item
     }
 
+    private var viewModel: DetailViewModelProtocol
+
     private lazy var scrollView = UIScrollView()
+    private lazy var stackView = UIStackView()
     private lazy var textView = UITextView()
     private lazy var tableView = UITableView()
     private lazy var deleteButton = UIButton()
@@ -45,8 +39,8 @@ final class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        registerForKeyBoardNotifications()
-        viewModel.delegate = self
+        subscribeForKeyBoardNotifications()
+        viewModel.assignDelegate(self)
 
         view.backgroundColor = .ColorAsset.backPrimary
         setupScrollView()
@@ -54,14 +48,19 @@ final class DetailViewController: UIViewController {
         isEnableToSaveOrDelete()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        unsubscribeFromKeyBoardNotifications()
+    }
+
     private func setupScrollView() {
+        scrollView.keyboardDismissMode = .interactive
+        stackView.axis = .vertical
+        stackView.spacing = Constants.stackViewVerticalSpacing
+        
         setupTextView()
         setupTableView()
         setupDeleteButton()
-        scrollView.addSubview(textView)
-        scrollView.addSubview(tableView)
-        scrollView.addSubview(deleteButton)
-        view.addSubview(scrollView)
     }
 
     private func setupTextView() {
@@ -111,35 +110,30 @@ final class DetailViewController: UIViewController {
     }
 
     private func setupLayout() {
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView.forAutoLayouts())
+        scrollView.addSubview(stackView.forAutoLayouts())
 
-        let frameGuide = scrollView.frameLayoutGuide
-        let contentGuide = scrollView.contentLayoutGuide
-
-        frameGuide.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        frameGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        frameGuide.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        frameGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor).isActive = true
-
-        textView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
-        textView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
-        deleteButton.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor, constant: Constants.leadingInset).isActive = true
-        deleteButton.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor, constant: Constants.trailingInset).isActive = true
-
-        textView.topAnchor.constraint(equalTo: contentGuide.topAnchor, constant: Constants.textViewTopInset).isActive = true
-        textView.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.textViewHeight).isActive = true
-        textView.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: Constants.textViewBottomInset).isActive = true
+        stackView.addArrangedSubview(textView.forAutoLayouts())
+        stackView.addArrangedSubview(tableView.forAutoLayouts())
+        stackView.addArrangedSubview(deleteButton.forAutoLayouts())
+        
         tableViewHeight = tableView.heightAnchor.constraint(equalToConstant: Constants.minTableViewHeight)
-        tableViewHeight.isActive = true
-        tableView.bottomAnchor.constraint(equalTo: deleteButton.topAnchor, constant: Constants.tableViewBottomInset).isActive = true
-        deleteButton.heightAnchor.constraint(equalToConstant: Constants.deleteButtonHeight).isActive = true
-        deleteButton.bottomAnchor.constraint(lessThanOrEqualTo: contentGuide.bottomAnchor).isActive = true
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: Constants.stackViewTopInset),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: Constants.leadingInset),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: Constants.trailingInset),
+            stackView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: Constants.stackViewWidthInsets),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.textViewHeight),
+            tableViewHeight,
+            deleteButton.heightAnchor.constraint(equalToConstant: Constants.deleteButtonHeight)
+        ])
     }
 }
 
@@ -188,7 +182,7 @@ extension DetailViewController: UITableViewDelegate {
 }
 
 // MARK: Detail view controller delegate
-extension DetailViewController: DetailViewControllerDelegate {
+extension DetailViewController: DetailViewModelDelegate {
     func showDatePicker() {
         tableView.insertRows(at: [CellType.calendar.getRowIndexPath()], with: .automatic)
         tableViewHeight.constant = tableView.contentSize.height
@@ -216,28 +210,48 @@ extension DetailViewController: DetailViewControllerDelegate {
 extension DetailViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         isEnableToSaveOrDelete()
+        scrollView.layoutIfNeeded()
     }
 }
 
 // MARK: Keyboards methods
 extension DetailViewController {
-    private func registerForKeyBoardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillHIde), name: UIResponder.keyboardWillHideNotification, object: nil)
+    private func subscribeForKeyBoardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc func kbWillShow(_ notification: NSNotification) {
-        guard let kbFrameSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        let keyboardTopY = kbFrameSize.cgRectValue.origin.y
-        let convertedDeleteButtonFrame = view.convert(deleteButton.frame, from: deleteButton.superview)
-        let deleteButtonBottomY = convertedDeleteButtonFrame.origin.y + deleteButton.frame.height
-        guard deleteButtonBottomY > keyboardTopY else { return }
-        let newFrameY = (keyboardTopY - deleteButtonBottomY - Constants.appearedKeyBoardInset)
-        scrollView.contentOffset.y = -newFrameY
+    private func unsubscribeFromKeyBoardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc func kbWillHIde(_ notification: NSNotification) {
-        scrollView.contentOffset.y = 0
+    @objc
+    private func keyboardWillShow(_ notification: Notification) {
+        guard let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height else { return }
+        let bottomSafeAreaInset = view.safeAreaInsets.bottom
+        scrollView.contentInset.bottom = keyboardHeight - bottomSafeAreaInset
+        scrollView.verticalScrollIndicatorInsets.bottom = self.scrollView.contentInset.bottom
+
+        guard view.gestureRecognizers == nil else { return }
+        addGestureRecognizer(to: view)
+    }
+
+    @objc
+    private func keyboardWillHide(_ notification: NSNotification) {
+        scrollView.contentInset.bottom = .zero
+        scrollView.verticalScrollIndicatorInsets.bottom = view.safeAreaInsets.bottom
+    }
+
+    @objc
+    private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    private func addGestureRecognizer(to view: UIView) {
+        let keyboardDismissTapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        keyboardDismissTapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(keyboardDismissTapGesture)
     }
 }
 
@@ -246,11 +260,11 @@ extension DetailViewController {
     private enum Constants {
         static let leadingInset: CGFloat = 16
         static let trailingInset: CGFloat = -16
-        static let textViewTopInset: CGFloat = 16
+        static let stackViewTopInset: CGFloat = 16
+        static let stackViewWidthInsets: CGFloat = -leadingInset * 2
         static let textViewHeight: CGFloat = 120
-        static let textViewBottomInset: CGFloat = -16
         static let minTableViewHeight: CGFloat = 116
-        static let tableViewBottomInset: CGFloat = -16
+        static let stackViewVerticalSpacing: CGFloat = 16
         static let textContainerBottomInset: CGFloat = 12
         static let textContainerTopInset: CGFloat = 17
         static let textContainerLeftInset: CGFloat = 16

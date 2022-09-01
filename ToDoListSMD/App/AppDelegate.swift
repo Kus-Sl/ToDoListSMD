@@ -25,10 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationController
         return true
     }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        todoService.save()
-    }
 }
 
 // MARK: Support methods

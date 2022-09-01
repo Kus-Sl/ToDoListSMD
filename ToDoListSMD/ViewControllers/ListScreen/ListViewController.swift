@@ -19,6 +19,7 @@ final class ListViewController: UIViewController {
     private lazy var completedItemsCountLabel = UILabel()
     private lazy var completedItemsButton = UIButton()
     private lazy var newTodoItemButton = UIButton()
+    private lazy var spinnerView = UIActivityIndicatorView()
 
     init(_ viewModel: ListViewModelProtocol) {
         self.viewModel = viewModel
@@ -32,15 +33,10 @@ final class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ColorAsset.backPrimary
+
+        viewModel.assignListViewModelDelegate(self)
         setupView()
         setupLayout()
-
-        viewModel.bindViewControllerWithModel { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-                self?.completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(self?.viewModel.getCompletedTodoItemsCount() ?? 0)"
-            }
-        }
     }
 
     private func setupView() {
@@ -49,6 +45,7 @@ final class ListViewController: UIViewController {
         setupCompletedItemsCountLabel()
         setupCompletedItemsButton()
         setupNewTodoItemButton()
+        setupSpinnerView()
 
         view.addSubview(tableView)
         tableViewHeaderView.addSubview(completedItemsCountLabel)
@@ -65,6 +62,7 @@ final class ListViewController: UIViewController {
             bottom: Constants.separatorBottomInset,
             right: Constants.separatorRightInset
         )
+        tableView.showsVerticalScrollIndicator = false
         tableView.dataSource = self
         tableView.delegate = self
 
@@ -114,6 +112,14 @@ final class ListViewController: UIViewController {
         mockView.centerYAnchor.constraint(equalTo: newTodoItemButton.centerYAnchor).isActive = true
         mockView.heightAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
         mockView.widthAnchor.constraint(equalToConstant: Constants.moсkViewSide).isActive = true
+    }
+
+    private func setupSpinnerView() {
+        spinnerView = UIActivityIndicatorView(style: .medium)
+        spinnerView.hidesWhenStopped = true
+        let spinnerItem = UIBarButtonItem(customView: spinnerView)
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = spinnerItem
+        spinnerView.startAnimating()
     }
 
     private func setupLayout() {
@@ -231,14 +237,30 @@ extension ListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, isDone in
+        let completeAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
             self.completeTodoItem(with: indexPath)
-            isDone(true)
         }
 
         completeAction.backgroundColor = .ColorAsset.colorGreen
         completeAction.image = .IconAsset.completeActionIcon
         return UISwipeActionsConfiguration(actions: [completeAction])
+    }
+}
+
+// MARK: List view model delegate
+extension ListViewController: ListViewModelDelegate {
+    func reloadTableView() {
+        tableView.reloadData()
+        completedItemsCountLabel.text = Constants.completedItemsCountLabelText + "\(viewModel.getCompletedTodoItemsCount())"
+    }
+
+    func startSpinner() {
+        spinnerView.isHidden = false
+        spinnerView.startAnimating()
+    }
+
+    func stopSpinner() {
+        spinnerView.stopAnimating()
     }
 }
 
